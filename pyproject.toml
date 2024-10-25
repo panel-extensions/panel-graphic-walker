@@ -1,0 +1,30 @@
+[project]
+name = "panel-graphic-walker"
+version = "0.1.0"
+description = "A project providing a Graphic Walker Pane for use with HoloViz Panel."
+readme = "README.md"
+authors = [
+    { name = "Philipp Rudiger", email = "philipp.jfr@gmail.com" }
+]
+requires-python = ">=3.9"
+dependencies = ["panel>=1.5.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.optional-dependencies]
+dev = [
+    "jedi-language-server;sys_platform == 'linux'",
+    "mypy",
+    "panel",
+    "pytest",
+    "ruff",
+    "watchfiles",
+]
+tests = [
+  "pytest"
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/panel_gwalker"]

@@ -90,7 +90,7 @@ class GraphicWalker(ReactComponent):
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
     fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
-    appearance: Literal["panel" | "media" | "dark" | "light"] = param.Selector(
+    appearance: Literal["panel", "media", "dark", "light"] = param.Selector(
         default=_PANEL_APPEARANCE,
         objects=[_PANEL_APPEARANCE, "media", "dark", "light"],
         doc="""Dark mode preference: 'media', 'dark', 'light' or 'panel' (default).

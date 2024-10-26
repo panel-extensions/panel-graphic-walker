@@ -1,1 +1,1 @@
-recursive-include src/panel_xml *.js
+recursive-include src/panel_gwalker *.js

@@ -1,16 +1,14 @@
-from typing import Dict
+from typing import Dict, Literal
 
 import numpy as np
-import param
 import pandas as pd
-
+import param
 from panel import config
 from panel.custom import ReactComponent
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 
 VERSION = "0.4.72"
-
 
 def infer_prop(s: np.ndarray, i=None):
     """
@@ -84,17 +82,25 @@ class GraphicWalker(ReactComponent):
         Servable `GraphicWalker` object that creates a UI for visual exploration of the input DataFrame.
     """
 
-    object = param.DataFrame(doc="""The data to explore.""")
-    fields = param.List(doc="""Optional fields, i.e. columns, specification.""")
-    appearance = param.Selector(
-        default=None,
-        objects=[None, "media", "dark", "light"],
-        doc="""Dark mode preference: 'media', 'dark', 'light' or None.
-        If None the the appearance is derived from pn.config.theme""",
+    object: pd.DataFrame = param.DataFrame(
+        doc="""The data to explore.
+        Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
-
-    config = param.Dict(
-        doc="""Optional extra Graphic Walker configuration. See the
+    fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
+    appearance: Literal["media", "dark", "light"] = param.Selector(
+        default="light",
+        objects=["light", "dark", "media"],
+        doc="""Dark mode preference: 'light', 'dark', 'media'.
+        If not provided the appearance is derived from pn.config.theme.""",
+    )
+    # This one is added to better explain that currently only 'client' mode is supported
+    # but we envision supporting 'server' mode one day
+    computation: Literal["client"] = param.Selector(
+        objects=["client"],
+        doc="""The computation configuration. Currently only 'client' is supported.""",
+    )
+    config: dict = param.Dict(
+        doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
 
@@ -104,43 +110,11 @@ class GraphicWalker(ReactComponent):
         }
     }
 
-    _esm = """
-    import {GraphicWalker} from "graphic-walker"
-    import {useEffect, useState} from "react"
-
-    function transform(data) {
-      const keys = Object.keys(data);
-      const length = data[keys[0]].length;
-
-      return Array.from({ length }, (_, i) =>
-        keys.reduce((obj, key) => {
-          obj[key] = data[key][i];
-          return obj;
-        }, {})
-      );
-    }
-
-    export function render({ model }) {
-      const [data] = model.useState('object')
-      const [fields] = model.useState('fields')
-      const [appearance] = model.useState('appearance')
-      const [config] = model.useState('config')
-      const [transformedData, setTransformedData] = useState([]);
-
-      useEffect(() => {
-        const result = transform(data);
-        setTransformedData(result);
-      }, [data]);
-
-      return <GraphicWalker
-        data={transformedData}
-        fields={fields}
-        appearance={appearance}
-        {...config}
-       />
-    }"""
+    _esm = "_gwalker.js"
 
     def __init__(self, object=None, **params):
+        if not "appearance" in params:
+            params["appearance"]=self._get_appearance(config.theme)
         super().__init__(object=object, **params)
 
     @classmethod
@@ -157,13 +131,13 @@ class GraphicWalker(ReactComponent):
         return False
 
     _THEME_CONFIG = {
-        "default": "media",
+        "default": "light",
         "dark": "dark",
     }
 
     def _get_appearance(self, theme):
         config = self._THEME_CONFIG
-        return config.get(theme, config.get("default", "media"))
+        return config.get(theme, self.param.appearance.default)
 
     def _process_param_change(self, params):
         if self.object is not None and "object" in params:
@@ -171,6 +145,4 @@ class GraphicWalker(ReactComponent):
                 params["fields"] = raw_fields(self.object)
             if not self.config:
                 params["config"] = {}
-            if not self.appearance:
-                params["appearance"] = self._get_appearance(config.theme)
         return params

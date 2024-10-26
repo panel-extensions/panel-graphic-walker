@@ -1,5 +1,6 @@
 import pandas as pd
 import panel as pn
+
 from panel_gwalker import GraphicWalker
 
 pn.extension()

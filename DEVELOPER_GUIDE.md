@@ -19,7 +19,7 @@ To install for development you will need to create a new environment
 Then run
 
 ```bash
-git clone https://github.com/awesome-panel/panel-xml.git
+git clone https://github.com/awesome-panel/panel-graphic-walker.git
 cd panel-xml
 uv venv
 source .venv/bin/activate # linux

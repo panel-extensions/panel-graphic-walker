@@ -4,6 +4,6 @@ from panel_gwalker import GraphicWalker
 
 pn.extension()
 
-df = pd.read_parquet('https://datasets.holoviz.org/windturbines/v1/windturbines.parq')
+df = pd.read_parquet('https://datasets.holoviz.org/windturbines/v1/windturbines.parq', nrows=10000)
 
 GraphicWalker(df, sizing_mode='stretch_both').servable()

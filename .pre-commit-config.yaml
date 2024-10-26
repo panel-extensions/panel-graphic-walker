@@ -56,6 +56,12 @@ repos:
           - '@stylistic/eslint-plugin@1.6.3'
           - '@typescript-eslint/eslint-plugin@7.2.0'
           - '@typescript-eslint/parser@7.2.0'
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        args: [--ignore-missing-imports]
+        additional_dependencies: []
 ci:
   autofix_prs: false
   autoupdate_schedule: quarterly

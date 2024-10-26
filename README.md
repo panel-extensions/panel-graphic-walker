@@ -3,13 +3,13 @@
 [![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/licenses/MIT)
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAB5hHGcAA42ST2_iMBDFvwryBSoFQ8JCIFIvu1rtnvewPZQKGTwQa4Pt2kNoivjuO86fUqRWVMkh8zx-b_xzTmxjJLCMqb01DntWaCl8j14rl_oiQlFreqm3zuwbZbU7iuIfuF7b9ssJm6vNQy0uqdVqDi8I2iujB3dBkdvePTlzB0KurHDPB8BBP0e0PhuNpEDhAT3PTWFK9cqN242OSks8uLXS4EdlfFXzYNGvna_CB3Ib9bx6VXq32tP57vseHeAmX60N5v077sGVYl1AMxWLmIPng3KwB42eaGyFx3a8JR2lPm77QXjepOGuSR02IIJOXljZQLTuoFJY-1fBkWVbUXiIGEiFP3VIZxm6Aym2wtzosKUyUkkYlmOezHhMmwtRmQOy7MRKcIEjyxKa1hj8Y8jy1IU5qiK2yVUhHVDT49sKijUxpcWjkpizLJ6OI7ZX-qEpJ031G9Qup5xQKhkIqAK-kyuR-mE0CsLtPkkIrcN100stVgRfxs5P5-iDKdqg2ZzPJkk6TtP0W7qYLyafTn-xJJLcVuza9rL8_g45vuD1BA2hLj6exHwyS5NFkiTTZByP5zfo3SbWErhFqwP1MZ68my-dfiUTwZEsiluhXV9IDc85qm-NfvXHp_N_IeI7ygQEAAA)
 
-`panel-graphic-walker` provides the `GraphicWalker` *pane* to leverage the [Graphic Walker](https://github.com/Kanaries/graphic-walker) data exploration tool in notebooks and [Panel](https://panel.holoviz.org/) data apps.
+`panel-graphic-walker` provides the `GraphicWalker` pane to utilize the [Graphic Walker](https://github.com/Kanaries/graphic-walker) data exploration tool within notebooks and [Panel](https://panel.holoviz.org/) data applications.
 
-This project is **very young**, so if you find a version that works for you then **please pin your version** as things might change. Please note you may currently hit a data size limit if using large DataFrames.
+This project is **in early stages**, so if you find a version that suits your needs, it’s recommended to **pin your version**, as updates may introduce changes. Please note that displaying larger datasets (>= 10 MB) may be limited depending on your environment.
 
 ## Installation
 
-You can install `panel-graphic-walker` using `pip`:
+Install `panel-graphic-walker` via `pip`:
 
 ```bash
 pip install panel-graphic-walker
@@ -21,7 +21,7 @@ pip install panel-graphic-walker
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAB5hHGcAA42ST2_iMBDFvwryBSoFQ8JCIFIvu1rtnvewPZQKGTwQa4Pt2kNoivjuO86fUqRWVMkh8zx-b_xzTmxjJLCMqb01DntWaCl8j14rl_oiQlFreqm3zuwbZbU7iuIfuF7b9ssJm6vNQy0uqdVqDi8I2iujB3dBkdvePTlzB0KurHDPB8BBP0e0PhuNpEDhAT3PTWFK9cqN242OSks8uLXS4EdlfFXzYNGvna_CB3Ib9bx6VXq32tP57vseHeAmX60N5v077sGVYl1AMxWLmIPng3KwB42eaGyFx3a8JR2lPm77QXjepOGuSR02IIJOXljZQLTuoFJY-1fBkWVbUXiIGEiFP3VIZxm6Aym2wtzosKUyUkkYlmOezHhMmwtRmQOy7MRKcIEjyxKa1hj8Y8jy1IU5qiK2yVUhHVDT49sKijUxpcWjkpizLJ6OI7ZX-qEpJ031G9Qup5xQKhkIqAK-kyuR-mE0CsLtPkkIrcN100stVgRfxs5P5-iDKdqg2ZzPJkk6TtP0W7qYLyafTn-xJJLcVuza9rL8_g45vuD1BA2hLj6exHwyS5NFkiTTZByP5zfo3SbWErhFqwP1MZ68my-dfiUTwZEsiluhXV9IDc85qm-NfvXHp_N_IeI7ygQEAAA)
 
-Here’s how to create a simple `GraphicWalker` pane:
+Here’s an example of how to create a simple `GraphicWalker` pane:
 
 ```python
 import pandas as pd
@@ -37,12 +37,11 @@ GraphicWalker(df).servable()
 ```
 
 ![panel-graphic-walker-table](https://github.com/philippjfr/panel-graphic-walker/blob/main/static/panel-graphic-walker_table.png?raw=true)
+![panel-graphic-walker-plot](https://github.com/philippjfr/panel-graphic-walker/blob/main/static/panel-graphic-walker_plot.png?raw=true)
 
-![panel-graphic-walker-table](https://github.com/philippjfr/panel-graphic-walker/blob/main/static/panel-graphic-walker_plot.png?raw=true)
+### Configuring Fields
 
-### Configure the `fields`
-
-You may optionally configure the `fields` (columns) manually:
+You may also configure the `fields` (data columns) manually:
 
 ```python
 import pandas as pd
@@ -80,9 +79,7 @@ GraphicWalker(df, fields=fields).servable()
 
 ### Additional Configuration
 
-You may specify extra configuration as defined in the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api).
-
-Lets try changing the `appearence` to dark:
+Extra configuration options are available via the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api). For instance, you can change the `appearance` to dark mode:
 
 ```python
 import pandas as pd
@@ -103,16 +100,14 @@ config = {
 GraphicWalker(df, config=config).servable()
 ```
 
-## Api
+## API
 
 ### Parameters
 
-- `object` (DataFrame): The data to explore.
-- `fields` (list): Optional fields, i.e. columns, specification.
-- `config` (dict): Optional extra Graphic Walker configuration. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
+- `object` (DataFrame): The data for exploration.
+- `fields` (list): Optional specification of fields (columns).
+- `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
 ## ❤️ Contributions
 
-Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/philippjfr/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.
-
-----
+Contributions and co-maintainers are very welcome! Submit issues or pull requests in the [GitHub repository](https://github.com/philippjfr/panel-graphic-walker). For more details, check the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md).

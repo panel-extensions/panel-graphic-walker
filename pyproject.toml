@@ -18,6 +18,7 @@ dev = [
     "jedi-language-server;sys_platform == 'linux'",
     "mypy",
     "panel",
+    "pre-commit",
     "pytest",
     "ruff",
     "watchfiles",

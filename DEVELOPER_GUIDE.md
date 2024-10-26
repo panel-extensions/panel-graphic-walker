@@ -24,12 +24,13 @@ cd panel-xml
 uv venv
 source .venv/bin/activate # linux
 uv pip install -e .[examples,dev,test]
+pre-commit install
 ```
 
 You can run all tests via
 
 ```bash
-ruff check
+pre-commit run --all
 pytest tests
 ```
 

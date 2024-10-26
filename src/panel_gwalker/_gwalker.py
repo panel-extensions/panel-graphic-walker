@@ -96,6 +96,8 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'media', 'dark', 'light' or 'panel' (default).
         If 'panel' the the appearance is derived from pn.config.theme.""",
     )
+    # This one is added to better explain that currently only 'client' mode is supported
+    # but we envision supporting 'server' mode one day
     computation: Literal["client"] = param.Selector(
         objects=["client"],
         doc="""The computation configuration. Currently only 'client' is supported.""",

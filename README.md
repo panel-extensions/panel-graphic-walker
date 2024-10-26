@@ -43,4 +43,13 @@ GraphicWalker(df).servable()
 
 Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/philippjfr/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.
 
+## Vision
+
+Our dream is that this package is super simple to use and supports your use cases:
+
+- Great documentation including examples.
+- Supports your preferred data backend including Pandas, Polars and DuckDB.
+- Supports persisting and reusing Graphic Walker specifications.
+- Scales to even the largest datasets only limited by your server or cluster.
+
 ----

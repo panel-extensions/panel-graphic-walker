@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from panel_gwalker import GraphicWalker
-from panel_gwalker._gwalker import _PANEL_APPERANCE
+from panel_gwalker._gwalker import _PANEL_APPEARANCE
 
 
 @pytest.fixture
@@ -22,7 +22,7 @@ def test_constructor(data):
     assert gwalker.object is data
     assert not gwalker.fields
     assert not gwalker.config
-    assert gwalker.appearance==_PANEL_APPERANCE
+    assert gwalker.appearance==_PANEL_APPEARANCE
 
 def test_process_parameter_change(data, default_appearance):
     gwalker = GraphicWalker(object=data)
@@ -79,7 +79,7 @@ def test_change_appearance_forth_and_back(data, default_appearance):
     assert params["appearance"]=="dark"
 
     # Change back to panel
-    gwalker.appearance=_PANEL_APPERANCE
-    params={"appearance": _PANEL_APPERANCE}
+    gwalker.appearance=_PANEL_APPEARANCE
+    params={"appearance": _PANEL_APPEARANCE}
     result = gwalker._process_param_change(params)
     assert params["appearance"]==default_appearance

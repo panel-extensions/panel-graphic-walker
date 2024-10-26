@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Literal
 
 import numpy as np
 import pandas as pd
@@ -10,7 +10,7 @@ from panel.reactive import SyncableData
 
 VERSION = "0.4.72"
 
-_PANEL_APPERANCE = "panel"
+_PANEL_APPEARANCE = "panel"
 
 
 def infer_prop(s: np.ndarray, i=None):
@@ -85,22 +85,22 @@ class GraphicWalker(ReactComponent):
         Servable `GraphicWalker` object that creates a UI for visual exploration of the input DataFrame.
     """
 
-    object = param.DataFrame(
+    object: pd.DataFrame = param.DataFrame(
         doc="""The data to explore.
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
-    fields = param.List(doc="""Optional fields, i.e. columns, specification.""")
-    appearance = param.Selector(
-        default=_PANEL_APPERANCE,
-        objects=[_PANEL_APPERANCE, "media", "dark", "light"],
+    fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
+    appearance: Literal["panel" | "media" | "dark" | "light"] = param.Selector(
+        default=_PANEL_APPEARANCE,
+        objects=[_PANEL_APPEARANCE, "media", "dark", "light"],
         doc="""Dark mode preference: 'media', 'dark', 'light' or 'panel' (default).
         If 'panel' the the appearance is derived from pn.config.theme.""",
     )
-    computation = param.Selector(
+    computation: Literal["client"] = param.Selector(
         objects=["client"],
         doc="""The computation configuration. Currently only 'client' is supported.""",
     )
-    config = param.Dict(
+    config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
@@ -178,6 +178,6 @@ class GraphicWalker(ReactComponent):
                 params["fields"] = raw_fields(self.object)
             if not self.config:
                 params["config"] = {}
-            if self.appearance == _PANEL_APPERANCE:
+            if self.appearance == _PANEL_APPEARANCE:
                 params["appearance"] = self._get_appearance(config.theme)
         return params

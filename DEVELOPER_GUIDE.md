@@ -20,7 +20,7 @@ Then run
 
 ```bash
 git clone https://github.com/awesome-panel/panel-graphic-walker.git
-cd panel-xml
+cd panel-graphic-walker
 uv venv
 source .venv/bin/activate # linux
 uv pip install -e .[examples,dev,test]
@@ -33,8 +33,6 @@ You can run all tests via
 pre-commit run --all
 pytest tests
 ```
-
-Please run this command and fix any failing tests if possible before you `git push`.
 
 ### Serve the Examples
 

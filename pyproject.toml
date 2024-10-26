@@ -25,6 +25,9 @@ dev = [
 tests = [
   "pytest"
 ]
+examples = [
+  "fastparquet"
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/panel_gwalker"]

@@ -8,6 +8,7 @@ from panel.custom import ReactComponent
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 
+VERSION = "0.4.72"
 
 def infer_prop(s: np.ndarray, i=None):
     """
@@ -49,14 +50,46 @@ def raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
 
 
 class GraphicWalker(ReactComponent):
+    """
+    The `GraphicWalker` component enables interactive exploration of data in a DataFrame
+    using an interface built on [Graphic Walker](https://docs.kanaries.net/graphic-walker).
 
-    config = param.Dict()
+    Reference: https://github.com/philippjfr/panel-graphic-walker.
 
-    object = param.DataFrame()
+    Example:
+        ```python
+        import pandas as pd
+        import panel as pn
+        from panel_gwalker import GraphicWalker
+
+        pn.extension()
+
+        # Load a sample dataset
+        df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz")
+
+        # Display the interactive graphic interface
+        GraphicWalker(df).servable()
+        ```
+
+    Args:
+        `object`: The DataFrame to explore.
+        `config`: The Graphic Walker configuration, i.e. the keys `rawFields` and `spec`.
+            `i18nLang` is currently not 
+
+    Returns:
+        Servable `GraphicWalker` object that creates a UI for visual exploration of the input DataFrame.
+    """
+
+
+    object = param.DataFrame(doc="""The data to explore.""")
+    fields = param.List(doc="""Optional fields, i.e. columns, specification.""")
+
+    config = param.Dict(doc="""Optional extra Graphic Walker configuration. See the
+    [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.""")
 
     _importmap = {
         "imports": {
-            "graphic-walker": "https://esm.sh/@kanaries/graphic-walker@0.4.72"
+            "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"
         }
     }
 
@@ -77,8 +110,9 @@ class GraphicWalker(ReactComponent):
     }
 
     export function render({ model }) {
-      const [config] = model.useState('config')
       const [data] = model.useState('object')
+      const [fields] = model.useState('fields')
+      const [config] = model.useState('config')
       const [transformedData, setTransformedData] = useState([]);
 
       useEffect(() => {
@@ -86,7 +120,7 @@ class GraphicWalker(ReactComponent):
         setTransformedData(result);
       }, [data]);
 
-      return <GraphicWalker data={transformedData} {...config}/>
+      return <GraphicWalker data={transformedData} fields={fields} {...config}/>
     }"""
 
     def __init__(self, object=None, **params):
@@ -103,6 +137,9 @@ class GraphicWalker(ReactComponent):
         return False
 
     def _process_param_change(self, params):
-        if self.object is not None and 'object' in params and not self.config:
-            params['config'] = {'rawFields': raw_fields(self.object)}
+        if self.object is not None and 'object' in params:
+            if not self.fields:
+                params["fields"]=raw_fields(self.object)
+            if not self.config:
+                params['config'] = {}
         return params

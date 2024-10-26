@@ -127,6 +127,16 @@ GraphicWalker(df, config=config).servable()
 - `fields` (list): Optional specification of fields (columns).
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
+## Vision
+
+Our dream is that this package is super simple to use and supports your use cases:
+
+- Great documentation including examples.
+- Supports your preferred data backend including Pandas, Polars and DuckDB.
+- Supports persisting and reusing Graphic Walker specifications.
+- Scales to even the largest datasets only limited by your server or cluster.
+
+
 ## ❤️ Contributions
 
-Contributions and co-maintainers are very welcome! Submit issues or pull requests in the [GitHub repository](https://github.com/philippjfr/panel-graphic-walker). For more details, check the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md).
+Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/philippjfr/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.

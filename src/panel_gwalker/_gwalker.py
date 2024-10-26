@@ -10,9 +10,6 @@ from panel.reactive import SyncableData
 
 VERSION = "0.4.72"
 
-_PANEL_APPEARANCE = "panel"
-
-
 def infer_prop(s: np.ndarray, i=None):
     """
 
@@ -90,11 +87,11 @@ class GraphicWalker(ReactComponent):
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
     fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
-    appearance: Literal["panel", "media", "dark", "light"] = param.Selector(
-        default=_PANEL_APPEARANCE,
-        objects=[_PANEL_APPEARANCE, "media", "dark", "light"],
-        doc="""Dark mode preference: 'media', 'dark', 'light' or 'panel' (default).
-        If 'panel' the the appearance is derived from pn.config.theme.""",
+    appearance: Literal["media", "dark", "light"] = param.Selector(
+        default="light",
+        objects=["light", "dark", "media"],
+        doc="""Dark mode preference: 'light', 'dark', 'media'.
+        If not provided the appearance is derived from pn.config.theme.""",
     )
     # This one is added to better explain that currently only 'client' mode is supported
     # but we envision supporting 'server' mode one day
@@ -150,6 +147,8 @@ class GraphicWalker(ReactComponent):
     }"""
 
     def __init__(self, object=None, **params):
+        if not "appearance" in params:
+            params["appearance"]=self._get_appearance(config.theme)
         super().__init__(object=object, **params)
 
     @classmethod
@@ -166,13 +165,13 @@ class GraphicWalker(ReactComponent):
         return False
 
     _THEME_CONFIG = {
-        "default": "media",
+        "default": "light",
         "dark": "dark",
     }
 
     def _get_appearance(self, theme):
         config = self._THEME_CONFIG
-        return config.get(theme, config.get("default", "media"))
+        return config.get(theme, self.param.appearance.default)
 
     def _process_param_change(self, params):
         if self.object is not None and "object" in params:
@@ -180,6 +179,4 @@ class GraphicWalker(ReactComponent):
                 params["fields"] = raw_fields(self.object)
             if not self.config:
                 params["config"] = {}
-            if self.appearance == _PANEL_APPEARANCE:
-                params["appearance"] = self._get_appearance(config.theme)
         return params

@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 
 from panel_gwalker import GraphicWalker
-from panel_gwalker._gwalker import _PANEL_APPEARANCE
 
 
 @pytest.fixture
@@ -12,17 +11,17 @@ def data():
 
 @pytest.fixture
 def default_appearance():
-    return "media"
+    return "light"
 
 def _get_params(gwalker):
     return {"object": gwalker.object, "fields": gwalker.fields, "appearance": gwalker.appearance, "config": gwalker.config}
 
-def test_constructor(data):
+def test_constructor(data, default_appearance):
     gwalker = GraphicWalker(object=data)
     assert gwalker.object is data
     assert not gwalker.fields
     assert not gwalker.config
-    assert gwalker.appearance==_PANEL_APPEARANCE
+    assert gwalker.appearance==default_appearance
 
 def test_process_parameter_change(data, default_appearance):
     gwalker = GraphicWalker(object=data)
@@ -68,19 +67,3 @@ def test_process_parameter_change_with_appearance(data):
     params=_get_params(gwalker)
     result = gwalker._process_param_change(params)
     assert result["appearance"]==appearance
-
-@pytest.mark.xfail(reason="I did not know how to fix this. When I did the app_demo.py example would fail.""")
-def test_change_appearance_forth_and_back(data, default_appearance):
-    gwalker = GraphicWalker(object=data)
-
-    # Change to dark
-    gwalker.appearance="dark"
-    params={"appearance": "dark"}
-    result = gwalker._process_param_change(params)
-    assert params["appearance"]=="dark"
-
-    # Change back to panel
-    gwalker.appearance=_PANEL_APPEARANCE
-    params={"appearance": _PANEL_APPEARANCE}
-    result = gwalker._process_param_change(params)
-    assert params["appearance"]==default_appearance

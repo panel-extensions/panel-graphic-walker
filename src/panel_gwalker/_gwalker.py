@@ -104,6 +104,12 @@ class GraphicWalker(ReactComponent):
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
 
+    current_chart = param.Dict()
+    save_current_chart = param.Event(label="Save", doc="Save the current chart.")
+
+    current_chart_list = param.List()
+    save_current_chart_list = param.Event(label="Save", doc="Save the current charts.")
+
     _importmap = {
         "imports": {
             "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"

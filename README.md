@@ -146,8 +146,8 @@ GraphicWalker(df, config=config).servable()
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAEHYHWcAA6VSXW_aMBT9K5GfQAomCSuBSOyh1bRpD5u0SetDUyGDDbEWbNe-SUor_vuuk1DG1IpJTZDgfp17OPc8k7XmgmRE7oy2EBimOHMBfgzP1Skpyjancnw3Vu-63HLbsPK3sEHf-NkyU8j1bZv0rUZR8QhCOanVYOgzfBMsEJtawfhy7epBTgoA47LxmDNgToCjhS51LZ-otttxIxWHyq6kEm5cx2cxxXm6fcpJGCirG7eII3zaNbnqmS3OSQ34ButI60aX1U4NchXg0_WGXYDFH7rpK32ikXzrmV1XAFpRr8DSMMt2g26UtgH-Vy_Dcl1ZKxR-F8xCGMi1VouccN2oUjOek2HoMb2C9OvP79_OMf4Z5sJAsUiGPbn381mW0r2PVI_QMZscmaGsQ-qErdmqFN2tSUiseKikFTscduiyDXOAiA-VgBwN0pqo_4G2e0mNtt3NRh2Jj4uIJjTyZYSEvfGGbRsxZMb8kqIh2YaVToREcAmflCdBMrAVZsweCq38yF5zycWoRrgpjXG4ZHtdAcmeSS2sNynJEiStNaAFfLpfhu7C7nUhS446kOzupQJshZ7FIp4ECpLFV1FIdlLdduGki74IuS1wjw8l90LIUlx7zwp7oxUwtLN9Y4NvHa26XmwxzOMScrg_hK-w6BdNZ3Q6SdIoTdMP6Xw2n7zJ_gSJSlKzJ-ewp_Lfp6TwCOcMOoWO6-NJTCfTNJknSXKVRHE0u6DeZcV6BS6pdRTqdXmKI7_06n92grCYZuWlpcc-v9W_h7C9Gjr-7v7wBw0Ywf5jBQAA)
 
-You can *export the current* chart from the client to the server by triggering the parameter `export_current_chart`.
-The chart is exported to the `current_chart` parameter:
+You can *export the current chart* from the client to the server by triggering the parameter `export_chart`.
+The chart is exported to the `chart` parameter:
 
 ```python
 import pandas as pd
@@ -164,8 +164,8 @@ walker = GraphicWalker(df)
 pn.Column(
     walker,
     pn.Row(
-        pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"), pn.pane.JSON(walker.param.current_chart, depth=2),
-        pn.widgets.Button.from_param(walker.param.export_current_chart_list, icon="download"), pn.pane.JSON(walker.param.current_chart_list, depth=3),
+        pn.widgets.Button.from_param(walker.param.export_chart, icon="download"), pn.pane.JSON(walker.param.chart, depth=2),
+        pn.widgets.Button.from_param(walker.param.export_chart_list, icon="download"), pn.pane.JSON(walker.param.chart_list, depth=3),
     )
 ).servable()
 ```
@@ -184,16 +184,16 @@ pn.Column(
 
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, then the existing chart(s) will not be deleted and you will have to create a new one manually to use the new dataset.
 - `appearance` (string): Optional dark mode preference: 'media', 'dark', 'light' or 'panel' (default). If 'panel' the the appearance is derived from `pn.config.theme`.
-- `computation` (str): The computation configuration. Currently only 'client' is supported.
+- `server_computation` (boole): If True the computations will take place on the server instead of the client to scale to larger datasets. Default is False.
 - `fields` (list): Optional specification of fields (columns).
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
 #### Export Chart
 
-- `current_chart (dict)`: The current chart. Only updated when `export_current_chart` is triggered.
-- `export_current_chart` (event): Updates the current chart.
-- `current_chart_list` (list): The current chart list. Only updated when `export_current_chart_list` is triggered.
-- `export_current_chart_list` (event): Updates the current chart list.
+- `chart (dict)`: The current chart. Only updated when `export_chart` is triggered.
+- `export_chart` (event): Updates the chart.
+- `chart_list` (list): The current chart list. Only updated when `export_chart_list` is triggered.
+- `export_chart_list` (event): Updates the current chart list.
 
 ## Vision
 

@@ -24,31 +24,31 @@ export function render({ model }) {
   const [fields] = model.useState('fields')
   const [appearance] = model.useState('appearance')
   const [config] = model.useState('config')
-  const [currentChart, setCurrentChart] = model.useState("current_chart")
-  const [exportCurrentChart,setExportCurrentChart] = model.useState("export_current_chart")
-  const [currentChartList, setCurrentChartList] = model.useState("current_chart_list")
-  const [exportCurrentChartList,setExportCurrentChartList] = model.useState("export_current_chart_list")
+  const [chart, setChart] = model.useState("chart")
+  const [exportChart,setExportChart] = model.useState("export_chart")
+  const [chartList, setChartList] = model.useState("chart_list")
+  const [exportChartList,setCurrentChartList] = model.useState("export_chart_list")
   const [transformedData, setTransformedData] = useState([]);
 
   const graphicWalkerRef = useRef(null);
 
-  if (exportCurrentChart && graphicWalkerRef && graphicWalkerRef.current){
+  if (exportChart && graphicWalkerRef && graphicWalkerRef.current){
     (async () => {
       let value = await graphicWalkerRef.current.exportChart()
       value=cleanToDict(value)
-      setCurrentChart(value)
-      setExportCurrentChart(false)
+      setChart(value)
+      setExportChart(false)
     })()
   }
 
-  if (exportCurrentChartList && graphicWalkerRef && graphicWalkerRef.current){
+  if (exportChartList && graphicWalkerRef && graphicWalkerRef.current){
     const chartList = [];
     (async () => {
         for await (const chart of graphicWalkerRef.current.exportChartList()) {
             chartList.push(cleanToDict(chart))
         }
-        setCurrentChartList(chartList)
-        setExportCurrentChartList(false)
+        setChartList(chartList)
+        setCurrentChartList(false)
     })()
   }
 

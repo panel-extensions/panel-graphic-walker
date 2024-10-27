@@ -93,22 +93,20 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark', 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    # This one is added to better explain that currently only 'client' mode is supported
-    # but we envision supporting 'server' mode one day
-    computation: Literal["client"] = param.Selector(
-        objects=["client"],
-        doc="""The computation configuration. Currently only 'client' is supported.""",
+    server_computation: bool = param.Boolean(
+        default=False,
+        doc="""If True the computations will take place on the server instead of the client to scale to larger datasets. Default is False.""",
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
 
-    current_chart: dict = param.Dict(doc="""The current chart.""")
-    export_current_chart: bool = param.Event(doc="""Updates the current chart.""")
+    chart: dict = param.Dict(doc="""The current chart.""")
+    export_chart: bool = param.Event(doc="""Updates the current chart.""")
 
-    current_chart_list: list = param.List(doc="""The current chart list.""")
-    export_current_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
+    chart_list: list = param.List(doc="""The current chart list.""")
+    export_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
 
     _importmap = {
         "imports": {

@@ -17,21 +17,27 @@ build-backend = "hatchling.build"
 dev = [
     "jedi-language-server;sys_platform == 'linux'",
     "mypy",
-    "panel",
     "pre-commit",
     "pytest",
     "ruff",
     "watchfiles",
 ]
 tests = [
-  "pytest"
+  "duckdb",
+  "gw-dsl-parser",
+  "pygwalker",
+  "pytest",
 ]
 examples = [
-  "fastparquet"
+  "duckdb",
+  "fastparquet",
+  "gw-dsl-parser",
+  "pygwalker",
 ]
 server = [
   "duckdb",
   "gw-dsl-parser",
+  "pygwalker",
 ]
 
 [tool.hatch.build.targets.wheel]

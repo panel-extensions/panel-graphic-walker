@@ -50,8 +50,12 @@ file_download = pn.widgets.FileDownload(
 )
 export_section = pn.Column(
     pn.pane.Markdown("## Export", margin=(0, 5)),
-    pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"), pn.pane.JSON(walker.param.current_chart, depth=2),
-    pn.widgets.Button.from_param(walker.param.export_current_chart_list, icon="download"), pn.pane.JSON(walker.param.current_chart_list, depth=3),
+    pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"),
+    pn.pane.JSON(walker.param.current_chart, depth=2),
+    pn.widgets.Button.from_param(
+        walker.param.export_current_chart_list, icon="download"
+    ),
+    pn.pane.JSON(walker.param.current_chart_list, depth=3),
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
 

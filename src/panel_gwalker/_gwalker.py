@@ -1,4 +1,4 @@
-from typing import Dict, Literal
+from typing import Any, Dict, List, Literal
 
 import numpy as np
 import pandas as pd
@@ -7,10 +7,14 @@ from panel import config
 from panel.custom import ReactComponent
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
+from param.parameterized import Event
+
+from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 
 VERSION = "0.4.72"
 
-def infer_prop(s: np.ndarray, i=None):
+
+def _infer_prop(s: np.ndarray, i=None):
     """
 
     Arguments
@@ -44,11 +48,11 @@ def infer_prop(s: np.ndarray, i=None):
     }
 
 
-def raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
+def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
     if isinstance(data, dict):
-        return [infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
+        return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
     else:
-        return [infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+        return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
 
 
 class GraphicWalker(ReactComponent):
@@ -93,11 +97,11 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark', 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    # This one is added to better explain that currently only 'client' mode is supported
-    # but we envision supporting 'server' mode one day
+    # Todo: In pyodide only 'client' computation should be available
     computation: Literal["client"] = param.Selector(
-        objects=["client"],
-        doc="""The computation configuration. Currently only 'client' is supported.""",
+        default="client",
+        objects=["client", "server"],
+        doc="""The computation configuration. One of 'client' (default)` or 'server'.""",
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
@@ -108,7 +112,12 @@ class GraphicWalker(ReactComponent):
     export_current_chart: bool = param.Event(doc="""Updates the current chart.""")
 
     current_chart_list: list = param.List(doc="""The current chart list.""")
-    export_current_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
+    export_current_chart_list: bool = param.Event(
+        doc="""Updates the current chart list."""
+    )
+
+    _payload_request: dict = param.Dict(doc="The payload request from the server.")
+    _payload_response: list = param.List(doc="The payload response to the server.")
 
     _importmap = {
         "imports": {
@@ -120,8 +129,9 @@ class GraphicWalker(ReactComponent):
 
     def __init__(self, object=None, **params):
         if not "appearance" in params:
-            params["appearance"]=self._get_appearance(config.theme)
+            params["appearance"] = self._get_appearance(config.theme)
         super().__init__(object=object, **params)
+        self.param.watch(self._on_payload_request_change, "_payload_request")
 
     @classmethod
     def applies(cls, object):
@@ -145,10 +155,28 @@ class GraphicWalker(ReactComponent):
         config = self._THEME_CONFIG
         return config.get(theme, self.param.appearance.default)
 
+    # Todo: When `computation="server"` we should not waste resources on transferring the data object.
+    # The `fields` should still be transferred though.
     def _process_param_change(self, params):
         if self.object is not None and "object" in params:
             if not self.fields:
-                params["fields"] = raw_fields(self.object)
+                params["fields"] = _raw_fields(self.object)
             if not self.config:
                 params["config"] = {}
         return params
+
+    def _on_payload_request_change(self, event: param.parameterized.Event):
+        payload = event.new
+        print("requested", payload)
+
+        field_specs = _raw_fields(self.object)
+        parser = get_data_parser(
+            self.object,
+            field_specs=field_specs,
+            infer_string_to_date=False,
+            infer_number_to_dimension=False,
+            other_params={},
+        )
+        result = parser.get_datas_by_payload(payload)
+        self._payload_response = result
+        print("responded", result)

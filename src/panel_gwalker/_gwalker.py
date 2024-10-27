@@ -120,7 +120,7 @@ class GraphicWalker(ReactComponent):
 
     def __init__(self, object=None, **params):
         if not "appearance" in params:
-            params["appearance"]=self._get_appearance(config.theme)
+            params["appearance"] = self._get_appearance(config.theme)
         super().__init__(object=object, **params)
 
     @classmethod

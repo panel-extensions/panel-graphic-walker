@@ -9,6 +9,7 @@ from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 from param.parameterized import Event
 
+from panel_gwalker._config import IS_RUNNING_IN_PYODIDE
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 
 VERSION = "0.4.72"

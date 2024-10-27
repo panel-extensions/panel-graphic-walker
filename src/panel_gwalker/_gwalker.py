@@ -10,11 +10,15 @@ from panel.reactive import SyncableData
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._utils import IS_RUNNING_IN_PYODIDE
+from panel_gwalker._utils import IS_RUNNING_IN_PYODIDE, configure_logger
 
 VERSION = "0.4.72"
 
+import logging
 
+logger = logging.getLogger(__name__)
+
+# Todo: Apply caching because this is called on every server side request
 def _infer_prop(s: np.ndarray, i=None):
     """
 
@@ -24,7 +28,7 @@ def _infer_prop(s: np.ndarray, i=None):
       the column
     """
     kind = s.dtype.kind
-    # print(f'{s.name}: type={s.dtype}, kind={s.dtype.kind}')
+    logger.debug("%s: type=%s, kind=%s", s.name, s.dtype, s.dtype.kind)
     v_cnt = len(s.value_counts())
     semanticType = (
         "quantitative"
@@ -48,7 +52,7 @@ def _infer_prop(s: np.ndarray, i=None):
         "analyticType": analyticType,
     }
 
-
+# Todo: Apply caching because this is called on every server side request
 def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
     if isinstance(data, dict):
         return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
@@ -128,6 +132,11 @@ class GraphicWalker(ReactComponent):
     def __init__(self, object=None, **params):
         if not "appearance" in params:
             params["appearance"] = self._get_appearance(config.theme)
+        if "_log_level_debug" in params:
+            _log_level_debug=params.pop("_log_level_debug")
+            if _log_level_debug:
+                configure_logger(logger=logger, level=logging.DEBUG)
+
         super().__init__(object=object, **params)
         self.param.watch(self._on_payload_request_change, "_payload_request")
 
@@ -165,7 +174,11 @@ class GraphicWalker(ReactComponent):
 
     def _on_payload_request_change(self, event: param.parameterized.Event):
         payload = event.new
-        print("requested", payload)
+        if not payload:
+            # This will happen when we set payload={} after the response has been received
+            return
+
+        logger.debug("requested %s", payload)
 
         field_specs = _raw_fields(self.object)
         parser = get_data_parser(
@@ -175,7 +188,13 @@ class GraphicWalker(ReactComponent):
             infer_number_to_dimension=False,
             other_params={},
         )
-        result = parser.get_datas_by_payload(payload)
+        try:
+            result = parser.get_datas_by_payload(payload)
+        except Exception as ex:
+            # Todo: Figure out why there is type issue and how to solve
+            sql = get_sql_from_payload("pygwalker_mid_table", payload, {"pygwalker_mid_table": parser.field_metas}) # type: ignore
+            logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
+
         # Todo: Figure out how to transfer this efficiently (as a dataframe?)
         self._payload_response = result
-        print("responded", result)
+        logger.debug("responded %s", result)

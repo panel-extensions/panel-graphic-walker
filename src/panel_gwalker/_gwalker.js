@@ -66,27 +66,21 @@ export function render({ model }) {
   // input value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#payload
   // Return value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#return-value
   const _computationFunc = async (value) => {
-    console.log("payload_request dirty", value, model);
-
     value = cleanToDict(value);
     const originalResponse = model._payload_response;
-    console.log("old", "new", model._payload_request, value)
     setPayloadRequest(value);
-    console.log("value transferred", value);
 
     let result = null;
 
     // Polling loop
     while (originalResponse === model._payload_response) {
-        console.log("loop", originalResponse, model._payload_response);
         await new Promise(resolve => setTimeout(resolve, 75));
     }
 
     // Once model._payload_response changes, set result
     result = model._payload_response;
-    console.log("payload_response", result);
 
-    // reset
+    // Hack: reset request to be able to send the same request again. Same for response.
     model._payload_request = {}
     model._payload_response = [];
     return result;

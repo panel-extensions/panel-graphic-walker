@@ -36,6 +36,7 @@ settings = pn.Column(
     pn.widgets.RadioButtonGroup.from_param(
         walker.param.appearance, button_type="primary", button_style="outline"
     ),
+    walker.param.server_computation,
     walker.param.config,
 )
 file_upload = pn.widgets.FileDropper(

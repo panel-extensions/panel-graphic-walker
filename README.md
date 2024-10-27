@@ -180,11 +180,19 @@ from panel_gwalker import GraphicWalker
 
 pn.extension()
 
-# Load a sample dataset with 10,000 rows
-df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz", nrows=10000)
-
+df = pd.read_csv(
+    "https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz", nrows=10000
+)
+df = pd.DataFrame({"a": [1, 2, 3]})
 # Enable server-side computation for scalable data processing
-GraphicWalker(df, computation="server").servable()
+walker = GraphicWalker(df, computation="server")
+
+pn.Column(
+    walker,
+    walker.param.computation,
+    walker.param._payload_request,
+    walker.param._payload_response,
+).servable()
 ```
 
 This setup allows your application to manage larger datasets efficiently by leveraging server resources for data processing.

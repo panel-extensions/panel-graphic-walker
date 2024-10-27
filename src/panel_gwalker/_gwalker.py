@@ -178,5 +178,6 @@ class GraphicWalker(ReactComponent):
             other_params={},
         )
         result = parser.get_datas_by_payload(payload)
+        # Todo: Figure out how to transfer this efficiently (as a dataframe?)
         self._payload_response = result
         print("responded", result)

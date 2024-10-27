@@ -95,7 +95,8 @@ class GraphicWalker(ReactComponent):
     )
     server_computation: bool = param.Boolean(
         default=False,
-        doc="""If True the computations will take place on the server instead of the client to scale to larger datasets. Default is False.""",
+        doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
+        instead of the client to scale to larger datasets. Default is False.""",
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the

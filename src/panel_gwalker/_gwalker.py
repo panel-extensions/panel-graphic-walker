@@ -61,7 +61,9 @@ class GraphicWalker(ReactComponent):
     server_computation: bool = param.Boolean(
         default=False,
         doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
-        instead of the client to scale to larger datasets. Default is False.""",
+        instead of the client to scale to larger datasets. Default is False. In Pyodide this will
+        always be set to False.""",
+        constant=IS_RUNNING_IN_PYODIDE,
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
@@ -92,6 +94,8 @@ class GraphicWalker(ReactComponent):
             _log_level_debug=params.pop("_log_level_debug")
             if _log_level_debug:
                 configure_debug_log_level()
+        if IS_RUNNING_IN_PYODIDE and "server_computation" in params:
+            params.pop("server_computation")
 
         super().__init__(object=object, **params)
         self.param.watch(self._on_payload_request_change, "_payload_request")

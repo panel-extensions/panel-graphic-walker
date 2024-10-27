@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/licenses/MIT)
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAB5hHGcAA42ST2_iMBDFvwryBSoFQ8JCIFIvu1rtnvewPZQKGTwQa4Pt2kNoivjuO86fUqRWVMkh8zx-b_xzTmxjJLCMqb01DntWaCl8j14rl_oiQlFreqm3zuwbZbU7iuIfuF7b9ssJm6vNQy0uqdVqDi8I2iujB3dBkdvePTlzB0KurHDPB8BBP0e0PhuNpEDhAT3PTWFK9cqN242OSks8uLXS4EdlfFXzYNGvna_CB3Ib9bx6VXq32tP57vseHeAmX60N5v077sGVYl1AMxWLmIPng3KwB42eaGyFx3a8JR2lPm77QXjepOGuSR02IIJOXljZQLTuoFJY-1fBkWVbUXiIGEiFP3VIZxm6Aym2wtzosKUyUkkYlmOezHhMmwtRmQOy7MRKcIEjyxKa1hj8Y8jy1IU5qiK2yVUhHVDT49sKijUxpcWjkpizLJ6OI7ZX-qEpJ031G9Qup5xQKhkIqAK-kyuR-mE0CsLtPkkIrcN100stVgRfxs5P5-iDKdqg2ZzPJkk6TtP0W7qYLyafTn-xJJLcVuza9rL8_g45vuD1BA2hLj6exHwyS5NFkiTTZByP5zfo3SbWErhFqwP1MZ68my-dfiUTwZEsiluhXV9IDc85qm-NfvXHp_N_IeI7ygQEAAA)
 
-**A simple way to explore your data through a *[Tableaux-like](https://www.tableau.com/)* interface directly in your [Panel](https://panel.holoviz.org/) data applications.**
+**A simple way to explore your data through a *[Tableau-like](https://www.tableau.com/)* interface directly in your [Panel](https://panel.holoviz.org/) data applications.**
 
 ![panel-graphic-walker-plot](https://github.com/philippjfr/panel-graphic-walker/blob/main/static/panel-graphic-walker_plot.png?raw=true)
 
@@ -142,10 +142,9 @@ GraphicWalker(df, config=config).servable()
 
 ### Export the Chart(s)
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAEHYHWcAA6VSXW_aMBT9K5GfQAomCSuBSOyh1bRpD5u0SetDUyGDDbEWbNe-SUor_vuuk1DG1IpJTZDgfp17OPc8k7XmgmRE7oy2EBimOHMBfgzP1Skpyjancnw3Vu-63HLbsPK3sEHf-NkyU8j1bZv0rUZR8QhCOanVYOgzfBMsEJtawfhy7epBTgoA47LxmDNgToCjhS51LZ-otttxIxWHyq6kEm5cx2cxxXm6fcpJGCirG7eII3zaNbnqmS3OSQ34ButI60aX1U4NchXg0_WGXYDFH7rpK32ikXzrmV1XAFpRr8DSMMt2g26UtgH-Vy_Dcl1ZKxR-F8xCGMi1VouccN2oUjOek2HoMb2C9OvP79_OMf4Z5sJAsUiGPbn381mW0r2PVI_QMZscmaGsQ-qErdmqFN2tSUiseKikFTscduiyDXOAiA-VgBwN0pqo_4G2e0mNtt3NRh2Jj4uIJjTyZYSEvfGGbRsxZMb8kqIh2YaVToREcAmflCdBMrAVZsweCq38yF5zycWoRrgpjXG4ZHtdAcmeSS2sNynJEiStNaAFfLpfhu7C7nUhS446kOzupQJshZ7FIp4ECpLFV1FIdlLdduGki74IuS1wjw8l90LIUlx7zwp7oxUwtLN9Y4NvHa26XmwxzOMScrg_hK-w6BdNZ3Q6SdIoTdMP6Xw2n7zJ_gSJSlKzJ-ewp_Lfp6TwCOcMOoWO6-NJTCfTNJknSXKVRHE0u6DeZcV6BS6pdRTqdXmKI7_06n92grCYZuWlpcc-v9W_h7C9Gjr-7v7wBw0Ywf5jBQAA)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAEkeHmcAA51SXW_aMBT9K5GfQAomCSuBSOyh1bRpD5u0SetDUyGDDbEWbNe-SUor_vuuk1CG1IqqCQ_cz3Ny7nkma80FyYjcGW0hMExx5gL8GZ6rU1KUbU7l-G6s3nW55bZh5V9hg77xq2WmkOvbNulbjaLiEYRyUqvB0Gf4JljgbmoF48u1qwc5KQCMy8ZjzoA5AY4WutS1fKLabseNVBwqu5JKuHEdn8UU5-n2KSdhoKxu3CKO8GlhctUzW5yTGvAN1pHWjS6rnRrkKsCn6w27AIu_dNNX-kQj-dYzu64AtKJegaVhlu0G3ShtA_xWL8NyXTALYSDXWi1ywnWjSs14Toah3-WVo99___xxPtsPcWGgWCTDnszH8ZeldB8j0U92TCZHJijbkDpha7YqRXdLEhIrHippxU4ocOiiDXOAmx4qATkaoDVJ_wdt9ZIabbubjDrwz4uIJjTyZVwJe-MN2TZiyIz5I0VDsg0rnQiJ4BK-KE-CZGArzJg9FFr5kb3mkotRjeumNMbhku11BSR7JrWw3oQkS5C01oAn9ukeDN2D3etCltwKbLp7qQBboSexiCeAgmTxVRSSnVS3XTjpom9CbgvE8aHkXghZimvvSWFvtAKGdrVvIPjW0arrxRbD_F5CDveH8BUWPdB0RqeTJI3SNP2UzmfzyZvsTytRSWr25Hztqfz_KSk8wjmDTqEjfDyJ6WSaJvMkSa6SKI5mF9S7rFivwCW1jkK9Lk9x5JdevQcThMU0Ky-BHvs8qn8PYXs1dPzd_eEfYFOR40MFAAA)
 
-You can *export the current* chart from the client to the server by triggering the parameter `export_current_chart`.
-The chart is exported to the `current_chart` parameter:
+You can *export the current chart* from the client to the server by triggering the parameter `export_chart`. The chart is exported to the `chart` parameter:
 
 ```python
 import pandas as pd
@@ -162,8 +161,8 @@ walker = GraphicWalker(df)
 pn.Column(
     walker,
     pn.Row(
-        pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"), pn.pane.JSON(walker.param.current_chart, depth=2),
-        pn.widgets.Button.from_param(walker.param.export_current_chart_list, icon="download"), pn.pane.JSON(walker.param.current_chart_list, depth=3),
+        pn.widgets.Button.from_param(walker.param.export_chart, icon="download"), pn.pane.JSON(walker.param.chart, depth=2),
+        pn.widgets.Button.from_param(walker.param.export_chart_list, icon="download"), pn.pane.JSON(walker.param.chart_list, depth=3),
     )
 ).servable()
 ```
@@ -178,7 +177,7 @@ First you will need to install extra dependencies:
 pip install panel-graphic-walker[server]
 ```
 
-Then you can use server side computation with `computation="server"`:
+Then you can use server side computation with `server_computation=True`:
 
 ```python
 import pandas as pd
@@ -193,7 +192,7 @@ df = pd.read_csv(
 )
 df = pd.DataFrame({"a": [1, 2, 3]})
 # Enable server-side computation for scalable data processing
-walker = GraphicWalker(df, computation="server")
+walker = GraphicWalker(df, server_computation=True)
 
 pn.Column(
     walker,
@@ -205,11 +204,11 @@ pn.Column(
 
 This setup allows your application to manage larger datasets efficiently by leveraging server resources for data processing.
 
-Please note that if running on Pyodide the computations will take place on the client even if `computation="server"`.
+Please note that if running on Pyodide the computations will take place on the client even if `server_computation=True`.
 
 ### App Demo
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIALXZHWcAA61WbVPbOBD-Kx73SzLjOAmQQjPjm6MF0l5pYWh7fMCMR7GVRMWWXFkOSRn--z1ry8HhYGDmLpQG7Wp3Hz37It25sUq4O3ZnWmWOUI7IcqWN881oIeefzkIZSivKmUxY4eBfnrSFPK1k2BjKyksli-a3LL3hunE40SxfiPiyEtLWXPp8ZbgshJKd0J2JlCda5Tm0rucU4jfiRxnABaFbGM1NvIhuRWIWodsl-_PDr8en0eQy-nFx6gRO6C6MyYtxvz8XZlFO_VhlfURMRZ7_nOl-Bao3r1H0amyhG0o4OD2bnG15uGGSacELX3LTjyRg9gvDjIj7GU8E2-h7qZorf8De8elgb-jncm49Hp5_eg7SZ2vb34bSxwl5P2NCvmG5sG4mPz4dHf_rfImKC38L4iNXCTOstxS_-7HmzPBesyav9PMnqI9ZvOChTPjMmXMT0ZZOdxxKBx9wXWqJLPuwT6K4WHZqBX1aOGBTcFP4C5UquPeVnvdvhUxgPRUSR1wOt9Y-PPlzwPAcqdVtEQwH-NSuq5Q-4OErluUpjxJ1K1PFkg22ZAYugOwIwU80y3gL2l2IYi6l0evQHTtXoXvEZcb0DQUM3QnXGZNQXdMqV3mZIqVKVntHEZDQr-ccVN_0e32_wUZfKFTEbhqjY6XJzDeq4gh6z8Fx-So4YWnBH8z8gvObzsAKLL2Q12e2fRJst0jnIS3PdcNU2WZAFgz0BVEj_Q8qLTO0VBUMa6p8_wt4IDLRaW_eON-sATEDhuZCBh0cfdTtehsz9BogFP4FS4R6Xxqj5ESrMvepx6OcgfwW9_UhEAtin6GL8YeMuedMK8vIrHOCnmuBeEjCRlGYdUoaVZoURUI1WnFugWz5jZWciTk0ODPNi6jMqTjqYzd4T6A4qgeJxcfimOeGJxHZEJAiQHEYamvkjQqi3peVqRGoujp9jZCtKrsIOSCcoy_vgd6mlrAXAepuqnRC82SM0hrmKweDcsETZ5qy2JZfvaOnwWYJ3mnjXr4K3Xvra8HFfGGCg1HreE31P3HApi9q45il6RShgqd6x3PImUSvAL5VUisS1YjEVzSfo4LH1A2vLqHjyuw1BVTXTrtstpJq48el1lzie8G0QR8h14DbnAFl7m2A_PXt7Ou2j0fGCdK9CHb-HyxRKor_Bsh6qFHtEirQTlO8RfqsIvUIwhAzIZQ956p1Y9nJft2xl97F4fnH6PLw9PPxBV0P3drAzg-nHiDOj4LNuTMpRcKvO-3b5OntuLOqbfjutm8KwOYyKTqthvPQlhhAwXdd0pSjoQ0NhhWPaqCdJUuhsjNbzJxqbZf0oebDqelq7QjTGPjV_0Wn27Wjsj3xN3fRZgKTk_ZOxJHK0ETmWW7WrXCtSaKmP0E6XCaz-ow4osF-XAbcP2GFOUWyvluB7QC65gP7ULA1ZYSpxtZ59f7ZpvJhPoD6KdOYNhskbRYfSTf9-iBvBntLtN2uLUW7oKx4M9jwrAiubA21ZFHK1pi7wVcladx1cU_pJZumnC4313M1_1UKzTNUckFPRLCD8v5VchPiCVfVp_0D824jevTI-iMY-Dv-gNRwSeMXrqqNWOKm-FvwW3c8q0aui-eVOZYEwR0bVJfn5muzUJJM1ioBn70l3L31hzCu0bvjO3fJNT0j3fEOQCtlLhRc3jXB8NbA7hhvwQRN6Y6vNhrDpqAYyuph6Y6Ho4HnZkJe1svdevWxGs31UiREBNL1nl4wXH9Q0oBJrp-JQFt703ovtuSM_Lru_fW99wQKG-hg19_fHe3tHwwHo73RcOfds-gfXIJJP1_jOnla3U6lb1ZmG0HNUBN-OHwLivdGO8ODd3ujvYP94QvsvcyYZeAlthqinqanviKBb3_0mpgYKxCz9KWgzT6KSj_3XpU1VPzV9f0_lWlZnyANAAA) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAI4eHmcAA6VW7VLbOBR9FY_7J5lxnARIoZnxztICabe0MLRdfmDGo9hKomJLriyHpAzvvufacnC6YejshtKg-3l0dO-VHtxYJdwduzOtMkcoR2S50sb5YrSQ8w8XoQylFeVMJqxw8C9P2kKeVjIYhrKKUsmi-T1L77huAk40yxcivq6EZJpLn68Ml4VQshO6M5HyRKs8h9b1nEL8RP4oA7ggdAujuYkX0b1IzCJ0u-R_efz59DyaXEffrs6dwAndhTF5Me7358Isyqkfq6yPjKnI8-8z3a9A9eY1il6NLXRDiQDnF5OLrQh3TDIteOFLbvqRBMx-YZgRcT_jiWAbfS9Vc-UP2Bs-HRwM_VzObcTjyw_PQfpoffvbUPrYIe9nTMhXLBc2zOTbh5PTf-0vUXHhb0H8JVTCDOstxc9-rDkzvNesKSr9_AnqYxYveCgTPnPm3ERk0umOQ-ngA65LLXHKPvyTKC6WnVpBnxYO-BTcFP5CpQrhfaXn_XshE3hPhcQWl8OttY9I_hwwPEdqdV8EwwE-dejqSJ_w8BXL8pRHibqXqWLJBlsyAxdAdoLkZ5plvAXtIUQxl9LodeiOnZvQPeEyY_qOEobuhOuMSahuaZWrvExxpEpWtqMISOjXc46qb_q9fdxgoy8UKnI3jdGx0mTmG1VxBL3nYLt8FZyxtOBPbn7B-V1nYAWWXsjrPds-CbZbpPN0LM91w1TZZsApGOgLokb671RaZmipKhnWVPn-J_BAZKLTXr1yvlgHYgYMzYUMOtj6qNv1Nm7oNUAo_CuWCPW2NEbJiVZl7lOPRzkD-S3u600gF8Q-QxfjDxlzz5lWnpFZ5wQ91wL5cAgbRWHWKWlUaVIUCdVoxbkFshU3VnIm5tBgzzQvojKn4qi33eA9g-KkHiQWH4tjnhueRORDQIoAxWGorXFuVBC1XVamRqDq6uNrhGxV-UU4A8I5-vQW6O3REvYiQN1NlU5onoxRWsN85WBQLnjiTFMW2_KrLXoabJbgnQwP8lXoPtpYCy7mCxMcjVrba6p_xwabvqidY5amU6QKdvWO51AwiV4BfKukViSqkYmvaD5HBY-pG367hE4rt98poLp22mWzdag2f7xg2qB_cMaA2WBHeXsbAH99ufi87WudEhzvItj7f7mjVBT_DYD1rFHsEwrQSlO6ReqsIu0EwhA9H8qec7PrRrrt2Gvt6vjyfXR9fP7x9IougG7tYieEU48I51vB5tyZlCLht532fbHbHLdSZYbvbvsuAHAuk6LTaikPjYcRE3zVJc0xGsvQYBzxqAbaWbIUKjuVxcyp1nZJH2ov7Jsuz44wjYNf_V90ul07DNszfXPbbGYsBWlbIo9UhmYuz3KzbqVrzQo1_Q7aETKZ1XvEFg3sMe65f8YKc47j-moFtsbpIg_sU8BWkRGmGkyX1Qtnm8qnCQDqp0xjnmyQtFn8RbrpyCd5M7pbou2GbCnaJWXFm9GFh0NwY2uoJYtStsZkDT4rSQOti5tIL9k05XR9uZ6r-Y9SaJ5xaQp6BIIdFPaPkpsQj7SqQu0fmGgb0S9F-0cw8Pf8AakRkgYsQlWGWOIu-Fvwe3c8q4aqiweUOZUEwR0bVJfn5muzUJJc1ioBn70lwr32h3Cu0bvjB3fJNT0U3fEeQCtlrhRCPjTJ8JqAdYzXXqI5jG42GsOmoBjK6unojoejgedmQl7Xy_169b4avvVSJEQEjustvVG4fqekAZNcP5OBTHvT2hYmOaO4rvt4--jtQGETHe37h_ujg8Oj4WB0MBruvXkW_VNIMOnna1wYu9Xto_TNymwjqBlq0g-Hr0HxwWhvePTmYHRwdDh8gb2XGbMMvMRWQ9RueupLEPgOR7-TE2MFYpa-lLSxo6z08-hVp4aKv7l9_AdzCv4JAg0AAA) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
 
 ![Panel Graphic Walker App Demo](static/panel-graphic-walker-app-fileupload.gif)
 
@@ -221,16 +220,16 @@ Please note that if running on Pyodide the computations will take place on the c
 
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, then the existing chart(s) will not be deleted and you will have to create a new one manually to use the new dataset.
 - `appearance` (string): Optional dark mode preference: 'media', 'dark', 'light' or 'panel' (default). If 'panel' the the appearance is derived from `pn.config.theme`.
-- `computation` (str): The computation configuration. One of 'client' (default)` or 'server'.
+- `server_computation` (bool): If True the computations will take place on the Panel server or in the Jupyter kernel instead of the client to scale to larger datasets. Default is False.
 - `fields` (list): Optional specification of fields (columns).
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
 #### Export Chart
 
-- `current_chart (dict)`: The current chart. Only updated when `export_current_chart` is triggered.
-- `export_current_chart` (event): Updates the current chart.
-- `current_chart_list` (list): The current chart list. Only updated when `export_current_chart_list` is triggered.
-- `export_current_chart_list` (event): Updates the current chart list.
+- `chart (dict)`: The current chart. Only updated when `export_chart` is triggered.
+- `export_chart` (event): Updates the chart.
+- `chart_list` (list): The current chart list. Only updated when `export_chart_list` is triggered.
+- `export_chart_list` (event): Updates the current chart list.
 
 ## Vision
 

@@ -9,8 +9,8 @@ from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 from param.parameterized import Event
 
-from panel_gwalker._config import IS_RUNNING_IN_PYODIDE
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
+from panel_gwalker._utils import IS_RUNNING_IN_PYODIDE
 
 VERSION = "0.4.72"
 
@@ -98,27 +98,24 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark', 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    # Todo: In pyodide only 'client' computation should be available
-    computation: Literal["client"] = param.Selector(
-        default="client",
-        objects=["client", "server"],
-        doc="""The computation configuration. One of 'client' (default)` or 'server'.""",
+    server_computation: bool = param.Boolean(
+        default=False,
+        doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
+        instead of the client to scale to larger datasets. Default is False.""",
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
 
-    current_chart: dict = param.Dict(doc="""The current chart.""")
-    export_current_chart: bool = param.Event(doc="""Updates the current chart.""")
-
-    current_chart_list: list = param.List(doc="""The current chart list.""")
-    export_current_chart_list: bool = param.Event(
-        doc="""Updates the current chart list."""
-    )
+    chart: dict = param.Dict(doc="""The current chart.""")
+    export_chart: bool = param.Event(doc="""Updates the current chart.""")
+    chart_list: list = param.List(doc="""The current chart list.""")
+    export_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
 
     _payload_request: dict = param.Dict(doc="The payload request from the server.")
     _payload_response: list = param.List(doc="The payload response to the server.")
+
 
     _importmap = {
         "imports": {
@@ -156,7 +153,7 @@ class GraphicWalker(ReactComponent):
         config = self._THEME_CONFIG
         return config.get(theme, self.param.appearance.default)
 
-    # Todo: When `computation="server"` we should not waste resources on transferring the data object.
+    # Todo: When `server_computation=True` we should not waste resources on transferring the data object.
     # The `fields` should still be transferred though.
     def _process_param_change(self, params):
         if self.object is not None and "object" in params:

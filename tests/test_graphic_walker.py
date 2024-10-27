@@ -101,5 +101,5 @@ def test_process_parameter_change_with_appearance(data):
 
 
 def test_server_computation(data, payload_event):
-    walker = GraphicWalker(object=data, computation="server")
+    walker = GraphicWalker(object=data, server_computation=True)
     walker._on_payload_request_change(payload_event)

@@ -22,46 +22,46 @@ function cleanToDict(value){
 export function render({ model }) {
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
-  const [computation] = model.useState('computation')
+  const [serverComputation] = model.useState('server_computation')
   const [appearance] = model.useState('appearance')
   const [config] = model.useState('config')
-  const [currentChart, setCurrentChart] = model.useState("current_chart")
-  const [exportCurrentChart,setExportCurrentChart] = model.useState("export_current_chart")
-  const [currentChartList, setCurrentChartList] = model.useState("current_chart_list")
-  const [exportCurrentChartList,setExportCurrentChartList] = model.useState("export_current_chart_list")
+  const [chart, setChart] = model.useState("chart")
+  const [exportChart,setExportChart] = model.useState("export_chart")
+  const [chartList, setChartList] = model.useState("chart_list")
+  const [exportChartList,setCurrentChartList] = model.useState("export_chart_list")
   const [payloadRequest, setPayloadRequest] = model.useState("_payload_request");
   const [transformedData, setTransformedData] = useState([]);
-  const [computationFunc, setComputationFunc] = useState(null);
+  const [computation, setComputation] = useState(null);
 
   const graphicWalkerRef = useRef(null);
 
-  if (exportCurrentChart && graphicWalkerRef && graphicWalkerRef.current){
+  if (exportChart && graphicWalkerRef && graphicWalkerRef.current){
     (async () => {
       let value = await graphicWalkerRef.current.exportChart()
       value=cleanToDict(value)
-      setCurrentChart(value)
-      setExportCurrentChart(false)
+      setChart(value)
+      setExportChart(false)
     })()
   }
 
-  if (exportCurrentChartList && graphicWalkerRef && graphicWalkerRef.current){
+  if (exportChartList && graphicWalkerRef && graphicWalkerRef.current){
     const chartList = [];
     (async () => {
         for await (const chart of graphicWalkerRef.current.exportChartList()) {
             chartList.push(cleanToDict(chart))
         }
-        setCurrentChartList(chartList)
-        setExportCurrentChartList(false)
+        setChartList(chartList)
+        setCurrentChartList(false)
     })()
   }
 
   useEffect(() => {
     let result = null
-    if (computation=="client"){
+    if (!serverComputation){
       result = transform(data);
     }
     setTransformedData(result);
-  }, [data, computation]);
+  }, [data, serverComputation]);
 
   // input value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#payload
   // Return value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#return-value
@@ -93,19 +93,19 @@ export function render({ model }) {
   }
 
   useEffect(() => {
-    if (computation=="server"){
-      setComputationFunc(()=>_computationFunc)
+    if (serverComputation){
+      setComputation(()=>_computationFunc)
     }
     else {
-      setComputationFunc(null)
+      setComputation(null)
     }
-  }, [computation]);
+  }, [serverComputation]);
 
   return <GraphicWalker
     ref={graphicWalkerRef}
     data={transformedData}
     fields={fields}
-    computation={computationFunc}
+    computation={computation}
     appearance={appearance}
     {...config}
    />

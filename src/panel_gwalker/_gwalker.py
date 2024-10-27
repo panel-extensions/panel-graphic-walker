@@ -10,55 +10,11 @@ from panel.reactive import SyncableData
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._utils import IS_RUNNING_IN_PYODIDE, configure_logger
+from panel_gwalker._utils import (IS_RUNNING_IN_PYODIDE, _infer_prop,
+                                  _raw_fields, configure_debug_log_level,
+                                  logger)
 
 VERSION = "0.4.72"
-
-import logging
-
-logger = logging.getLogger(__name__)
-
-# Todo: Apply caching because this is called on every server side request
-def _infer_prop(s: np.ndarray, i=None):
-    """
-
-    Arguments
-    ---------
-    s (pd.Series):
-      the column
-    """
-    kind = s.dtype.kind
-    logger.debug("%s: type=%s, kind=%s", s.name, s.dtype, s.dtype.kind)
-    v_cnt = len(s.value_counts())
-    semanticType = (
-        "quantitative"
-        if (kind in "fcmiu" and v_cnt > 16)
-        else (
-            "temporal"
-            if kind in "M"
-            else "nominal" if kind in "bOSUV" or v_cnt <= 2 else "ordinal"
-        )
-    )
-    # 'quantitative' | 'nominal' | 'ordinal' | 'temporal';
-    analyticType = (
-        "measure"
-        if kind in "fcm" or (kind in "iu" and len(s.value_counts()) > 16)
-        else "dimension"
-    )
-    return {
-        "fid": s.name,
-        "name": s.name,
-        "semanticType": semanticType,
-        "analyticType": analyticType,
-    }
-
-# Todo: Apply caching because this is called on every server side request
-def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
-    if isinstance(data, dict):
-        return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
-    else:
-        return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
-
 
 class GraphicWalker(ReactComponent):
     """
@@ -135,7 +91,7 @@ class GraphicWalker(ReactComponent):
         if "_log_level_debug" in params:
             _log_level_debug=params.pop("_log_level_debug")
             if _log_level_debug:
-                configure_logger(logger=logger, level=logging.DEBUG)
+                configure_debug_log_level()
 
         super().__init__(object=object, **params)
         self.param.watch(self._on_payload_request_change, "_payload_request")
@@ -172,6 +128,13 @@ class GraphicWalker(ReactComponent):
                 params["config"] = {}
         return params
 
+    # Todo: Test if this performs?
+    # - Compute
+    # - Memory
+    # - Multiple walkers in an app
+    # - Multiple sessions and users
+    # Todo: Figure out if duckdb config should be exposed. Currently I believe its memory
+    # Would probably scale even better if disk based. But then slower.
     def _on_payload_request_change(self, event: param.parameterized.Event):
         payload = event.new
         if not payload:

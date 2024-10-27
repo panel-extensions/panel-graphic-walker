@@ -29,6 +29,10 @@ tests = [
 examples = [
   "fastparquet"
 ]
+server = [
+  "duckdb",
+  "gw-dsl-parser",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/panel_gwalker"]

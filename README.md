@@ -22,8 +22,6 @@
 
 This project is **in early stages**, so if you find a version that suits your needs, it’s recommended to **pin your version**, as updates may introduce changes.
 
-Please note that displaying larger datasets (>= 10 MB) may currently not be possible depending on the limits of your environment.
-
 ## Installation
 
 Install `panel-graphic-walker` via `pip`:
@@ -170,6 +168,27 @@ pn.Column(
 ).servable()
 ```
 
+### Scale with Server-Side Computation
+
+In some environments you may meet message or client side data limits. To handle larger datasets, you can offload the `computation` to the `"server"`:
+
+```python
+import pandas as pd
+import panel as pn
+
+from panel_gwalker import GraphicWalker
+
+pn.extension()
+
+# Load a sample dataset with 10,000 rows
+df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz", nrows=10000)
+
+# Enable server-side computation for scalable data processing
+GraphicWalker(df, computation="server").servable()
+```
+
+This setup allows your application to manage larger datasets efficiently by leveraging server resources for data processing.
+
 ### App Demo
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIALXZHWcAA61WbVPbOBD-Kx73SzLjOAmQQjPjm6MF0l5pYWh7fMCMR7GVRMWWXFkOSRn--z1ry8HhYGDmLpQG7Wp3Hz37It25sUq4O3ZnWmWOUI7IcqWN881oIeefzkIZSivKmUxY4eBfnrSFPK1k2BjKyksli-a3LL3hunE40SxfiPiyEtLWXPp8ZbgshJKd0J2JlCda5Tm0rucU4jfiRxnABaFbGM1NvIhuRWIWodsl-_PDr8en0eQy-nFx6gRO6C6MyYtxvz8XZlFO_VhlfURMRZ7_nOl-Bao3r1H0amyhG0o4OD2bnG15uGGSacELX3LTjyRg9gvDjIj7GU8E2-h7qZorf8De8elgb-jncm49Hp5_eg7SZ2vb34bSxwl5P2NCvmG5sG4mPz4dHf_rfImKC38L4iNXCTOstxS_-7HmzPBesyav9PMnqI9ZvOChTPjMmXMT0ZZOdxxKBx9wXWqJLPuwT6K4WHZqBX1aOGBTcFP4C5UquPeVnvdvhUxgPRUSR1wOt9Y-PPlzwPAcqdVtEQwH-NSuq5Q-4OErluUpjxJ1K1PFkg22ZAYugOwIwU80y3gL2l2IYi6l0evQHTtXoXvEZcb0DQUM3QnXGZNQXdMqV3mZIqVKVntHEZDQr-ccVN_0e32_wUZfKFTEbhqjY6XJzDeq4gh6z8Fx-So4YWnBH8z8gvObzsAKLL2Q12e2fRJst0jnIS3PdcNU2WZAFgz0BVEj_Q8qLTO0VBUMa6p8_wt4IDLRaW_eON-sATEDhuZCBh0cfdTtehsz9BogFP4FS4R6Xxqj5ESrMvepx6OcgfwW9_UhEAtin6GL8YeMuedMK8vIrHOCnmuBeEjCRlGYdUoaVZoURUI1WnFugWz5jZWciTk0ODPNi6jMqTjqYzd4T6A4qgeJxcfimOeGJxHZEJAiQHEYamvkjQqi3peVqRGoujp9jZCtKrsIOSCcoy_vgd6mlrAXAepuqnRC82SM0hrmKweDcsETZ5qy2JZfvaOnwWYJ3mnjXr4K3Xvra8HFfGGCg1HreE31P3HApi9q45il6RShgqd6x3PImUSvAL5VUisS1YjEVzSfo4LH1A2vLqHjyuw1BVTXTrtstpJq48el1lzie8G0QR8h14DbnAFl7m2A_PXt7Ou2j0fGCdK9CHb-HyxRKor_Bsh6qFHtEirQTlO8RfqsIvUIwhAzIZQ956p1Y9nJft2xl97F4fnH6PLw9PPxBV0P3drAzg-nHiDOj4LNuTMpRcKvO-3b5OntuLOqbfjutm8KwOYyKTqthvPQlhhAwXdd0pSjoQ0NhhWPaqCdJUuhsjNbzJxqbZf0oebDqelq7QjTGPjV_0Wn27Wjsj3xN3fRZgKTk_ZOxJHK0ETmWW7WrXCtSaKmP0E6XCaz-ow4osF-XAbcP2GFOUWyvluB7QC65gP7ULA1ZYSpxtZ59f7ZpvJhPoD6KdOYNhskbRYfSTf9-iBvBntLtN2uLUW7oKx4M9jwrAiubA21ZFHK1pi7wVcladx1cU_pJZumnC4313M1_1UKzTNUckFPRLCD8v5VchPiCVfVp_0D824jevTI-iMY-Dv-gNRwSeMXrqqNWOKm-FvwW3c8q0aui-eVOZYEwR0bVJfn5muzUJJM1ioBn70l3L31hzCu0bvjO3fJNT0j3fEOQCtlLhRc3jXB8NbA7hhvwQRN6Y6vNhrDpqAYyuph6Y6Ho4HnZkJe1svdevWxGs31UiREBNL1nl4wXH9Q0oBJrp-JQFt703ovtuSM_Lru_fW99wQKG-hg19_fHe3tHwwHo73RcOfds-gfXIJJP1_jOnla3U6lb1ZmG0HNUBN-OHwLivdGO8ODd3ujvYP94QvsvcyYZeAlthqinqanviKBb3_0mpgYKxCz9KWgzT6KSj_3XpU1VPzV9f0_lWlZnyANAAA) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
@@ -184,7 +203,7 @@ pn.Column(
 
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, then the existing chart(s) will not be deleted and you will have to create a new one manually to use the new dataset.
 - `appearance` (string): Optional dark mode preference: 'media', 'dark', 'light' or 'panel' (default). If 'panel' the the appearance is derived from `pn.config.theme`.
-- `computation` (str): The computation configuration. Currently only 'client' is supported.
+- `computation` (str): The computation configuration. One of 'client' (default)` or 'server'.
 - `fields` (list): Optional specification of fields (columns).
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 

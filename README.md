@@ -170,7 +170,15 @@ pn.Column(
 
 ### Scale with Server-Side Computation
 
-In some environments you may meet message or client side data limits. To handle larger datasets, you can offload the `computation` to the `"server"`:
+In some environments you may meet message or client side data limits. To handle larger datasets, you can offload the `computation` to the `"server"`.
+
+First you will need to install extra dependencies:
+
+```bash
+pip install panel-graphic-walker[server]
+```
+
+Then you can use server side computation with `computation="server"`:
 
 ```python
 import pandas as pd
@@ -196,6 +204,8 @@ pn.Column(
 ```
 
 This setup allows your application to manage larger datasets efficiently by leveraging server resources for data processing.
+
+Please note that if running on Pyodide the computations will take place on the client even if `computation="server"`.
 
 ### App Demo
 

@@ -63,25 +63,33 @@ export function render({ model }) {
     setTransformedData(result);
   }, [data, computation]);
 
-  const _computationFunc = (value) => {
-    console.log("payload_request dirty", value, model)
+  // input value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#payload
+  // Return value: https://github.com/Kanaries/graphic-walker/blob/main/computation.md#return-value
+  const _computationFunc = async (value) => {
+    console.log("payload_request dirty", value, model);
 
-    value = cleanToDict(value)
-    const originalResponse=model._payload_response
-    console.log("payload_request clean", value, model)
-    console.log("setPayloadRequest", setPayloadRequest)
-    setPayloadRequest(value)
+    value = cleanToDict(value);
+    const originalResponse = model._payload_response;
+    console.log("old", "new", model._payload_request, value)
+    setPayloadRequest(value);
+    console.log("value transferred", value);
 
-    (async() => {
-        while (originalResponse==model._payload_response) {
-          await new Promise(resolve => setTimeout(resolve, 100));
-        }
-        console.log("response", model._payload_response)
-        return model._payload_response
+    let result = null;
+
+    // Polling loop
+    while (originalResponse === model._payload_response) {
+        console.log("loop", originalResponse, model._payload_response);
+        await new Promise(resolve => setTimeout(resolve, 75));
     }
-    )()
 
-    console.log("payload_response", model._payload_response)
+    // Once model._payload_response changes, set result
+    result = model._payload_response;
+    console.log("payload_response", result);
+
+    // reset
+    model._payload_request = {}
+    model._payload_response = [];
+    return result;
   }
 
   useEffect(() => {
@@ -92,8 +100,6 @@ export function render({ model }) {
       setComputationFunc(null)
     }
   }, [computation]);
-
-
 
   return <GraphicWalker
     ref={graphicWalkerRef}

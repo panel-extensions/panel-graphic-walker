@@ -53,7 +53,7 @@ export_section = pn.Column(
     pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"), pn.pane.JSON(walker.param.current_chart, depth=2),
     pn.widgets.Button.from_param(walker.param.export_current_chart_list, icon="download"), pn.pane.JSON(walker.param.current_chart_list, depth=3),
 )
-docs_section = f"## Docs\n\n- [panel-graph-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
+docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
 
 
 @pn.depends(file_upload, watch=True)

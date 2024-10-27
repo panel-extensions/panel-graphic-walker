@@ -9,7 +9,8 @@ pn.extension("filedropper", sizing_mode="stretch_width")
 
 PANEL_GW_URL = "https://github.com/philippjfr/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
-GW_URL = "https://github.com/Kanaries/graphic-walker"
+GW_API = "https://github.com/Kanaries/graphic-walker/tree/main#api"
+GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
 
 
 @pn.cache
@@ -47,6 +48,12 @@ file_upload = pn.widgets.FileDropper(
 file_download = pn.widgets.FileDownload(
     callback=get_example_download, filename="example.csv"
 )
+export_section = pn.Column(
+    pn.pane.Markdown("## Export", margin=(0, 5)),
+    pn.widgets.Button.from_param(walker.param.export_current_chart, icon="download"), pn.pane.JSON(walker.param.current_chart, depth=2),
+    pn.widgets.Button.from_param(walker.param.export_current_chart_list, icon="download"), pn.pane.JSON(walker.param.current_chart_list, depth=3),
+)
+docs_section = f"## Docs\n\n- [panel-graph-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
 
 
 @pn.depends(file_upload, watch=True)
@@ -65,7 +72,8 @@ pn.template.FastListTemplate(
         file_upload,
         file_download,
         settings,
-        f"## Docs\n\n[panel-graph-walker](PANEL_GRAPH_WALKER_URL), [Graph Walker](https://docs.kanaries.net/graphic-walker)",
+        export_section,
+        docs_section,
     ],
     main=[walker],
     main_layout=None,

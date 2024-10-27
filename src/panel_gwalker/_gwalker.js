@@ -25,34 +25,32 @@ export function render({ model }) {
   const [appearance] = model.useState('appearance')
   const [config] = model.useState('config')
   const [currentChart, setCurrentChart] = model.useState("current_chart")
-  const [saveCurrentChart,setSaveCurrentChart] = model.useState("save_current_chart")
+  const [exportCurrentChart,setExportCurrentChart] = model.useState("export_current_chart")
   const [currentChartList, setCurrentChartList] = model.useState("current_chart_list")
-  const [saveCurrentChartList,setSaveCurrentChartList] = model.useState("save_current_chart_list")
+  const [exportCurrentChartList,setExportCurrentChartList] = model.useState("export_current_chart_list")
   const [transformedData, setTransformedData] = useState([]);
 
   const graphicWalkerRef = useRef(null);
 
-  if (saveCurrentChart && graphicWalkerRef && graphicWalkerRef.current){
-    graphicWalkerRef.current.exportChart().then((value)=>{
-        value=cleanToDict(value)
-        setCurrentChart(value)
-    })
-    setSaveCurrentChart(false)
+  if (exportCurrentChart && graphicWalkerRef && graphicWalkerRef.current){
+    (async () => {
+      let value = await graphicWalkerRef.current.exportChart()
+      value=cleanToDict(value)
+      setCurrentChart(value)
+      setExportCurrentChart(false)
+    })()
   }
 
-  if (saveCurrentChartList && graphicWalkerRef && graphicWalkerRef.current){
-        const chartList = [];
-        (async () => {
-            for await (const chart of graphicWalkerRef.current.exportChartList()) {
-                chartList.push(cleanToDict(chart))
-            }
-            setCurrentChartList(chartList)
-            setSaveCurrentChartList(false)
-        })()
-        // value=cleanToDict(value)
-        // setCurrentChartList(value)
-    }
-
+  if (exportCurrentChartList && graphicWalkerRef && graphicWalkerRef.current){
+    const chartList = [];
+    (async () => {
+        for await (const chart of graphicWalkerRef.current.exportChartList()) {
+            chartList.push(cleanToDict(chart))
+        }
+        setCurrentChartList(chartList)
+        setExportCurrentChartList(false)
+    })()
+  }
 
   useEffect(() => {
     const result = transform(data);

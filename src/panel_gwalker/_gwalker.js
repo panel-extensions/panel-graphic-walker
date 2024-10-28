@@ -1,5 +1,5 @@
 import {GraphicWalker} from "graphic-walker"
-import {useEffect, useState} from "react"
+import {useEffect, useState, useRef} from "react"
 
 function transform(data) {
   const keys = Object.keys(data);
@@ -13,16 +13,48 @@ function transform(data) {
   );
 }
 
+function cleanToDict(value){
+    value = JSON.stringify(value)
+    value = JSON.parse(value)
+    return value
+}
+
 export function render({ model }) {
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
   const [appearance] = model.useState('appearance')
   const [config] = model.useState('config')
-  const [currentChart, setCurrentChart] = model.useState("current_chart")
-  const [saveCurrentChart] = model.useState("save_current_chart")
   const [transformedData, setTransformedData] = useState([]);
+  const graphicWalkerRef = useRef(null);
+  const storeRef = useRef(null);
 
-  console.log(saveCurrentChart)
+  model.on('msg:custom', async (e) => {
+    let exporter
+    if (e.mode === 'spec') {
+      exporter = storeRef.current
+    } else {
+      exporter = graphicWalkerRef.current
+    }
+    if (exporter === null) {
+      return
+    }
+    let value, exported
+    if (e.scope === 'current') {
+      if (e.mode === 'spec') {
+	exported = exporter.currentVis
+      } else {
+	exported = exporter.exportChart()
+      }
+      value = cleanToDict(exported)
+    } else if (e.scope === 'all') {
+      value = []
+      exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
+      for await (const chart of exported) {
+        chartList.push(cleanToDict(chart))
+      }
+    }
+    model.send_msg({id: e.id, data: value})
+  })
 
   useEffect(() => {
     const result = transform(data);
@@ -30,6 +62,8 @@ export function render({ model }) {
   }, [data]);
 
   return <GraphicWalker
+    storeRef={storeRef}
+    ref={graphicWalkerRef}
     data={transformedData}
     fields={fields}
     appearance={appearance}

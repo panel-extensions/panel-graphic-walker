@@ -15,7 +15,6 @@ def data():
 def default_appearance():
     return "light"
 
-
 @pytest.fixture()
 def payload_event():
     return Event(

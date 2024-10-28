@@ -1,3 +1,5 @@
+import asyncio
+import uuid
 from typing import Any, Dict, List, Literal
 
 import numpy as np
@@ -71,13 +73,9 @@ class GraphicWalker(ReactComponent):
     )
 
     chart: dict = param.Dict(doc="""The current chart.""")
-    export_chart: bool = param.Event(doc="""Updates the current chart.""")
-    chart_list: list = param.List(doc="""The current chart list.""")
-    export_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
 
     _payload_request: dict = param.Dict(doc="The payload request from the server.")
     _payload_response: list = param.List(doc="The payload response to the server.")
-
 
     _importmap = {
         "imports": {
@@ -86,6 +84,11 @@ class GraphicWalker(ReactComponent):
     }
 
     _esm = "_gwalker.js"
+
+    _THEME_CONFIG = {
+        "default": "light",
+        "dark": "dark",
+    }
 
     def __init__(self, object=None, **params):
         if not "appearance" in params:
@@ -99,6 +102,7 @@ class GraphicWalker(ReactComponent):
 
         super().__init__(object=object, **params)
         self.param.watch(self._on_payload_request_change, "_payload_request")
+        self._exports = {}
 
     @classmethod
     def applies(cls, object):
@@ -112,11 +116,6 @@ class GraphicWalker(ReactComponent):
             if isinstance(object, pd.DataFrame):
                 return 0
         return False
-
-    _THEME_CONFIG = {
-        "default": "light",
-        "dark": "dark",
-    }
 
     def _get_appearance(self, theme):
         config = self._THEME_CONFIG
@@ -165,3 +164,45 @@ class GraphicWalker(ReactComponent):
         # Todo: Figure out how to transfer this efficiently (as a dataframe?)
         self._payload_response = result
         logger.debug("responded %s", result)
+
+    def _handle_msg(self, msg: any) -> None:
+        event_id = msg.pop('id')
+        if event_id in self._exports:
+            self._exports[event_id] = msg['data']
+
+    async def export(
+        self,
+        mode: Literal['spec', 'svg'] = 'spec',
+        scope: Literal['current', 'all'] = 'current',
+        timeout: int = 5000
+    ):
+        """
+        Requests chart(s) on the frontend to be exported either
+        as Vega specs or rendered to SVG.
+
+        Arguments
+        ---------
+        mode: 'code' | 'svg'
+           Whether to export the chart specification or SVG.
+        scope: 'current' | 'all'
+           Whether to export only the current chart or all charts.
+        timeout: int
+           How long to wait for the response before timing out.
+
+        Returns
+        -------
+        Dictionary containing the exported chart(s).
+        """
+        event_id = uuid.uuid4().hex
+        self._send_msg({'id': event_id, 'scope': f'{scope}', 'mode': mode})
+        wait_count = 0
+        self._exports[event_id] = None
+        while self._exports[event_id] is not None:
+            await asyncio.sleep(0.1)
+            wait_count += 1
+            if (wait_count * 100) > timeout:
+                del self._exports[event_id]
+                raise TimeoutError(
+                    f'Exporting {scope} chart(s) timed out.'
+                )
+        return self._exports.pop(event_id)

@@ -25,35 +25,39 @@ export function render({ model }) {
   const [serverComputation] = model.useState('server_computation')
   const [appearance] = model.useState('appearance')
   const [config] = model.useState('config')
-  const [chart, setChart] = model.useState("chart")
-  const [exportChart,setExportChart] = model.useState("export_chart")
-  const [chartList, setChartList] = model.useState("chart_list")
-  const [exportChartList,setCurrentChartList] = model.useState("export_chart_list")
   const [payloadRequest, setPayloadRequest] = model.useState("_payload_request");
   const [transformedData, setTransformedData] = useState([]);
   const [computation, setComputation] = useState(null);
 
   const graphicWalkerRef = useRef(null);
 
-  if (exportChart && graphicWalkerRef && graphicWalkerRef.current){
-    (async () => {
-      let value = await graphicWalkerRef.current.exportChart()
-      value=cleanToDict(value)
-      setChart(value)
-      setExportChart(false)
-    })()
-  }
-
-  if (exportChartList && graphicWalkerRef && graphicWalkerRef.current){
-    const chartList = [];
-    (async () => {
-        for await (const chart of graphicWalkerRef.current.exportChartList()) {
-            chartList.push(cleanToDict(chart))
-        }
-        setChartList(chartList)
-        setCurrentChartList(false)
-    })()
-  }
+  model.on('msg:custom', async (e) => {
+    let exporter
+    if (e.mode === 'spec') {
+      exporter = storeRef.current
+    } else {
+      exporter = graphicWalkerRef.current
+    }
+    if (exporter === null) {
+      return
+    }
+    let value, exported
+    if (e.scope === 'current') {
+      if (e.mode === 'spec') {
+	      exported = exporter.currentVis
+      } else {
+	      exported = exporter.exportChart()
+      }
+      value = cleanToDict(exported)
+    } else if (e.scope === 'all') {
+      value = []
+      exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
+      for await (const chart of exported) {
+        chartList.push(cleanToDict(chart))
+      }
+    }
+    model.send_msg({id: e.id, data: value})
+  })
 
   useEffect(() => {
     let result = null
@@ -96,6 +100,7 @@ export function render({ model }) {
   }, [serverComputation]);
 
   return <GraphicWalker
+    storeRef={storeRef}
     ref={graphicWalkerRef}
     data={transformedData}
     fields={fields}

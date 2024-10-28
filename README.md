@@ -193,12 +193,10 @@ pn.Column(
 - `fields` (list): Optional specification of fields (columns).
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
-#### Export Chart
+#### Methods
 
-- `chart (dict)`: The current chart. Only updated when `export_chart` is triggered.
-- `export_chart` (event): Updates the chart.
-- `chart_list` (list): The current chart list. Only updated when `export_chart_list` is triggered.
-- `export_chart_list` (event): Updates the current chart list.
+- `export(mode: 'code' | 'svg' = 'svg', scope: 'current' | 'all', timeout: int = 5000)`
+  Requests chart(s) on the frontend to be exported either as Vega specs or rendered to SVG.
 
 ## Vision
 

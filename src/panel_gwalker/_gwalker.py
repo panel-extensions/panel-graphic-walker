@@ -1,3 +1,5 @@
+import asyncio
+import uuid
 from typing import Dict, Literal
 
 import numpy as np
@@ -104,7 +106,6 @@ class GraphicWalker(ReactComponent):
     )
 
     chart: dict = param.Dict(doc="""The current chart.""")
-    export_chart: bool = param.Event(doc="""Updates the current chart.""")
 
     chart_list: list = param.List(doc="""The current chart list.""")
     export_chart_list: bool = param.Event(doc="""Updates the current chart list.""")
@@ -117,10 +118,16 @@ class GraphicWalker(ReactComponent):
 
     _esm = "_gwalker.js"
 
+    _THEME_CONFIG = {
+        "default": "light",
+        "dark": "dark",
+    }
+
     def __init__(self, object=None, **params):
         if not "appearance" in params:
             params["appearance"] = self._get_appearance(config.theme)
         super().__init__(object=object, **params)
+        self._exports = {}
 
     @classmethod
     def applies(cls, object):
@@ -135,11 +142,6 @@ class GraphicWalker(ReactComponent):
                 return 0
         return False
 
-    _THEME_CONFIG = {
-        "default": "light",
-        "dark": "dark",
-    }
-
     def _get_appearance(self, theme):
         config = self._THEME_CONFIG
         return config.get(theme, self.param.appearance.default)
@@ -151,3 +153,42 @@ class GraphicWalker(ReactComponent):
             if not self.config:
                 params["config"] = {}
         return params
+
+    def _handle_msg(self, msg: any) -> None:
+        event_id = msg.pop('id')
+        self._exports[event_id] = msg['data']
+
+    async def export(
+        self,
+        mode: Literal['spec', 'svg'] = 'spec',
+        scope: Literal['current', 'all'] = 'current',
+        timeout: int = 5000
+    ):
+        """
+        Requests chart(s) on the frontend to be exported either
+        as Vega specs or rendered to SVG.
+
+        Arguments
+        ---------
+        mode: 'code' | 'svg'
+           Whether to export the chart specification or SVG.
+        scope: 'current' | 'all'
+           Whether to export only the current chart or all charts.
+        timeout: int
+           How long to wait for the response before timing out.
+
+        Returns
+        -------
+        Dictionary containing the exported chart(s).
+        """
+        event_id = uuid.uuid4().hex
+        self._send_msg({'id': event_id, 'scope': f'{scope}', 'mode': mode})
+        wait_count = 0
+        while event_id not in self._exports:
+            await asyncio.sleep(0.1)
+            wait_count += 1
+            if wait_count * 100 > timeout:
+                raise TimeoutError(
+                    f'Exporting {scope} chart(s) timed out.'
+                )
+        return self._exports.pop(event_id)

@@ -44,11 +44,11 @@ export function render({ model }) {
   if (exportChartList && graphicWalkerRef && graphicWalkerRef.current){
     const chartList = [];
     (async () => {
-        for await (const chart of graphicWalkerRef.current.exportChartList()) {
-            chartList.push(cleanToDict(chart))
-        }
-        setChartList(chartList)
-        setCurrentChartList(false)
+      for await (const chart of graphicWalkerRef.current.exportChartList()) {
+        chartList.push(cleanToDict(chart))
+      }
+      setChartList(chartList)
+      setCurrentChartList(false)
     })()
   }
 

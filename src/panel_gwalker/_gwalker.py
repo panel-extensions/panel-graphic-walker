@@ -156,7 +156,8 @@ class GraphicWalker(ReactComponent):
 
     def _handle_msg(self, msg: any) -> None:
         event_id = msg.pop('id')
-        self._exports[event_id] = msg['data']
+        if event_id in self._exports:
+            self._exports[event_id] = msg['data']
 
     async def export(
         self,
@@ -184,10 +185,12 @@ class GraphicWalker(ReactComponent):
         event_id = uuid.uuid4().hex
         self._send_msg({'id': event_id, 'scope': f'{scope}', 'mode': mode})
         wait_count = 0
-        while event_id not in self._exports:
+        self._exports[event_id] = None
+        while self._exports[event_id] is not None:
             await asyncio.sleep(0.1)
             wait_count += 1
-            if wait_count * 100 > timeout:
+            if (wait_count * 100) > timeout:
+                del self._exports[event_id]
                 raise TimeoutError(
                     f'Exporting {scope} chart(s) timed out.'
                 )

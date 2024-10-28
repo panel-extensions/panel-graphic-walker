@@ -6,13 +6,6 @@ import numpy as np
 import pandas as pd
 
 logger = logging.getLogger("panel-graphic-walker")
-
-try:
-    import pyodide
-    IS_RUNNING_IN_PYODIDE=True
-except ImportError:
-    IS_RUNNING_IN_PYODIDE=False
-
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
 
 def configure_debug_log_level():

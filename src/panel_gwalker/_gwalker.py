@@ -7,16 +7,18 @@ import pandas as pd
 import param
 from panel import config
 from panel.custom import ReactComponent
+from panel.io.state import state
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._utils import (IS_RUNNING_IN_PYODIDE, _infer_prop,
-                                  _raw_fields, configure_debug_log_level,
-                                  logger)
+from panel_gwalker._utils import (
+    _infer_prop, _raw_fields, configure_debug_log_level, logger
+)
 
 VERSION = "0.4.72"
+
 
 class GraphicWalker(ReactComponent):
     """
@@ -65,7 +67,7 @@ class GraphicWalker(ReactComponent):
         doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
         instead of the client to scale to larger datasets. Default is False. In Pyodide this will
         always be set to False.""",
-        constant=IS_RUNNING_IN_PYODIDE,
+        constant=state._is_pyodide,
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
@@ -97,11 +99,9 @@ class GraphicWalker(ReactComponent):
             _log_level_debug=params.pop("_log_level_debug")
             if _log_level_debug:
                 configure_debug_log_level()
-        if IS_RUNNING_IN_PYODIDE and "server_computation" in params:
+        if state._is_pyodide and "server_computation" in params:
             params.pop("server_computation")
-
         super().__init__(object=object, **params)
-        self.param.watch(self._on_payload_request_change, "_payload_request")
         self._exports = {}
 
     @classmethod
@@ -124,28 +124,17 @@ class GraphicWalker(ReactComponent):
     # Todo: When `server_computation=True` we should not waste resources on transferring the data object.
     # The `fields` should still be transferred though.
     def _process_param_change(self, params):
-        if self.object is not None and "object" in params:
+        if params.get("object") is not None:
             if not self.fields:
                 params["fields"] = _raw_fields(self.object)
             if not self.config:
                 params["config"] = {}
-        return params
+            if self.server_computation:
+                del params["object"]
+        return super()._process_param_change(params)
 
-    # Todo: Test if this performs?
-    # - Compute
-    # - Memory
-    # - Multiple walkers in an app
-    # - Multiple sessions and users
-    # Todo: Figure out if duckdb config should be exposed. Currently I believe its memory
-    # Would probably scale even better if disk based. But then slower.
-    def _on_payload_request_change(self, event: param.parameterized.Event):
-        payload = event.new
-        if not payload:
-            # This will happen when we set payload={} after the response has been received
-            return
-
+    def _compute(self, payload):
         logger.debug("requested %s", payload)
-
         field_specs = _raw_fields(self.object)
         parser = get_data_parser(
             self.object,
@@ -158,17 +147,27 @@ class GraphicWalker(ReactComponent):
             result = parser.get_datas_by_payload(payload)
         except Exception as ex:
             # Todo: Figure out why there is type issue and how to solve
-            sql = get_sql_from_payload("pygwalker_mid_table", payload, {"pygwalker_mid_table": parser.field_metas}) # type: ignore
+            sql = get_sql_from_payload(
+                "pygwalker_mid_table",
+                payload,
+                {"pygwalker_mid_table": parser.field_metas}
+            ) # type: ignore
             logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
 
-        # Todo: Figure out how to transfer this efficiently (as a dataframe?)
-        self._payload_response = result
-        logger.debug("responded %s", result)
+        df = pd.DataFrame.from_records(result)
+        return {col: df[col].values for col in df.columns}
 
     def _handle_msg(self, msg: any) -> None:
+        action = msg['action']
         event_id = msg.pop('id')
-        if event_id in self._exports:
+        if action == 'export' and event_id in self._exports:
             self._exports[event_id] = msg['data']
+        elif action == 'compute':
+            self._send_msg({
+                'action': 'compute',
+                'id': event_id,
+                'result': self._compute(msg['payload'])
+            })
 
     async def export(
         self,
@@ -194,7 +193,12 @@ class GraphicWalker(ReactComponent):
         Dictionary containing the exported chart(s).
         """
         event_id = uuid.uuid4().hex
-        self._send_msg({'id': event_id, 'scope': f'{scope}', 'mode': mode})
+        self._send_msg({
+            'action': 'export',
+            'id': event_id,
+            'scope': f'{scope}',
+            'mode': mode
+        })
         wait_count = 0
         self._exports[event_id] = None
         while self._exports[event_id] is not None:

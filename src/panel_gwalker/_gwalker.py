@@ -121,8 +121,6 @@ class GraphicWalker(ReactComponent):
         config = self._THEME_CONFIG
         return config.get(theme, self.param.appearance.default)
 
-    # Todo: When `server_computation=True` we should not waste resources on transferring the data object.
-    # The `fields` should still be transferred though.
     def _process_param_change(self, params):
         if params.get("object") is not None:
             if not self.fields:

@@ -7,16 +7,21 @@ from panel_gwalker import GraphicWalker
 
 pn.extension("filedropper", sizing_mode="stretch_width")
 
-PANEL_GW_URL = "https://github.com/philippjfr/panel-graphic-walker"
+PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker/tree/main#api"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
 
+def _label(value):
+    return pn.pane.Markdown(value, margin=(-20, 5))
+
+def _section_header(value):
+    return pn.pane.Markdown(value, margin=(-5, 5))
 
 @pn.cache
 def get_data():
-    return pd.read_csv(
-        "https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz", nrows=10000
+    return pd.read_parquet(
+        "https://datasets.holoviz.org/windturbines/v1/windturbines.parq"
     )
 
 
@@ -31,12 +36,18 @@ def get_example_download():
 
 button_style = dict(button_type="primary", button_style="outline")
 
+walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
+core_settings = pn.Column(
+    walker.param.server_computation,
+    walker.param.config, name="Core"
 
-walker = GraphicWalker(get_data(), sizing_mode="stretch_both")
-settings = pn.Column(
-    pn.pane.Markdown("## Settings", margin=(0, 5)),
+)
+style_settings = pn.Column(
+    _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
-    walker.param.config,
+    _label("Theme"),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
+    name="Style"
 )
 file_upload = pn.widgets.FileDropper(
     accepted_filetypes=["text/csv"],
@@ -62,11 +73,13 @@ async def export(_):
     exported.object = await walker.export(mode=mode.value, scope=scope.value)
 
 export_section = pn.Column(
-    pn.pane.Markdown("## Export", margin=(0, 5)),
+    _section_header("## Export"),
+    _label("Mode"),
     mode,
+    _label("Scope"),
     scope,
-    pn.widgets.Button(icon="download", on_click=export),
-    exported
+    pn.widgets.Button(icon="download", on_click=export, description="Click to export"),
+    exported, name="Export"
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
 
@@ -86,8 +99,13 @@ pn.template.FastListTemplate(
     sidebar=[
         file_upload,
         file_download,
-        settings,
-        export_section,
+        pn.Accordion(
+            core_settings,
+            style_settings,
+            export_section,
+            width=320,
+            active=[0]
+        ),
         docs_section,
     ],
     main=[walker],

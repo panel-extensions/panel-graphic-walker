@@ -4,7 +4,7 @@ Based on https://py.cafe/docs/api#snippet-links-with-code-and-requirements.
 """
 from urllib.parse import quote
 
-BASE_REQUIREMENTS = ["panel-graphic-walker"]
+BASE_REQUIREMENTS = ["panel-graphic-walker>=0.3.1"]
 
 ROOT_URL = "https://raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/"
 

@@ -55,16 +55,16 @@ export function render({ model }) {
     let value, exported
     if (e.scope === 'current') {
       if (e.mode === 'spec') {
-	exported = exporter.currentVis
+	      exported = exporter.currentVis
       } else {
-	exported = await exporter.exportChart()
+	      exported = await exporter.exportChart()
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {
       value = []
       exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
       for await (const chart of exported) {
-        chartList.push(cleanToDict(chart))
+        value.push(cleanToDict(chart))
       }
     }
     model.send_msg({action: 'export', data: value, id: e.id})

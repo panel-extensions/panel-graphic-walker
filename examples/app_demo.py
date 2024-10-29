@@ -9,7 +9,7 @@ pn.extension("filedropper", sizing_mode="stretch_width")
 
 PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
-GW_API = "https://github.com/Kanaries/graphic-walker/tree/main#api"
+GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
 
 def _label(value):
@@ -81,7 +81,7 @@ export_section = pn.Column(
     pn.widgets.Button(icon="download", on_click=export, description="Click to export"),
     exported, name="Export"
 )
-docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
+docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 
 @pn.depends(file_upload, watch=True)

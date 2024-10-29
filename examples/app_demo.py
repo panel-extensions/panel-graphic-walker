@@ -16,7 +16,7 @@ GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-vi
 @pn.cache
 def get_data():
     return pd.read_parquet(
-        "https://datasets.holoviz.org/windturbines/v1/windturbines.parquet"
+        "https://datasets.holoviz.org/windturbines/v1/windturbines.parq"
     )
 
 
@@ -31,7 +31,7 @@ def get_example_download():
 
 button_style = dict(button_type="primary", button_style="outline")
 
-walker = GraphicWalker(get_data(), sizing_mode="stretch_both", _debug=True)
+walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
 settings = pn.Column(
     pn.pane.Markdown("## Settings", margin=(0, 5)),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),

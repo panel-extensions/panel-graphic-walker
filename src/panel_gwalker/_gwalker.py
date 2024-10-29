@@ -137,7 +137,7 @@ class GraphicWalker(ReactComponent):
         return super()._process_param_change(params)
 
     def _compute(self, payload):
-        logger.debug("requested %s", payload)
+        logger.debug("request: %s", payload)
         field_specs = _raw_fields(self.object)
         parser = get_data_parser(
             self.object,
@@ -158,6 +158,7 @@ class GraphicWalker(ReactComponent):
             logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
 
         df = pd.DataFrame.from_records(result)
+        logger.debug("response:\n%s", df)
         return {col: df[col].values for col in df.columns}
 
     def _handle_msg(self, msg: Any) -> None:

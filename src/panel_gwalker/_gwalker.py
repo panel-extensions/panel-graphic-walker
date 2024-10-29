@@ -24,7 +24,7 @@ class GraphicWalker(ReactComponent):
     The `GraphicWalker` component enables interactive exploration of data in a DataFrame
     using an interface built on [Graphic Walker](https://docs.kanaries.net/graphic-walker).
 
-    Reference: https://github.com/philippjfr/panel-graphic-walker.
+    Reference: https://github.com/panel-extensions/panel-graphic-walker.
 
     Example:
         ```python
@@ -55,12 +55,6 @@ class GraphicWalker(ReactComponent):
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
     fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
-    appearance: Literal["media", "dark", "light"] = param.Selector(
-        default="light",
-        objects=["light", "dark", "media"],
-        doc="""Dark mode preference: 'light', 'dark', 'media'.
-        If not provided the appearance is derived from pn.config.theme.""",
-    )
     server_computation: bool = param.Boolean(
         default=False,
         doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
@@ -73,7 +67,17 @@ class GraphicWalker(ReactComponent):
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
 
-    chart: dict = param.Dict(doc="""The current chart.""")
+    appearance: Literal["media", "dark", "light"] = param.Selector(
+        default="light",
+        objects=["light", "dark", "media"],
+        doc="""Dark mode preference: 'light', 'dark' or 'media'.
+        If not provided the appearance is derived from pn.config.theme.""",
+    )
+    theme: Literal["vega", "g2", "streamlit"]=param.Selector(
+        default="vega",
+        objects=["vega", "g2", "streamlit"],
+        doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
+    )
 
     _importmap = {
         "imports": {

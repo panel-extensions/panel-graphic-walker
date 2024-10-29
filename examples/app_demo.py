@@ -7,11 +7,16 @@ from panel_gwalker import GraphicWalker
 
 pn.extension("filedropper", sizing_mode="stretch_width")
 
-PANEL_GW_URL = "https://github.com/philippjfr/panel-graphic-walker"
+PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker/tree/main#api"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
 
+def _label(value):
+    return pn.pane.Markdown(value, margin=(-20, 5))
+
+def _section_header(value):
+    return pn.pane.Markdown(value, margin=(-5, 5))
 
 @pn.cache
 def get_data():
@@ -33,8 +38,11 @@ button_style = dict(button_type="primary", button_style="outline")
 
 walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
 settings = pn.Column(
-    pn.pane.Markdown("## Settings", margin=(0, 5)),
+    _section_header("## Settings"),
+    _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
+    _label("Theme"),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
     walker.param.server_computation,
     walker.param.config,
 )
@@ -62,10 +70,12 @@ async def export(_):
     exported.object = await walker.export(mode=mode.value, scope=scope.value)
 
 export_section = pn.Column(
-    pn.pane.Markdown("## Export", margin=(0, 5)),
+    _section_header("## Export"),
+    _label("Mode"),
     mode,
+    _label("Scope"),
     scope,
-    pn.widgets.Button(icon="download", on_click=export),
+    pn.widgets.Button(icon="download", on_click=export, description="Click to export"),
     exported
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"

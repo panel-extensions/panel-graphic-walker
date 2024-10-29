@@ -31,6 +31,7 @@ function generateRandomId(length = 8) {
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
+  const [theme] = model.useState('theme')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
@@ -122,6 +123,7 @@ export function render({ model }) {
     fields={fields}
     computation={computation}
     appearance={appearance}
+    vizThemeConfig={theme}
     {...config}
    />
 }

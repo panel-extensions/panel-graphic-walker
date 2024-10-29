@@ -208,7 +208,7 @@ class GraphicWalker(ReactComponent):
         })
         wait_count = 0
         self._exports[event_id] = None
-        while self._exports[event_id] is not None:
+        while self._exports[event_id] is None:
             await asyncio.sleep(0.1)
             wait_count += 1
             if (wait_count * 100) > timeout:

@@ -19,15 +19,6 @@ function cleanToDict(value){
     return value
 }
 
-function generateRandomId(length = 8) {
-  let id = '';
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < length; i++) {
-    id += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return id;
-}
-
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
@@ -95,7 +86,7 @@ export function render({ model }) {
   }
 
   const computationFunc = async (value) => {
-    const event_id = generateRandomId()
+    const event_id = crypto.randomUUID()
     model.send_msg({
       action: 'compute',
       payload: cleanToDict(value),

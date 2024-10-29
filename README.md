@@ -212,7 +212,7 @@ Please note that if running on Pyodide the computations will always take place o
 
 ### App Demo
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%0Afastparquet%3E%3D0.3.1) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%3E%3D0.3.2%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
 
 ![Panel Graphic Walker App Demo](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%3E%3D0.3.1%0Afastparquet)
 

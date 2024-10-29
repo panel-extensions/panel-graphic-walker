@@ -4,6 +4,7 @@ import pytest
 from param.parameterized import Event
 
 from panel_gwalker import GraphicWalker
+from panel_gwalker._utils import _raw_fields
 
 
 @pytest.fixture
@@ -15,25 +16,6 @@ def data():
 def default_appearance():
     return "light"
 
-@pytest.fixture()
-def payload_event():
-    return Event(
-        what="value",
-        name="_payload_request",
-        obj=None,
-        cls=None,
-        old=None,
-        new={
-            "workflow": [
-                {
-                    "type": "view",
-                    "query": [{"op": "aggregate", "groupBy": ["a"], "measures": []}],
-                }
-            ]
-        },
-        type="changed",
-    )
-
 
 def _get_params(gwalker):
     return {
@@ -41,6 +23,7 @@ def _get_params(gwalker):
         "fields": gwalker.fields,
         "appearance": gwalker.appearance,
         "config": gwalker.config,
+        "server_computation": gwalker.server_computation,
     }
 
 
@@ -57,7 +40,7 @@ def test_process_parameter_change(data, default_appearance):
     params = _get_params(gwalker)
 
     result = gwalker._process_param_change(params)
-    assert params["fields"]
+    assert params["fields"]==gwalker.calculated_fields()
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
@@ -99,8 +82,19 @@ def test_process_parameter_change_with_appearance(data):
     assert result["appearance"] == appearance
 
 
-def test_server_computation(data, payload_event):
-    walker = GraphicWalker(object=data, server_computation=True)
-    walker.param.server_computation.constant=False
-    walker.server_computation=True
-    walker._on_payload_request_change(payload_event)
+def test_server_computation(data):
+    gwalker = GraphicWalker(object=data, server_computation=True)
+    gwalker.param.server_computation.constant=False
+    gwalker.server_computation=True
+
+    params = _get_params(gwalker)
+    assert "object" not in gwalker._process_param_change(params)
+
+    gwalker.server_computation=False
+    params = _get_params(gwalker)
+    assert "object" in gwalker._process_param_change(params)
+
+
+def test_calculated_fields(data):
+     gwalker = GraphicWalker(object=data)
+     assert gwalker.calculated_fields() == _raw_fields(data)

@@ -4,6 +4,7 @@ from typing import Dict
 
 import numpy as np
 import pandas as pd
+import panel as pn
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -58,7 +59,7 @@ def _infer_prop(s: np.ndarray, i=None):
         "analyticType": analyticType,
     }
 
-# Todo: Apply caching because this is called on every server side request
+@pn.cache(max_items=20, ttl=60*5, policy='LRU')
 def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
     if isinstance(data, dict):
         return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]

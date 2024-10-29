@@ -203,8 +203,6 @@ walker = GraphicWalker(df, server_computation=True)
 pn.Column(
     walker,
     walker.param.computation,
-    walker.param._payload_request,
-    walker.param._payload_response,
 ).servable()
 ```
 
@@ -238,8 +236,10 @@ Please note that if running on Pyodide the computations will take place on the c
 
 #### Methods
 
+- `calculated_fields()`: Returns a dictionary of fields calculated from the object. This is a
+great starting point if you want to customize the fields.
 - `export(mode: 'code' | 'svg' = 'svg', scope: 'current' | 'all', timeout: int = 5000)`
-  Requests chart(s) on the frontend to be exported either as Vega specs or rendered to SVG.
+  Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings.
 
 ## Vision
 

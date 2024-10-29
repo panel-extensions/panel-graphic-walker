@@ -13,9 +13,8 @@ from panel.reactive import SyncableData
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._utils import (
-    _infer_prop, _raw_fields, configure_debug_log_level, logger
-)
+from panel_gwalker._utils import (_infer_prop, _raw_fields,
+                                  configure_debug_log_level, logger)
 
 VERSION = "0.4.72"
 
@@ -76,9 +75,6 @@ class GraphicWalker(ReactComponent):
 
     chart: dict = param.Dict(doc="""The current chart.""")
 
-    _payload_request: dict = param.Dict(doc="The payload request from the server.")
-    _payload_response: list = param.List(doc="The payload response to the server.")
-
     _importmap = {
         "imports": {
             "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"
@@ -95,12 +91,13 @@ class GraphicWalker(ReactComponent):
     def __init__(self, object=None, **params):
         if not "appearance" in params:
             params["appearance"] = self._get_appearance(config.theme)
-        if "_log_level_debug" in params:
-            _log_level_debug=params.pop("_log_level_debug")
-            if _log_level_debug:
+        if "_debug" in params:
+            _debug=params.pop("_debug")
+            if _debug:
                 configure_debug_log_level()
         if state._is_pyodide and "server_computation" in params:
             params.pop("server_computation")
+
         super().__init__(object=object, **params)
         self._exports = {}
 
@@ -121,10 +118,18 @@ class GraphicWalker(ReactComponent):
         config = self._THEME_CONFIG
         return config.get(theme, self.param.appearance.default)
 
+    @param.depends("object")
+    def calculated_fields(self)->dict:
+        """Returns all the fields calculated from the object.
+
+        The calculated fields are a great starting point if you want to customize the fields.
+        """
+        return _raw_fields(self.object)
+
     def _process_param_change(self, params):
         if params.get("object") is not None:
             if not self.fields:
-                params["fields"] = _raw_fields(self.object)
+                params["fields"] = self.calculated_fields()
             if not self.config:
                 params["config"] = {}
             if self.server_computation:
@@ -155,7 +160,7 @@ class GraphicWalker(ReactComponent):
         df = pd.DataFrame.from_records(result)
         return {col: df[col].values for col in df.columns}
 
-    def _handle_msg(self, msg: any) -> None:
+    def _handle_msg(self, msg: Any) -> None:
         action = msg['action']
         event_id = msg.pop('id')
         if action == 'export' and event_id in self._exports:

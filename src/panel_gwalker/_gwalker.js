@@ -57,7 +57,7 @@ export function render({ model }) {
       if (e.mode === 'spec') {
 	exported = exporter.currentVis
       } else {
-	exported = exporter.exportChart()
+	exported = await exporter.exportChart()
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {

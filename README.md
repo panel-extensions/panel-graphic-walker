@@ -22,8 +22,6 @@
 
 This project is **in early stages**, so if you find a version that suits your needs, it’s recommended to **pin your version**, as updates may introduce changes.
 
-Please note that displaying larger datasets (>= 10 MB) may currently not be possible depending on the limits of your environment.
-
 ## Installation
 
 Install `panel-graphic-walker` via `pip`:
@@ -214,7 +212,7 @@ Please note that if running on Pyodide the computations will always take place o
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
 
-![Panel Graphic Walker App Demo](static/panel-graphic-walker-app-fileupload.gif)
+![Panel Graphic Walker App Demo](https://github.com/panel-extensions/panel-graphic-walker/blob/main/static/panel-graphic-walker-app-fileupload.gif)
 
 ## API
 

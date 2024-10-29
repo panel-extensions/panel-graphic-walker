@@ -22,8 +22,6 @@
 
 This project is **in early stages**, so if you find a version that suits your needs, it’s recommended to **pin your version**, as updates may introduce changes.
 
-Please note that displaying larger datasets (>= 10 MB) may currently not be possible depending on the limits of your environment.
-
 ## Installation
 
 Install `panel-graphic-walker` via `pip`:

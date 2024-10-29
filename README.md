@@ -237,7 +237,7 @@ Please note that if running on Pyodide the computations will always take place o
 
 ### Methods
 
-- `calculated_fields()`: Returns a dictionary of `fields` calculated from the `object`. This is a
+- `calculated_fields()`: Returns a list of `fields` calculated from the `object`. This is a
 great starting point if you want to provide custom `fields`.
 - `export(mode: 'code' | 'svg' = 'svg', scope: 'current' | 'all', timeout: int = 5000)`
   Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings.

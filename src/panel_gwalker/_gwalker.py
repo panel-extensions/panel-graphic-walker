@@ -123,7 +123,7 @@ class GraphicWalker(ReactComponent):
         return config.get(theme, self.param.appearance.default)
 
     @param.depends("object")
-    def calculated_fields(self)->dict:
+    def calculated_fields(self)->list[dict]:
         """Returns all the fields calculated from the object.
 
         The calculated fields are a great starting point if you want to customize the fields.

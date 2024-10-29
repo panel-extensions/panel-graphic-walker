@@ -17,6 +17,7 @@ build-backend = "hatchling.build"
 dev = [
     "jedi-language-server;sys_platform == 'linux'",
     "mypy",
+    "pandas-stubs",
     "pre-commit",
     "pytest",
     "ruff",
@@ -42,3 +43,7 @@ server = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/panel_gwalker"]
+
+[[tool.mypy.overrides]]
+module = "param.*,pygwalker.*,gw_dsl_parser.*"
+ignore_missing_imports = true

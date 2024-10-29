@@ -25,8 +25,7 @@ def configure_debug_log_level():
     logger.info("Logger successfully configured")
     return logger
 
-# Todo: Apply caching because this is called on every server side request
-def _infer_prop(s: np.ndarray, i=None):
+def _infer_prop(s: pd.Series, i=None)->dict:
     """
 
     Arguments
@@ -60,7 +59,7 @@ def _infer_prop(s: np.ndarray, i=None):
     }
 
 @pn.cache(max_items=20, ttl=60*5, policy='LRU')
-def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]):
+def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray])->list[dict]:
     if isinstance(data, dict):
         return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
     else:

@@ -37,14 +37,17 @@ def get_example_download():
 button_style = dict(button_type="primary", button_style="outline")
 
 walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
-settings = pn.Column(
-    _section_header("## Settings"),
+core_settings = pn.Column(
+    walker.param.server_computation,
+    walker.param.config, name="Core"
+
+)
+style_settings = pn.Column(
     _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
     _label("Theme"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
-    walker.param.server_computation,
-    walker.param.config,
+    name="Style"
 )
 file_upload = pn.widgets.FileDropper(
     accepted_filetypes=["text/csv"],
@@ -76,7 +79,7 @@ export_section = pn.Column(
     _label("Scope"),
     scope,
     pn.widgets.Button(icon="download", on_click=export, description="Click to export"),
-    exported
+    exported, name="Export"
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker](PANEL_GRAPH_WALKER_URL)\n- [Graphic Walker Usage Guide](GW_GUIDE_URL)\n- [Graphic Walker API](GW_API)"
 
@@ -96,8 +99,13 @@ pn.template.FastListTemplate(
     sidebar=[
         file_upload,
         file_download,
-        settings,
-        export_section,
+        pn.Accordion(
+            core_settings,
+            style_settings,
+            export_section,
+            width=320,
+            active=[0]
+        ),
         docs_section,
     ],
     main=[walker],

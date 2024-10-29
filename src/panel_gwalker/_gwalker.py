@@ -142,7 +142,7 @@ class GraphicWalker(ReactComponent):
 
     def _compute(self, payload):
         logger.debug("request: %s", payload)
-        field_specs = _raw_fields(self.object)
+        field_specs = self.fields or self.calculated_fields()
         parser = get_data_parser(
             self.object,
             field_specs=field_specs,
@@ -153,12 +153,11 @@ class GraphicWalker(ReactComponent):
         try:
             result = parser.get_datas_by_payload(payload)
         except Exception as ex:
-            # Todo: Figure out why there is type issue and how to solve
             sql = get_sql_from_payload(
                 "pygwalker_mid_table",
                 payload,
                 {"pygwalker_mid_table": parser.field_metas}
-            ) # type: ignore
+            )
             logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
 
         df = pd.DataFrame.from_records(result)

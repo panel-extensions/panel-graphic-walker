@@ -57,7 +57,7 @@ export function render({ model }) {
       if (e.mode === 'spec') {
         exported = exporter.currentVis
       } else {
-          exported = exporter.currentVis
+        exported = exporter.currentVis
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {

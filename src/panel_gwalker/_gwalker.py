@@ -18,7 +18,6 @@ from panel_gwalker._utils import (_infer_prop, _raw_fields,
 
 VERSION = "0.4.72"
 
-
 class GraphicWalker(ReactComponent):
     """
     The `GraphicWalker` component enables interactive exploration of data in a DataFrame

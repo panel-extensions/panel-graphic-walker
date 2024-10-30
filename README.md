@@ -16,7 +16,7 @@
 - **Simplicity:** Just plug in your data, and `panel-graphic-walker` takes care of the rest.
 - **Quick Data Exploration:** Start exploring in seconds, with instant chart and table rendering via a *[Tableau-like](https://www.tableau.com/)* interface.
 - **Integrates with Python Visualization Ecosystem:** Easily integrates with [Panel](https://panel.holoviz.org/index.html), [HoloViz](https://holoviz.org/), and the broader [Python Visualization](https://pyviz.org/tools.html) ecosystem.
-- **Scales to your Data:** Designed for diverse data backends and scalable, so you can explore even larger datasets seamlessly. *(Features Coming Soon)*
+- **Scales to your Data:** Designed for diverse data backends and scalable, so you can explore even larger datasets seamlessly. *(More Features Coming Soon)*
 
 ## Pin your version!
 
@@ -94,11 +94,13 @@ fields = [
 GraphicWalker(df, fields=fields).servable()
 ```
 
+You can get the full list of fields via `GraphicWalker(df).calculated_fields()`.
+
 ### Configuring the Appearance
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAMfaHGcAA42SQY_aMBCF_0rkEysFk4RCIBI9tKracw_dw2a1MnggVoPttYewLOK_d5yQpUi7YpMcMuOXec-fc2QrI4EVTG2tcRhZoaXwET1WlvrShLrt6ZLutTPbrve02Yv6L7joLPzphK3U6r5tBqnVHF4QtFdGD-5CR66jBc3mDoR8WvlmUOqIrpJViNYXo5EUKDyg55WpTaNeuXGb0V5piTu3VBr8qEmvak5T-Oa1ZHGkndn7RZrQVerW7irRQK7jSFgLwgm9gkXJtiCVKNkd9-AasayhC8li5uB5pxxsQaMnPGvh0Qr3vAMsaWft7s8vxOutNdx0fsOOy9dFwjOehGUaiQcbSLdCKinIHwV7VqxF7SFmFAV_6BCCFeh21LEHrIwOnxyMVBKGDY2b8pQ-rsXB7JAVR9aAC3RZkVFoY_C3oZHH3oyAkHpVqVo6INHD2wqKJWGmxb2SWLEinSQx2yp935XjrvoFalORTyiVDCBUDd8CZnDfjUZBJ-A-cAjS4bLTksSKMJex0-MpfifF2Wg649Nxlid5nn_J57P5-MP0l5FEktsDux57Wf7_KDm-4HWCjlBvn45TPp7m2TzLskmWpMnsBr3bxM4EbtHqQb2Pp-rz5ZPPeCI4aov6lmmvC67hPsXtqdEf__B4-gduo4LZHAQAAA)
 
-By default, the appearance is determined by `pn.config.theme`. However, you can manually change this, for example, to `media`, which corresponds to the user's preference as set in the browser.
+By default, the appearance is determined by the value of [`pn.config.theme`](https://panel.holoviz.org/how_to/styling/themes.html). However, you can manually change this, for example, to `dark` or `media`. `media` corresponds to the user's preference as set in the browser.
 
 ```python
 import pandas as pd
@@ -142,9 +144,9 @@ GraphicWalker(df, config=config).servable()
 
 ### Export the Chart(s)
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAEkeHmcAA51SXW_aMBT9K5GfQAomCSuBSOyh1bRpD5u0SetDUyGDDbEWbNe-SUor_vuuk1CG1IqqCQ_cz3Ny7nkma80FyYjcGW0hMExx5gL8GZ6rU1KUbU7l-G6s3nW55bZh5V9hg77xq2WmkOvbNulbjaLiEYRyUqvB0Gf4JljgbmoF48u1qwc5KQCMy8ZjzoA5AY4WutS1fKLabseNVBwqu5JKuHEdn8UU5-n2KSdhoKxu3CKO8GlhctUzW5yTGvAN1pHWjS6rnRrkKsCn6w27AIu_dNNX-kQj-dYzu64AtKJegaVhlu0G3ShtA_xWL8NyXTALYSDXWi1ywnWjSs14Toah3-WVo99___xxPtsPcWGgWCTDnszH8ZeldB8j0U92TCZHJijbkDpha7YqRXdLEhIrHippxU4ocOiiDXOAmx4qATkaoDVJ_wdt9ZIabbubjDrwz4uIJjTyZVwJe-MN2TZiyIz5I0VDsg0rnQiJ4BK-KE-CZGArzJg9FFr5kb3mkotRjeumNMbhku11BSR7JrWw3oQkS5C01oAn9ukeDN2D3etCltwKbLp7qQBboSexiCeAgmTxVRSSnVS3XTjpom9CbgvE8aHkXghZimvvSWFvtAKGdrVvIPjW0arrxRbD_F5CDveH8BUWPdB0RqeTJI3SNP2UzmfzyZvsTytRSWr25Hztqfz_KSk8wjmDTqEjfDyJ6WSaJvMkSa6SKI5mF9S7rFivwCW1jkK9Lk9x5JdevQcThMU0Ky-BHvs8qn8PYXs1dPzd_eEfYFOR40MFAAA)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAPQXIWcAA41STW-bQBD9K2gvtSW8tnFjEiR6SFT149BKrdQcQmSt2TFsg3fJMkCcyP-9s4CTWErkgmUxM2_mvX07Tyw1EljE1LY0Fr1SaCkqj36lTPRLEooupxN6N9Zs-9wqa0VxB9YbgF-sKHOVXndJBy01hwcEXSmjR2OXkRsvptncgpCrtGpGCcsRyyqaTqVAUQFWPDeFadQjNzabtkpLrO1aaaimzfwo5tTPs8eE-Z62pq3i-YyejmbQFR9LGskNVeHBiQXphGjuDsK___75YyShxDxedP2i2unUk7DxevRoNY4S7dFz6OZm_RdSpCGiFQq9npGO28G7ITT9yhT1Vo_61h7i9wEVf5l2qAyJVsnMGXBZIxr9LSXTFP3FCZOm1YUR0p3V6FVaqPQu7rl8T6SoGlh10A9pDundB99Dk2UFrGRtBZL7nTfjgfv1OYYUCR7zCmwj1gX08pnPLNzXysIWNFa0JBtRYSnsfQ2Y0P12OzB80NY8pyZZb_qkP_CneMYDPnNlGom70u1bB6RQlOUfBS2LNqKowGcgFX7WTgSL0NaUKXeYG-1adkYqCZOGxi35nJoLsTM1suiJNWDdjrEoINHGIFnr0gMZLQeh01wV0gKBbp4rKNa0clQk6zFn0fxs5rOt0td9uOijr6CynHhcqKQzQhVw6VYO7JXRKGgb7TsMDjpZ91iClMLNZWx_u_ffUDEQLc_5chGEszAMP4YX5xeLd9W_jCQnebljx2Nfyq-vkuMDHivoHTrQzxdzvliGwUUQBGfBbD47P-HeaccGB065dTDqbXvyg77w7H84ESylRXGK9IBzrO7d-92t0cbf3O7_AZ8QF94iBQAA)
 
-You can *export the current chart* from the client to the server by triggering the parameter `export_chart`. The chart is exported to the `chart` parameter:
+You can *export the current chart(s)* from the client to the server by running the *asynchronous* `export` method:
 
 ```python
 import pandas as pd
@@ -165,7 +167,7 @@ async def export(_):
 pn.Column(
     walker,
     pn.Row(
-        pn.widgets.Button(icon="download", on_click=export),
+        pn.widgets.ButtonIcon(icon="download", on_click=export, active_icon='check', toggle_duration=1000),
         exported,
     )
 ).servable()
@@ -173,7 +175,7 @@ pn.Column(
 
 ### Scale with Server-Side Computation
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIANV3IGcAA41SwY7aMBD9lci9sFIwEAqBSPTQVdWeq6p72KyQiSeJ1cT22g4si_j3jpOwgLormuSQmXl-b-aNDyRTHEhCRK2VcYFmkjMb4Kd5Ks9JqNqcTPHNjaq73LrYseoPmKAHfjdMlyJ7aJMeqiWFFwfSCiUHdz7D82CF3NQA4-vMbgcpKZ3TNhmNOHPMgrO0VJXaileqTDHaCcldYzZCgh1tJ1cxxfO0eE1Jy_wp-CbZpoLAgtmCGVrBIchUrRvHHOoHuTKBzVjVgrxYoI3KwFohi1T2k6yuhxjwPOwJ1xdcq1-mgVYVJ7xXVVPLQSoDfDqa8DKgmhlW039ZEHXXpn1HnT0kJAaeG2GgBuksLiZn1iHBcwMuRU9b3_sf3NRbalh0bQ87zS-rMY3o2JeR0u2133ELxJBp_VvAjiQ5qyyEBLhwnXckcThYSPTelUr6I3vF0cfhFunmdIKHK7ZXjSPJgeA0fq8kibBppdxPhZSHk5jBKCRZKSpuAEGPbxXHNrhmLO4EdyVJJrNxSGohH7pw2kU_QBQl6vhQcG-EqOArsqJh90o6hjfAfKDgocNNh0WIZp6XkOPTMXyni15ovqDzaRSP4zj-HC8Xy-mH3Z8p0Umq9-Sa9ly-XCV1L-66g86hk_xkOqHTeRwtoyiaRePJeHHDvduO9Q7ccutk1Pv2lKf-4tn_aDowmGbVLdETzqv69xi2W8Mb__h0_AtVJe61lgQAAA)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAEAYIWcAA41SwY7aMBD9lci9sFIwJBQCkeihq6o9V1X3sFkhEw-J1cT22g4si_j3jpOwgLormuSQmXl-b-aNDyRXHEhKRK2VcYFmkjMb4Kd5Js9JqNqczPDdGFV3uVWxY9UfMEEP_G6YLkX-0CY9VEsKLw6kFUoO7nyGb4IlclMDjK9yux1kpHRO23Q04swxC87SUlVqK16pMsVoJyR3jVkLCXa0ja5iiudp8ZqRlvlT8E2ydQWBBbMFM7SCQ5CrWjeOOdQPNsoENmdVC_JigTYqB2uFLDLZT7K8HmLAN2FPuLrgWv4yDbSqOOG9qppaDjIZ4NPRhJcB1cywmv7Lgqi7Nu076uwhITHw3AgDNUhncTEbZh0SPDfgMvS09b3_wU29pYZF1_aw0_yyHNMJjXwZKd1e-x23QAyZ1r8F7Ei6YZWFkAAXrvOOpA4HC4neu1JJf2SvOPo43I5pPKMRHq7YXjWOpAeC0_i9kjTGppVyPxVSHk5iBqOQ5KWouAEEPb5VHFvjmrG4E9yVJI2m45DUQj504aSLfoAoStTxoeDeCFHBV2RFw-6VdAxvgPlAwUOH6w6LEM08LyHHp2P4The90GxOZ5M4GSdJ8jlZzBeTD7s_U6KTVO_JNe25fLlK6l7cdQedQyf5aBLRySyJF3EcT-NxNJ7fcO-2Y70Dt9w6GfW-PeWpv2T6P5oODKZZdUv0hPOq_j2G7dbwxj8-Hf8C2Bsh_pYEAAA)
 
 In some environments you may meet message or client side data limits. To handle larger datasets, you can offload the *computation* to the *server*.
 
@@ -210,9 +212,9 @@ Please note that if running on Pyodide the computations will always take place o
 
 ### App Demo
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/app_demo.py&requirements=panel-graphic-walker%3E%3D0.3.2%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](examples/app_demo.py)
 
-![Panel Graphic Walker App Demo](https://github.com/panel-extensions/panel-graphic-walker/blob/main/static/panel-graphic-walker-app-fileupload.gif)
+![Panel Graphic Walker App Demo](https://raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/static/panel-graphic-walker-app-demo.gif)
 
 ## API
 

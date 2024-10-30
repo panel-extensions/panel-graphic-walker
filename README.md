@@ -146,7 +146,7 @@ GraphicWalker(df, config=config).servable()
 
 [![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#c=H4sIAPQXIWcAA41STW-bQBD9K2gvtSW8tnFjEiR6SFT149BKrdQcQmSt2TFsg3fJMkCcyP-9s4CTWErkgmUxM2_mvX07Tyw1EljE1LY0Fr1SaCkqj36lTPRLEooupxN6N9Zs-9wqa0VxB9YbgF-sKHOVXndJBy01hwcEXSmjR2OXkRsvptncgpCrtGpGCcsRyyqaTqVAUQFWPDeFadQjNzabtkpLrO1aaaimzfwo5tTPs8eE-Z62pq3i-YyejmbQFR9LGskNVeHBiQXphGjuDsK___75YyShxDxedP2i2unUk7DxevRoNY4S7dFz6OZm_RdSpCGiFQq9npGO28G7ITT9yhT1Vo_61h7i9wEVf5l2qAyJVsnMGXBZIxr9LSXTFP3FCZOm1YUR0p3V6FVaqPQu7rl8T6SoGlh10A9pDundB99Dk2UFrGRtBZL7nTfjgfv1OYYUCR7zCmwj1gX08pnPLNzXysIWNFa0JBtRYSnsfQ2Y0P12OzB80NY8pyZZb_qkP_CneMYDPnNlGom70u1bB6RQlOUfBS2LNqKowGcgFX7WTgSL0NaUKXeYG-1adkYqCZOGxi35nJoLsTM1suiJNWDdjrEoINHGIFnr0gMZLQeh01wV0gKBbp4rKNa0clQk6zFn0fxs5rOt0td9uOijr6CynHhcqKQzQhVw6VYO7JXRKGgb7TsMDjpZ91iClMLNZWx_u_ffUDEQLc_5chGEszAMP4YX5xeLd9W_jCQnebljx2Nfyq-vkuMDHivoHTrQzxdzvliGwUUQBGfBbD47P-HeaccGB065dTDqbXvyg77w7H84ESylRXGK9IBzrO7d-92t0cbf3O7_AZ8QF94iBQAA)
 
-You can *export the current chart* from the client to the server by triggering the parameter `export_chart`. The chart is exported to the `chart` parameter:
+You can *export the current chart(s)* from the client to the server by running the *asynchronous* `export` method:
 
 ```python
 import pandas as pd

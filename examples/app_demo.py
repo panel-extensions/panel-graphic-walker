@@ -45,8 +45,8 @@ core_settings = pn.Column(
 style_settings = pn.Column(
     _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
-    _label("Theme"),
-    pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
+    _label("Theme Key"),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.theme_key, **button_style),
     name="Style"
 )
 file_upload = pn.widgets.FileDropper(

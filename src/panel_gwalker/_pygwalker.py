@@ -44,7 +44,7 @@ def get_data_parser(
         from pygwalker.data_parsers.base import FieldSpec
     except ImportError as exc:
         raise ImportError(
-            "pygwalker is not installed, please pip install it first."
+            "Server dependencies are not installed. Please: pip install panel-graphic-walker[server]."
         ) from exc
 
     _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]

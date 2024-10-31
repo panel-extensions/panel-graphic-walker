@@ -72,10 +72,10 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark' or 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    theme: Literal["vega", "g2", "streamlit"]=param.Selector(
+    theme_key: Literal["g2", "streamlit", "vega"]=param.Selector(
         default="vega",
-        objects=["vega", "g2", "streamlit"],
-        doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
+        objects=["g2", "streamlit", "vega"],
+        doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
     )
 
     _importmap = {

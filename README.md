@@ -229,7 +229,7 @@ Please note that if running on Pyodide the computations will always take place o
 #### Style
 
 - `appearance` (str): Optional dark mode preference: 'light', 'dark' or 'media'. If not provided the appearance is derived from `pn.config.theme`.
-- `theme` (str): Optional chart theme: 'vega' (default), 'g2' or 'streamlit'.
+- `theme_key` (str): Optional chart theme: 'g2', 'streamlit' or 'vega'.
 
 #### Other
 

@@ -77,6 +77,7 @@ class GraphicWalker(ReactComponent):
         objects=["vega", "g2", "streamlit"],
         doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
     )
+    tab: Literal["data", "vis"] = param.Selector(default="vis", objects=["data", "vis"], doc="""Tab shown. One of 'data' or 'vis'.""")
 
     _importmap = {
         "imports": {

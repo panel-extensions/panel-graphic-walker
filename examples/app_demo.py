@@ -39,8 +39,10 @@ button_style = dict(button_type="primary", button_style="outline")
 walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
 core_settings = pn.Column(
     walker.param.server_computation,
-    walker.param.config, name="Core"
-
+    walker.param.config,
+    _label("Tab"),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.tab, **button_style),
+    name="Core",
 )
 style_settings = pn.Column(
     _label("Appearance"),

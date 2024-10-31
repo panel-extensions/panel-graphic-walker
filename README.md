@@ -234,6 +234,7 @@ Please note that if running on Pyodide the computations will always take place o
 #### Other
 
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
+- `tab` (str): Tab shown. One of 'data' or 'vis'.
 
 ### Methods
 

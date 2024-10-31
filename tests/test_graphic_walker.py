@@ -32,6 +32,7 @@ def test_constructor(data, default_appearance):
     assert gwalker.object is data
     assert not gwalker.fields
     assert not gwalker.config
+    assert gwalker.tab
     assert gwalker.appearance == default_appearance
 
 

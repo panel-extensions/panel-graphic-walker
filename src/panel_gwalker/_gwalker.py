@@ -78,6 +78,8 @@ class GraphicWalker(ReactComponent):
         doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
     )
 
+    tab: Literal["data", "vis"] = param.Selector(default="vis", objects=["data", "vis"], doc="""default tab to show. One of 'data' or 'vis' (default).""")
+
     _importmap = {
         "imports": {
             "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"

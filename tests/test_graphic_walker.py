@@ -33,7 +33,8 @@ def test_constructor(data, default_appearance):
     assert not gwalker.fields
     assert not gwalker.config
     assert gwalker.appearance == default_appearance
-    assert gwalker.theme_key
+    assert gwalker.theme_key == "vega"
+    assert gwalker.tab == "vis"
 
 
 def test_process_parameter_change(data, default_appearance):

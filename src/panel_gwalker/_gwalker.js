@@ -26,6 +26,7 @@ export function render({ model }) {
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
+  const [spec] = model.useState('spec')
   const [serverComputation] = model.useState('server_computation')
 
   // Data State
@@ -84,6 +85,11 @@ export function render({ model }) {
       await new Promise(resolve => setTimeout(resolve, 10));
     }
   }
+
+  useEffect(() => {
+    console.log(storeRef)
+    // storeRef.current=spec
+  })
 
   const computationFunc = async (value) => {
     const event_id = crypto.randomUUID()

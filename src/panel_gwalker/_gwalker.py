@@ -77,6 +77,7 @@ class GraphicWalker(ReactComponent):
         objects=["vega", "g2", "streamlit"],
         doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
     )
+    spec = param.Dict(doc="""Optional chart specification. Can be generated via `export` method.""")
 
     _importmap = {
         "imports": {

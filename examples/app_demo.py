@@ -39,6 +39,7 @@ button_style = dict(button_type="primary", button_style="outline")
 walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
 core_settings = pn.Column(
     walker.param.server_computation,
+    walker.param.spec,
     walker.param.config, name="Core"
 
 )
@@ -60,29 +61,82 @@ file_download = pn.widgets.FileDownload(
     callback=get_example_download, filename="example.csv"
 )
 
-exported = pn.pane.JSON(depth=2)
-
-mode = pn.widgets.RadioButtonGroup(
-    options={'SVG': 'svg', 'Vega Spec': 'spec'}, value='spec', **button_style
-)
-scope = pn.widgets.RadioButtonGroup(
-    options={'Current': 'current', 'All': 'all'}, value='current', **button_style
-)
-
-async def export(_):
-    exported.object = await walker.export(mode=mode.value, scope=scope.value)
-
+export_button = walker.create_export_button()
+exported = pn.rx("""
+```bash
+{value}
+```
+""").format(value=export_button.param.value)
 export_section = pn.Column(
-    _section_header("## Export"),
-    _label("Mode"),
-    mode,
-    _label("Scope"),
-    scope,
-    pn.widgets.Button(icon="download", on_click=export, description="Click to export"),
-    exported, name="Export"
+    export_button,
+    exported,
+    name="Export"
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
+spec = {
+    "encodings": {
+        "dimensions": [
+            {
+                "fid": "t_county",
+                "name": "t_county",
+                "basename": "t_county",
+                "semanticType": "nominal",
+                "analyticType": "dimension",
+            },
+            {
+                "fid": "t_manu",
+                "name": "t_manu",
+                "basename": "t_manu",
+                "semanticType": "nominal",
+                "analyticType": "dimension",
+            },
+        ],
+        "measures": [
+            {
+                "fid": "gw_count_fid",
+                "name": "Row count",
+                "analyticType": "measure",
+                "semanticType": "quantitative",
+                "aggName": "sum",
+                "computed": True,
+                "expression": {"op": "one", "params": [], "as": "gw_count_fid"},
+            }
+        ],
+        "rows": [
+            {
+                "fid": "gw_count_fid",
+                "name": "Row count",
+                "analyticType": "measure",
+                "semanticType": "quantitative",
+                "aggName": "sum",
+                "computed": True,
+                "expression": {"op": "one", "params": [], "as": "gw_count_fid"},
+            }
+        ],
+        "columns": [
+            {
+                "fid": "t_county",
+                "name": "t_county",
+                "basename": "t_county",
+                "semanticType": "nominal",
+                "analyticType": "dimension",
+                "sort": "descending",
+            }
+        ],
+        "color": [
+            {
+                "fid": "t_manu",
+                "name": "t_manu",
+                "basename": "t_manu",
+                "semanticType": "nominal",
+                "analyticType": "dimension",
+            }
+        ],
+    },
+}
+apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", width=100, on_click=lambda event: walker.param.update(spec=spec))
+clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", width=100, on_click=lambda event: walker.param.update(spec=None))
 
 @pn.depends(file_upload, watch=True)
 def _update_walker(value):
@@ -99,6 +153,7 @@ pn.template.FastListTemplate(
     sidebar=[
         file_upload,
         file_download,
+        pn.Row(apply_spec, clear_spec),
         pn.Accordion(
             core_settings,
             style_settings,

@@ -224,7 +224,7 @@ Please note that if running on Pyodide the computations will always take place o
 
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, then the existing chart(s) will not be deleted and you will have to create a new one manually to use the new dataset.
 - `fields` (list): Optional specification of fields (columns).
-- `spec` (dict): Optional chart specification. Can be generated via the `export` method.
+- `spec` (str, dict, list): Optional chart specification as url, json, dict or list. Can be generated via the `export` method.
 - `server_computation` (bool): Optional. If True the computations will take place on the Panel server or in the Jupyter kernel instead of the client to scale to larger datasets. Default is False.
 
 #### Style

@@ -8,8 +8,12 @@ import param
 from panel import config
 from panel.custom import ReactComponent
 from panel.io.state import state
+from panel.layout import Column
+from panel.pane import Markdown
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
+from panel.viewable import Viewer
+from panel.widgets import Button, RadioButtonGroup
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
@@ -17,6 +21,69 @@ from panel_gwalker._utils import (_infer_prop, _raw_fields,
                                   configure_debug_log_level, logger)
 
 VERSION = "0.4.72"
+
+import json
+
+
+class Spec(param.Parameter):
+    """
+    A parameter that holds a chart specification.
+    """
+    def _validate(self, val):
+        if not isinstance(val, (type(None), str, dict, list)):
+            msg = f"Spec must be a None type, str, dict or a list, got {type(val).__name__}"
+            raise ValueError(msg)
+        return val
+
+def _label(value):
+    return Markdown(value, margin=(-10,10))
+
+class ExportButton(Viewer):
+    value: list | dict = param.ClassSelector(class_=(list, dict), doc="""The exported Chart(s) spec or SVG.""")
+
+    mode: Literal["spec", "svg"] = param.Selector(default="spec", objects=["spec", "svg"], doc="""Export mode: 'spec' or 'svg'.""")
+    scope: Literal["current", "all"] = param.Selector(default="current", objects=["current", "all"], doc="""Export scope: 'current' or 'all' charts.""")
+
+    export: bool = param.Event(doc="""Click to export.""")
+
+    def __init__(self, walker: 'GraphicWalker', sizing_mode="fixed", width=300, **params):
+        super().__init__(**params)
+        self._walker = walker
+
+        mode = RadioButtonGroup.from_param(
+            self.param.mode,
+            options={"Chart Spec": "spec", "SVG": "svg", },
+            value="spec",
+            button_style="outline",
+            button_type="primary",
+            sizing_mode="stretch_width",
+        )
+        scope = RadioButtonGroup.from_param(
+            self.param.scope,
+            options={"Current": "current", "All": "all"},
+            value="current",
+            button_style="outline",
+            button_type="primary",
+            sizing_mode="stretch_width",
+        )
+
+        export_button = Button.from_param(
+            self.param.export, icon="download", name="Export", on_click=self._export, description="Click to export",  sizing_mode="stretch_width",
+        )
+        self._layout = Column(
+            mode, scope, export_button, styles={"border": "1px dashed gray"}, sizing_mode=sizing_mode, width=300,
+        )
+
+    def __panel__(self):
+        return self._layout
+
+    @param.depends("export", watch=True)
+    async def _export(self, _=None):
+        try:
+            self.value = await self._walker.export(mode=self.mode, scope=self.scope)
+        except TimeoutError as ex:
+            self.value = {"TimeoutError": str(ex)}
+
 
 class GraphicWalker(ReactComponent):
     """
@@ -77,7 +144,9 @@ class GraphicWalker(ReactComponent):
         objects=["vega", "g2", "streamlit"],
         doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
     )
-    spec = param.Dict(doc="""Optional chart specification. Can be generated via `export` method.""")
+    # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
+    spec: str | dict | list = Spec(doc="""Optional chart specification as url, json, dict or list.
+    Can be generated via the `export` method.""")
 
     _importmap = {
         "imports": {
@@ -138,6 +207,7 @@ class GraphicWalker(ReactComponent):
                 params["config"] = {}
             if self.server_computation:
                 del params["object"]
+
         return super()._process_param_change(params)
 
     def _compute(self, payload):
@@ -217,3 +287,12 @@ class GraphicWalker(ReactComponent):
                     f'Exporting {scope} chart(s) timed out.'
                 )
         return self._exports.pop(event_id)
+
+    def create_export_button(self)->ExportButton:
+        """Returns a component to export the chart(s) as either spec or SVG.
+
+        >>> export = ExportButton(walker)
+
+        export.value will hold the exported value
+        """
+        return ExportButton(self)

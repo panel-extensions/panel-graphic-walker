@@ -81,6 +81,13 @@ def test_process_parameter_change_with_appearance(data):
     result = gwalker._process_param_change(params)
     assert result["appearance"] == appearance
 
+def test_process_parameter_change_resetting_server_computationt(data):
+    gwalker = GraphicWalker(object=data, server_computation=True)
+    gwalker.server_computation = False
+    params = {"server_computation": gwalker.server_computation}
+    result = gwalker._process_param_change(params)
+    assert result["object"] is gwalker.object
+
 
 def test_server_computation(data):
     gwalker = GraphicWalker(object=data, server_computation=True)

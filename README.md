@@ -242,6 +242,8 @@ Please note that if running on Pyodide the computations will always take place o
 great starting point if you want to provide custom `fields`.
 - `export(mode: 'code' | 'svg' = 'svg', scope: 'current' | 'all', timeout: int = 5000)`
   Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings.
+- `create_export_button`: Returns a UI component to export the chart(s) as either a spec or SVG.
+The `value` parameter will hold the exported spec.
 
 ## Vision
 

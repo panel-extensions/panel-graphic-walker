@@ -289,10 +289,10 @@ class GraphicWalker(ReactComponent):
         return self._exports.pop(event_id)
 
     def create_export_button(self)->ExportButton:
-        """Returns a component to export the chart(s) as either spec or SVG.
+        """Returns a UI component to export the chart(s) as either a spec or SVG.
 
         >>> export = ExportButton(walker)
 
-        export.value will hold the exported value
+        The `value` parameter will hold the exported chart(s) spec or SVG.
         """
         return ExportButton(self)

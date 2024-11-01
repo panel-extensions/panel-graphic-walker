@@ -25,6 +25,7 @@ VERSION = "0.4.72"
 import json
 
 
+# Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
 class Spec(param.Parameter):
     """
     A parameter that holds a chart specification.

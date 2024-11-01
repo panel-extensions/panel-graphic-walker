@@ -1,4 +1,4 @@
-import {GraphicWalker, IChart} from "graphic-walker"
+import {GraphicWalker} from "graphic-walker"
 import {useEffect, useState, useRef} from "react"
 
 function transform(data) {

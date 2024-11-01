@@ -135,8 +135,13 @@ spec = {
         ],
     },
 }
-apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", width=100, on_click=lambda event: walker.param.update(spec=spec))
-clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", width=100, on_click=lambda event: walker.param.update(spec=None))
+def _apply_spec(value):
+    if walker.spec==value:
+        walker.param.trigger("spec")
+    else:
+        walker.spec=value
+apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", width=100, on_click=lambda event: _apply_spec(spec))
+clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", width=100, on_click=lambda event: _apply_spec(None))
 
 @pn.depends(file_upload, watch=True)
 def _update_walker(value):

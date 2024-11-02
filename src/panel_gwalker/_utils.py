@@ -1,11 +1,15 @@
+import json
 import logging
+import os
 import sys
+from functools import lru_cache
+from pathlib import Path
 from typing import Dict
+from urllib.parse import urlparse
 
 import numpy as np
 import pandas as pd
 import panel as pn
-import urlparse
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -66,16 +70,26 @@ def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray])->list[dict]:
     else:
         return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
 
-def process_spec(spec):
-    if not isinstance(spec, str):
-        return spec
+SpecType = None | str | Path | dict | list[dict]
+SPECTYPES = (type(None), str, Path, dict, list)
 
-    parsed_url = urlparse(spec)
-    if parsed_url.scheme in ["http", "https"]:
-        return spec
+@lru_cache(maxsize=10)
+def _read_and_load_json(spec):
+    with open(spec, 'r') as f:
+        return json.load(f)
 
-    if os.path.isfile(spec) and spec.endswith(".json"):
-        with open(spec, 'r') as f:
-            return json.load(f)
+@lru_cache(maxsize=10)
+def _load_json(spec):
+    return json.loads(spec)
 
-    raise ValueError("The spec provided is neither a valid JSON string, URL, nor a file path to a JSON file.")
+def _is_url(spec):
+    return spec.startswith(("http", "https"))
+
+def process_spec(spec: SpecType):
+    if (isinstance(spec, str) and os.path.isfile(spec) and spec.endswith(".json")) or isinstance(spec, Path):
+        return _read_and_load_json(spec)
+
+    if isinstance(spec, str) and not _is_url(spec):
+        return _load_json(spec)
+
+    return spec

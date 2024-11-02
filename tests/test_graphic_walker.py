@@ -7,7 +7,7 @@ import pytest
 from param.parameterized import Event
 
 from panel_gwalker import GraphicWalker
-from panel_gwalker._utils import _raw_fields, process_spec
+from panel_gwalker._utils import _raw_fields
 
 
 @pytest.fixture
@@ -26,6 +26,7 @@ def _get_params(gwalker):
         "fields": gwalker.fields,
         "appearance": gwalker.appearance,
         "config": gwalker.config,
+        "spec": gwalker.spec,
         "server_computation": gwalker.server_computation,
     }
 
@@ -109,31 +110,45 @@ def test_calculated_fields(data):
      gwalker = GraphicWalker(object=data)
      assert gwalker.calculated_fields() == _raw_fields(data)
 
-def test_process_spec(tmp_path: Path):
+def test_process_spec(data, tmp_path: Path):
     """If the spec is a string, it can be either a file path, a url path, or a JSON string."""
+    def _process_spec(spec):
+        gwalker = GraphicWalker(object=data, spec=spec, _debug=True)
+        params = _get_params(gwalker)
+        return gwalker._process_param_change(params)["spec"]
 
-    # Test with a JSON string
-    json_string = '{"key": "value"}'
-    result = process_spec(json_string)
-    assert result == {"key": "value"}, f"Expected JSON object, got {result}"
+
+    # Test with None
+    assert _process_spec(None) is None
+
+    # Test with dict
+    dict_spec = {"key": "value"}
+    _process_spec(dict_spec) == dict_spec
+
+    # Test with list
+    list_spec = [{"key": "value"}]
+    assert _process_spec(list_spec) == list_spec
 
     # Test with a URL (assuming we are just checking format, not accessing the URL)
     url = "http://example.com/data.json"
-    result = process_spec(url)
-    assert result == url, f"Expected URL, got {result}"
+    assert _process_spec(url) == url
 
-    # Test with a file path by creating a temporary JSON file
+    # Test with a JSON string
+    json_string = '{"key": "value"}'
+    result = _process_spec(json_string)
+    assert result == {"key": "value"}, f"Expected JSON object, got {result}"
+
+    # Test with a file Path
     json_data = {"file_key": "file_value"}
     tmp_file = tmp_path/"data.json"
 
-    with open(tmp_file) as file:
+    with open(tmp_file, "w") as file:
         json.dump(json_data, file)
 
-    result = process_spec(tmp_file)
+    result = _process_spec(tmp_file)
     assert result == json_data, f"Expected JSON content from file, got {result}"
-
 
     # Test with a file path string
     tmp_file_str = str(tmp_file.absolute())
-    result = process_spec(tmp_file_str)
+    result = _process_spec(tmp_file_str)
     assert result == json_data, f"Expected JSON content from file, got {result}"

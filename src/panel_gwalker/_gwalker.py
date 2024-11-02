@@ -17,8 +17,9 @@ from panel.widgets import Button, RadioButtonGroup
 from param.parameterized import Event
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._utils import (_infer_prop, _raw_fields,
-                                  configure_debug_log_level, logger)
+from panel_gwalker._utils import (SPECTYPES, SpecType, _infer_prop,
+                                  _raw_fields, configure_debug_log_level,
+                                  logger, process_spec)
 
 VERSION = "0.4.72"
 
@@ -31,8 +32,9 @@ class Spec(param.Parameter):
     A parameter that holds a chart specification.
     """
     def _validate(self, val):
-        if not isinstance(val, (type(None), str, dict, list)):
-            msg = f"Spec must be a None type, str, dict or a list, got {type(val).__name__}"
+        if not isinstance(val, SPECTYPES):
+            spec_types = ",".join(SPECTYPES)
+            msg = f"Spec must be a {spec_types}. Got '{type(val).__name__}'."
             raise ValueError(msg)
         return val
 
@@ -146,7 +148,7 @@ class GraphicWalker(ReactComponent):
         doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
     )
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
-    spec: str | dict | list = Spec(doc="""Optional chart specification as url, json, dict or list.
+    spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
     Can be generated via the `export` method.""")
 
     _importmap = {
@@ -208,7 +210,8 @@ class GraphicWalker(ReactComponent):
                 params["config"] = {}
             if self.server_computation:
                 del params["object"]
-
+        if "spec" in params:
+            params["spec"]=process_spec(params["spec"])
         return super()._process_param_change(params)
 
     def _compute(self, payload):

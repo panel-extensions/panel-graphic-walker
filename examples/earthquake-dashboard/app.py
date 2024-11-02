@@ -24,12 +24,6 @@ def get_df() -> pd.DataFrame:
     return df
 
 
-@pn.cache
-def get_spec():
-    with open(SPEC, "r") as file:
-        return json.load(file)
-
-
 pn.extension(raw_css=[get_css()], theme="dark", sizing_mode="stretch_width")
 
 df = get_df()
@@ -49,15 +43,12 @@ Source: [Data]({DATASET}), Credits: [earthquake-dashboard-pygwalker](https://ear
     stylesheets=["""* {--design-primary-color: #B22222;}"""],
 )
 
-spec = get_spec()
-
-
 walker = GraphicWalker(
     df,
     server_computation=True,
     theme="g2",
     appearance="dark",
-    spec=spec,
+    spec=SPEC,
     margin=(0, 25, 25, 25),
 )
 

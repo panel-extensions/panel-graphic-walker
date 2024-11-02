@@ -1,10 +1,13 @@
+import json
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
 from param.parameterized import Event
 
 from panel_gwalker import GraphicWalker
-from panel_gwalker._utils import _raw_fields
+from panel_gwalker._utils import _raw_fields, process_spec
 
 
 @pytest.fixture
@@ -98,3 +101,32 @@ def test_server_computation(data):
 def test_calculated_fields(data):
      gwalker = GraphicWalker(object=data)
      assert gwalker.calculated_fields() == _raw_fields(data)
+
+def test_process_spec(tmp_path: Path):
+    """If the spec is a string, it can be either a file path, a url path, or a JSON string."""
+
+    # Test with a JSON string
+    json_string = '{"key": "value"}'
+    result = process_spec(json_string)
+    assert result == {"key": "value"}, f"Expected JSON object, got {result}"
+
+    # Test with a URL (assuming we are just checking format, not accessing the URL)
+    url = "http://example.com/data.json"
+    result = process_spec(url)
+    assert result == url, f"Expected URL, got {result}"
+
+    # Test with a file path by creating a temporary JSON file
+    json_data = {"file_key": "file_value"}
+    tmp_file = tmp_path/"data.json"
+
+    with open(tmp_file) as file:
+        json.dump(json_data, file)
+
+    result = process_spec(tmp_file)
+    assert result == json_data, f"Expected JSON content from file, got {result}"
+
+
+    # Test with a file path string
+    tmp_file_str = str(tmp_file.absolute())
+    result = process_spec(tmp_file_str)
+    assert result == json_data, f"Expected JSON content from file, got {result}"

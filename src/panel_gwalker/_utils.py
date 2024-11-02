@@ -5,6 +5,7 @@ from typing import Dict
 import numpy as np
 import pandas as pd
 import panel as pn
+import urlparse
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -64,3 +65,17 @@ def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray])->list[dict]:
         return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
     else:
         return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+
+def process_spec(spec):
+    if not isinstance(spec, str):
+        return spec
+
+    parsed_url = urlparse(spec)
+    if parsed_url.scheme in ["http", "https"]:
+        return spec
+
+    if os.path.isfile(spec) and spec.endswith(".json"):
+        with open(spec, 'r') as f:
+            return json.load(f)
+
+    raise ValueError("The spec provided is neither a valid JSON string, URL, nor a file path to a JSON file.")

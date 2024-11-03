@@ -52,7 +52,7 @@ function transformSpec(spec, fields) {
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
-  const [theme] = model.useState('theme')
+  const [themeKey] = model.useState('theme_key')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
@@ -151,7 +151,7 @@ export function render({ model }) {
     chart={transformedSpec}
     computation={computation}
     appearance={appearance}
-    vizThemeConfig={theme}
+    vizThemeConfig={themeKey}
     /* hack to force re-render if the transformedSpec is reset to null */
     key={transformedSpec ? "withSpec" : "nullSpec"}
     {...config}

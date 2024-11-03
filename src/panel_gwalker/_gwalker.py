@@ -200,10 +200,10 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark' or 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    theme: Literal["vega", "g2", "streamlit"]=param.Selector(
-        default="g2",
+    theme_key: Literal["g2", "streamlit", "vega"]=param.Selector(
+        default="vega",
         objects=["g2", "streamlit", "vega"],
-        doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
+        doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
     )
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
@@ -233,6 +233,8 @@ class GraphicWalker(ReactComponent):
         ],
         Coroutine[Any, Any, None]
     ] = param.Action(doc="""Saves the chart(s) as either a spec or SVG.""", constant=True, allow_refs=False)
+
+    tab: Literal["data", "vis"] = param.Selector(default="vis", objects=["data", "vis"], doc="""default tab to show. One of 'data' or 'vis' (default).""")
 
     _importmap = {
         "imports": {

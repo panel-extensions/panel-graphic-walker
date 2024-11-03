@@ -17,7 +17,8 @@ from panel.pane import Markdown
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 from panel.viewable import Viewer
-from panel.widgets import Button, ButtonIcon, RadioButtonGroup, TextInput
+from panel.widgets import (Button, ButtonIcon, IntInput, RadioButtonGroup,
+                           TextInput)
 from param.parameterized import Event
 from typing_extensions import Concatenate
 
@@ -66,7 +67,7 @@ def create_export_settings(walker: 'GraphicWalker', **params)->Column:
         button_type="primary",
         **params,
     )
-    timeout = walker.param.export_timeout
+    timeout = IntInput.from_param(walker.param.export_timeout, **params)
     return Column(mode, scope, timeout)
 
 def _extract_layout_params(params):
@@ -125,13 +126,13 @@ class SaveButton(Viewer):
         if include_settings:
             settings = create_export_settings(walker, **layout_params)
             if isinstance(walker.save_path, str):
-                settings.append(TextInput.from_param(walker.param.save_path))
+                settings.append(TextInput.from_param(walker.param.save_path, **layout_params))
         else:
             settings = []
 
 
-        layout_params.pop("width", None)
         # Should be changed to IconButton once https://github.com/holoviz/panel/issues/7458 is fixed.
+        # layout_params.pop("width", None)
         button = Button.from_param(
             self.param.save, icon=icon, name=name, description=description, **layout_params
         )

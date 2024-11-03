@@ -7,17 +7,17 @@ import panel as pn
 
 from panel_gwalker import GraphicWalker
 
-pn.extension()
+pn.extension(sizing_mode="stretch_width")
 
-DATA_URL = "https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv"
+ROOT = Path(__file__).parent
+# Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
+DATA_PATH = ROOT / "bike_sharing_dc.parquet"
+SPEC_PATH = ROOT / "spec.json"
+ACCENT = "#ff4a4a"
 
-
-@pn.cache()
+@pn.cache
 def get_data():
-    data = pd.read_csv(DATA_URL)
-    data.to_parquet("bike_sharing_dc.parquet")
-    return data
-
+        return pd.read_parquet(DATA_PATH)
 
 data = get_data()
 
@@ -29,20 +29,15 @@ DEFAULT_BUTTON_PARAMS = {
 }
 
 
-def create_save_button(walker: GraphicWalker, path: str | Path, **params):
-    path = Path(path)
 
-    async def save_spec(event):
-        spec = await walker.export(mode="spec", scope="all")
-        with path.open("w") as file:
-            json.dump(spec, file)
-        logger.debug("Saved spec to %s", path)
+walker = GraphicWalker(data, theme_key="streamlit", spec=SPEC_PATH, save_path=SPEC_PATH.as_posix())
+button = walker.create_save_button(include_settings=True, sizing_mode="fixed", width=300)
 
-    params = DEFAULT_BUTTON_PARAMS | params
-    return pn.widgets.Button(**params, on_click=save_spec)
+app = pn.Column(walker, button, )
 
-
-walker = GraphicWalker(data)
-button = create_save_button(walker, "spec2.json")
-
-app = pn.Column(button, walker).servable()
+pn.template.FastListTemplate(
+    title="Bike Sharing Visualization with panel-graphic-walker",
+    main_layout=None,
+    accent=ACCENT,
+    main=[app]
+).servable()

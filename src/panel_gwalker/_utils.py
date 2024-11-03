@@ -73,12 +73,14 @@ def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray])->list[dict]:
 SpecType = None | str | Path | dict | list[dict]
 SPECTYPES = (type(None), str, Path, dict, list)
 
-@lru_cache(maxsize=10)
+# We should figure out how to disable when developing with hot reload
+# https://github.com/holoviz/panel/issues/7459
+# @lru_cache(maxsize=10)
 def _read_and_load_json(spec):
     with open(spec, 'r') as f:
         return json.load(f)
 
-@lru_cache(maxsize=10)
+# @lru_cache(maxsize=10)
 def _load_json(spec):
     return json.loads(spec)
 

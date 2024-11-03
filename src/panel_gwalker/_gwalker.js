@@ -1,4 +1,4 @@
-import {GraphicWalker} from "graphic-walker"
+import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer} from "graphic-walker"
 import {useEffect, useState, useRef} from "react"
 
 function transform(data) {
@@ -58,12 +58,17 @@ export function render({ model }) {
   const [fields] = model.useState('fields')
   const [spec] = model.useState('spec')
   const [serverComputation] = model.useState('server_computation')
+  const [renderer] = model.useState('renderer')
+  const [pageSize] = model.useState('page_size')
 
   // Data State
   const [computation, setComputation] = useState(null);
   const [transformedData, setTransformedData] = useState([]);
   const [transformedSpec, setTransformedSpec] = useState([]);
   const events = useRef(new Map());
+  const [visualState, setVisualState]=useState(null)
+  const [visualConfig, setVisualConfig]=useState(null)
+  const [visualLayout, setVisualLayout]=useState(null)
 
   // Refs
   const graphicWalkerRef = useRef(null);
@@ -115,6 +120,21 @@ export function render({ model }) {
     setTransformedSpec(transformSpec(spec))
   }, [spec]);
 
+  useEffect(() => {
+    console.log(transformedSpec)
+    if (transformedSpec!=null && transformedSpec.length > 0) {
+      const firstSpec = transformedSpec[0];
+
+      setVisualState(firstSpec.encodings || null);
+      setVisualConfig(firstSpec.config || null);
+      setVisualLayout(firstSpec.layout || null);
+    } else {
+      setVisualState(null);
+      setVisualConfig(null);
+      setVisualLayout(null);
+    }
+  }, [transformedSpec])
+
   const wait_for = async (event_id) => {
     while (!events.current.has(event_id)) {
       await new Promise(resolve => setTimeout(resolve, 10));
@@ -142,6 +162,51 @@ export function render({ model }) {
       setComputation(null)
     }
   }, [serverComputation]);
+  // "GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"
+  if (renderer=='TableWalker') {
+    return <TableWalker
+      storeRef={storeRef}
+      ref={graphicWalkerRef}
+      data={transformedData}
+      fields={fields}
+      computation={computation}
+      appearance={appearance}
+      vizThemeConfig={themeKey}
+      pageSize={pageSize}
+      {...config}
+    />
+  }
+
+  if (renderer=='GraphicRenderer') {
+    return <GraphicRenderer
+      storeRef={storeRef}
+      ref={graphicWalkerRef}
+      data={transformedData}
+      fields={fields}
+      chart={transformedSpec}
+      computation={computation}
+      appearance={appearance}
+      vizThemeConfig={themeKey}
+      pageSize={pageSize}
+      /* hack to force re-render if the transformedSpec is reset to null */
+      key={transformedSpec ? "withSpec" : "nullSpec"}
+      {...config}
+    />
+  }
+
+  if (renderer=="PureRenderer") {
+    return <PureRenderer
+      ref={graphicWalkerRef}
+      rawData={transformedData}
+      visualState={visualState}
+      visualConfig={visualConfig}
+      visualLayout={visualLayout}
+      appearance={appearance}
+      vizThemeConfig={themeKey}
+      /* hack to force re-render if the transformedSpec is reset to null */
+      key={transformedSpec ? "withSpec" : "nullSpec"}
+    />
+  }
 
   return <GraphicWalker
     storeRef={storeRef}
@@ -155,5 +220,5 @@ export function render({ model }) {
     /* hack to force re-render if the transformedSpec is reset to null */
     key={transformedSpec ? "withSpec" : "nullSpec"}
     {...config}
-   />
+  />
 }

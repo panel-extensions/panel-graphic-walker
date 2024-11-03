@@ -226,11 +226,12 @@ Please note that if running on Pyodide the computations will always take place o
 - `fields` (list): Optional specification of fields (columns).
 - `spec` (str, dict, list): Optional chart specification as url, json, dict or list. Can be generated via the `export` method.
 - `server_computation` (bool): Optional. If True the computations will take place on the Panel server or in the Jupyter kernel instead of the client to scale to larger datasets. Default is False.
+- `renderer` (str): How to display the data. One of 'GraphicRenderer', 'GraphicWalker (default), 'PureRenderer' or 'TableWalker'.
 
 #### Style
 
 - `appearance` (str): Optional dark mode preference: 'light', 'dark' or 'media'. If not provided the appearance is derived from `pn.config.theme`.
-- `theme_key` (str): Optional chart theme: 'g2' (default), 'streamlit' or 'vega'.
+- `theme_key` (str): Optional chart theme: 'g2' (default), 'streamlit' or 'vega'. Try combining the `theme_key` 'streamlit' and the [`FastListTemplate`](https://panel.holoviz.org/reference/templates/FastListTemplate.html) `accent` color <div style="display:inline;background-color:#ff4a4a;color:white;padding:0 5px;border-radius:3px;">#ff4a4a</div>. Looks great.
 
 #### Export and Save
 

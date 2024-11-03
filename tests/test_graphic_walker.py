@@ -199,3 +199,7 @@ async def test_save_button(data, tmp_path: Path):
     button.param.trigger("save")
     await sleep(0.1)
     assert gwalker.save_path.exists()
+
+def test_page_size(data):
+    gwalker = GraphicWalker(object=data, export=_mock_export, page_size=50)
+    assert gwalker.page_size==50

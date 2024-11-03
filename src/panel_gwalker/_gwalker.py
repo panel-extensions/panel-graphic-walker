@@ -194,6 +194,12 @@ class GraphicWalker(ReactComponent):
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
+    renderer: Literal["GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"] = param.Selector(
+        default = "GraphicWalker", objects=["GraphicRenderer", "GraphicWalker", "PureRenderer", "TableWalker"],
+        doc="""How to display the data. One of 'GraphicRenderer', 'GraphicWalker (default),
+        'PureRenderer', 'TableWalker'. Please note the 'PureRenderer' does not work with
+        `server_computation=True`."""
+    )
 
     appearance: Literal["media", "dark", "light"] = param.Selector(
         default="light",
@@ -209,7 +215,7 @@ class GraphicWalker(ReactComponent):
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
     Can be generated via the `export` method.""")
-
+    page_size: int = param.Integer(20, bounds=(1, None), doc="""The number of rows per page in the table of the TableWalker.""")
     export_mode: Literal["spec", "svg"] = param.Selector(label="Mode", default="spec", objects=["spec", "svg"], doc="""Used as default mode for export and save methods.""")
     export_scope: Literal["all", "current"] = param.Selector(label="Scope", default="all", objects=["all", "current"], doc="""Used as default scope for export and save methods.""")
     export_timeout: int = param.Integer(label="Timeout", default=5000, doc="""Export timeout in milliseconds. Used as default for export and save methods.""")

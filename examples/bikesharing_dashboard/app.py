@@ -1,4 +1,5 @@
 # Credits: https://pygwalkerdemo-cxz7f7pt5oc.streamlit.app/
+# https://github.com/kanaries/pygwalker-in-streamlit/blob/main/pygwalker_demo.py
 import json
 from pathlib import Path
 

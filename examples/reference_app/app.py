@@ -1,4 +1,5 @@
 from io import StringIO
+from pathlib import Path
 
 import pandas as pd
 import panel as pn
@@ -7,10 +8,13 @@ from panel_gwalker import GraphicWalker
 
 pn.extension("filedropper", sizing_mode="stretch_width")
 
+ROOT = Path(__file__).parent
 PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
+SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
+SPEC_SIMPLE = ROOT / "spec_simple.json"
 
 def _label(value):
     return pn.pane.Markdown(value, margin=(-20, 5))
@@ -36,11 +40,17 @@ def get_example_download():
 
 button_style = dict(button_type="primary", button_style="outline")
 
-walker = GraphicWalker(get_data(), sizing_mode="stretch_both", server_computation=True)
+walker = GraphicWalker(get_data(), spec=SPEC_CAPACITY_STATE, sizing_mode="stretch_both", server_computation=True, save_path="examples/features_dashboard/spec.json")
+
+is_not_table_walker = walker.param.renderer.rx().rx.is_not("TableWalker")
+
 core_settings = pn.Column(
     walker.param.server_computation,
     walker.param.spec,
-    walker.param.config, name="Core"
+    walker.param.config,
+    walker.param.renderer,
+    pn.widgets.IntInput.from_param(walker.param.page_size, disabled=is_not_table_walker),
+    name="Core"
 
 )
 style_settings = pn.Column(
@@ -78,74 +88,16 @@ save_section = pn.Column(
 )
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
-spec = {
-    "encodings": {
-        "dimensions": [
-            {
-                "fid": "t_county",
-                "name": "t_county",
-                "basename": "t_county",
-                "semanticType": "nominal",
-                "analyticType": "dimension",
-            },
-            {
-                "fid": "t_manu",
-                "name": "t_manu",
-                "basename": "t_manu",
-                "semanticType": "nominal",
-                "analyticType": "dimension",
-            },
-        ],
-        "measures": [
-            {
-                "fid": "gw_count_fid",
-                "name": "Row count",
-                "analyticType": "measure",
-                "semanticType": "quantitative",
-                "aggName": "sum",
-                "computed": True,
-                "expression": {"op": "one", "params": [], "as": "gw_count_fid"},
-            }
-        ],
-        "rows": [
-            {
-                "fid": "gw_count_fid",
-                "name": "Row count",
-                "analyticType": "measure",
-                "semanticType": "quantitative",
-                "aggName": "sum",
-                "computed": True,
-                "expression": {"op": "one", "params": [], "as": "gw_count_fid"},
-            }
-        ],
-        "columns": [
-            {
-                "fid": "t_county",
-                "name": "t_county",
-                "basename": "t_county",
-                "semanticType": "nominal",
-                "analyticType": "dimension",
-                "sort": "descending",
-            }
-        ],
-        "color": [
-            {
-                "fid": "t_manu",
-                "name": "t_manu",
-                "basename": "t_manu",
-                "semanticType": "nominal",
-                "analyticType": "dimension",
-            }
-        ],
-    },
-}
+
 def _apply_spec(value):
     if walker.spec==value:
         walker.param.trigger("spec")
     else:
         walker.spec=value
-apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", on_click=lambda event: _apply_spec(spec))
-clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", on_click=lambda event: _apply_spec(None))
+
+simple_spec = pn.widgets.Button(name="Simple", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(SPEC_SIMPLE))
+initial_spec = pn.widgets.Button(name="Initial", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(SPEC_CAPACITY_STATE))
+no_spec = pn.widgets.Button(name="No Spec", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(None))
 
 @pn.depends(file_upload, watch=True)
 def _update_walker(value):
@@ -164,7 +116,7 @@ pn.template.FastListTemplate(
         file_upload,
         file_download,
         "## Spec Input",
-        pn.Row(apply_spec, clear_spec),
+        pn.Row(simple_spec, no_spec, initial_spec),
         "## Settings",
         pn.Accordion(
             core_settings,

@@ -230,7 +230,16 @@ Please note that if running on Pyodide the computations will always take place o
 #### Style
 
 - `appearance` (str): Optional dark mode preference: 'light', 'dark' or 'media'. If not provided the appearance is derived from `pn.config.theme`.
-- `theme` (str): Optional chart theme: 'vega' (default), 'g2' or 'streamlit'.
+- `theme` (str): Optional chart theme: 'g2' (default), 'streamlit' or 'vega'.
+
+#### Export and Save
+
+- `export_mode` ('spec' | 'svg'): Used as default by `export` and `save`. Default is 'spec'.
+- `export_scope` ('all' | 'current'): Used as default scope for `export` and `save`.
+- `export_timeout` (int): Exports timeout in milliseconds. Used as default for `export` and `save`.
+- `export` (action): Export the chart(s) as either a spec or SVG.
+- `save_path` (str | PathLike): Used as default path for save. Default is 'tmp_graphic_walker.json'.
+- `save` (action): Saves the chart(s) as either a spec or SVG.
 
 #### Other
 
@@ -238,12 +247,14 @@ Please note that if running on Pyodide the computations will always take place o
 
 ### Methods
 
-- `calculated_fields()`: Returns a list of `fields` calculated from the `object`. This is a
+- `calculated_fields`: Returns a list of `fields` calculated from the `object`. This is a
 great starting point if you want to provide custom `fields`.
-- `export(mode: 'code' | 'svg' = 'svg', scope: 'current' | 'all', timeout: int = 5000)`
-  Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings.
+- `export`: Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings. Uses the `export_mode`, `export_scope` or `export_timeout` values as defaults if `None` is provided as argument.
+- `save`: Saves chart(s) from the frontend exported either as Vega specifications or as SVG strings.Uses the `save_path`, `export_mode`, `export_scope` or `export_timeout` values as defaults if `None` is provided as argument.
+- `create_export_settings`: Returns a UI component to set the `export_scope`, `export_mode` and `export_timeout` parameters.
 - `create_export_button`: Returns a UI component to export the chart(s) as either a spec or SVG.
 The `value` parameter will hold the exported spec.
+- `create_save_button`: Returns a UI component to save the chart(s) as either a spec or SVG. Will save to `save_path` path.
 
 ## Vision
 

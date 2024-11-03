@@ -1,8 +1,10 @@
 import json
+from asyncio import sleep
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import param
 import pytest
 from param.parameterized import Event
 
@@ -152,3 +154,46 @@ def test_process_spec(data, tmp_path: Path):
     tmp_file_str = str(tmp_file.absolute())
     result = _process_spec(tmp_file_str)
     assert result == json_data, f"Expected JSON content from file, got {result}"
+
+async def _mock_export(*args, **kwargs):
+    return {"args": args, "kwargs": kwargs}
+
+def test_can_create_export_settings(data):
+    gwalker = GraphicWalker(object=data, export=_mock_export)
+    assert gwalker.create_export_settings(width=400)
+
+@pytest.mark.asyncio
+async def test_export(data):
+    gwalker = GraphicWalker(object=data, export=_mock_export)
+    assert isinstance(gwalker.param.export, param.Action)
+    assert await gwalker.export()
+
+@pytest.mark.asyncio
+async def test_export_button(data):
+    gwalker = GraphicWalker(object=data, export=_mock_export)
+    button = gwalker.create_export_button(width=400)
+    assert not button.value
+    button.param.trigger("export")
+    await sleep(0.01)
+    assert button.value
+
+@pytest.mark.asyncio
+async def test_can_save(data, tmp_path, export=_mock_export):
+    gwalker = GraphicWalker(object=data)
+    assert isinstance(gwalker.param.save, param.Action)
+
+    gwalker._export=_mock_export # type: ignore[method-assign]
+    path = tmp_path/"spec.json"
+    await gwalker.save(path=path)
+    assert path.exists()
+
+@pytest.mark.asyncio
+async def test_save_button(data, tmp_path: Path):
+    gwalker = GraphicWalker(object=data, export=_mock_export)
+    gwalker._export=_mock_export # type: ignore[method-assign]
+    gwalker.save_path = tmp_path/"spec.json"
+
+    button = gwalker.create_save_button(width=400)
+    button.param.trigger("save")
+    await sleep(0.1)
+    assert gwalker.save_path.exists()

@@ -72,6 +72,10 @@ export_section = pn.Column(
     exported,
     name="Export"
 )
+save_section = pn.Column(
+    walker.create_save_button(),
+    name="Save"
+)
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 spec = {
@@ -140,8 +144,8 @@ def _apply_spec(value):
         walker.param.trigger("spec")
     else:
         walker.spec=value
-apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", width=100, on_click=lambda event: _apply_spec(spec))
-clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", width=100, on_click=lambda event: _apply_spec(None))
+apply_spec = pn.widgets.Button(name="Apply Spec", button_type="primary", on_click=lambda event: _apply_spec(spec))
+clear_spec = pn.widgets.Button(name="Clear Spec", button_type="primary", on_click=lambda event: _apply_spec(None))
 
 @pn.depends(file_upload, watch=True)
 def _update_walker(value):
@@ -156,13 +160,17 @@ pn.template.FastListTemplate(
     logo=GW_LOGO,
     title="Panel Graphic Walker",
     sidebar=[
+        "## Data Input",
         file_upload,
         file_download,
+        "## Spec Input",
         pn.Row(apply_spec, clear_spec),
+        "## Settings",
         pn.Accordion(
             core_settings,
             style_settings,
             export_section,
+            save_section,
             width=320,
             active=[0]
         ),

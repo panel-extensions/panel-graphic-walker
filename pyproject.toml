@@ -28,6 +28,7 @@ tests = [
   "gw-dsl-parser",
   "pygwalker",
   "pytest",
+  "pytest-asyncio"
 ]
 examples = [
   "duckdb",

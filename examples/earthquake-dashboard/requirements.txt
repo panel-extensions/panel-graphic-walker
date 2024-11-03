@@ -1,2 +1,0 @@
-panel-graphic-walker
-pandas

@@ -1,6 +1,10 @@
 import asyncio
+import json
 import uuid
-from typing import Any, Dict, List, Literal
+from os import PathLike
+from pathlib import Path
+from typing import (Any, Callable, Concatenate, Coroutine, Dict, List, Literal,
+                    Optional, ParamSpec)
 
 import numpy as np
 import pandas as pd
@@ -13,8 +17,9 @@ from panel.pane import Markdown
 from panel.pane.base import PaneBase
 from panel.reactive import SyncableData
 from panel.viewable import Viewer
-from panel.widgets import Button, RadioButtonGroup
+from panel.widgets import Button, ButtonIcon, RadioButtonGroup, TextInput
 from param.parameterized import Event
+from typing_extensions import Concatenate
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 from panel_gwalker._utils import (SPECTYPES, SpecType, _infer_prop,
@@ -23,8 +28,7 @@ from panel_gwalker._utils import (SPECTYPES, SpecType, _infer_prop,
 
 VERSION = "0.4.72"
 
-import json
-
+P = ParamSpec('P')
 
 # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
 class Spec(param.Parameter):
@@ -41,51 +45,105 @@ class Spec(param.Parameter):
 def _label(value):
     return Markdown(value, margin=(-10,10))
 
-class ExportButton(Viewer):
-    value: list | dict = param.ClassSelector(class_=(list, dict), doc="""The exported Chart(s) spec or SVG.""")
+def create_export_settings(walker: 'GraphicWalker', **params)->Column:
+    """Returns a UI component to set the `export_scope`, `export_mode` and `export_timeout` parameters.
 
-    mode: Literal["spec", "svg"] = param.Selector(default="spec", objects=["spec", "svg"], doc="""Export mode: 'spec' or 'svg'.""")
-    scope: Literal["current", "all"] = param.Selector(default="current", objects=["current", "all"], doc="""Export scope: 'current' or 'all' charts.""")
+    Args:
+        walker (GraphicWalker): The GraphicWalker to create the UI Component for.
+
+    Returns:
+        Column: The component.
+    """
+    mode = RadioButtonGroup.from_param(
+        walker.param.export_mode,
+        button_style="outline",
+        button_type="primary",
+        **params,
+    )
+    scope = RadioButtonGroup.from_param(
+        walker.param.export_scope,
+        button_style="outline",
+        button_type="primary",
+        **params,
+    )
+    timeout = walker.param.export_timeout
+    return Column(mode, scope, timeout)
+
+def _extract_layout_params(params):
+    layout_params = {}
+    for key in ["sizing_mode", "width", "max_width"]:
+        if key in params:
+            layout_params[key]=params.pop(key)
+    return layout_params
+
+class ExportButton(Viewer):
+    """A UI component to export the Chart(s) spec of SVG(s)"""
+    value: list | dict = param.ClassSelector(class_=(list, dict), doc="""The exported Chart(s) spec or SVG.""")
 
     export: bool = param.Event(doc="""Click to export.""")
 
-    def __init__(self, walker: 'GraphicWalker', sizing_mode="fixed", width=300, **params):
+    def __init__(self, walker: 'GraphicWalker', icon: str="download", name: str="Export", description: str="Click to export", include_settings: bool= True, **params):
+        layout_params = _extract_layout_params(params)
         super().__init__(**params)
         self._walker = walker
 
-        mode = RadioButtonGroup.from_param(
-            self.param.mode,
-            options={"Chart Spec": "spec", "SVG": "svg", },
-            value="spec",
-            button_style="outline",
-            button_type="primary",
-            sizing_mode="stretch_width",
-        )
-        scope = RadioButtonGroup.from_param(
-            self.param.scope,
-            options={"Current": "current", "All": "all"},
-            value="current",
-            button_style="outline",
-            button_type="primary",
-            sizing_mode="stretch_width",
-        )
+        if include_settings:
+            settings = create_export_settings(walker, **layout_params)
+        else:
+            settings = []
 
-        export_button = Button.from_param(
-            self.param.export, icon="download", name="Export", on_click=self._export, description="Click to export",  sizing_mode="stretch_width",
+        # Should be changed to IconButton once https://github.com/holoviz/panel/issues/7458 is fixed.
+        button = Button.from_param(
+            self.param.export, icon=icon, name=name, description=description, **layout_params
         )
         self._layout = Column(
-            mode, scope, export_button, styles={"border": "1px dashed gray"}, sizing_mode=sizing_mode, width=300,
+            *settings, button,
         )
 
     def __panel__(self):
         return self._layout
 
     @param.depends("export", watch=True)
-    async def _export(self, _=None):
+    async def _export(self):
         try:
-            self.value = await self._walker.export(mode=self.mode, scope=self.scope)
+            self.value = await self._walker.export()
         except TimeoutError as ex:
             self.value = {"TimeoutError": str(ex)}
+
+class SaveButton(Viewer):
+    """A UI component to save the Chart(s) spec of SVG(s).
+
+    Will save to `save_path` path of the `walker`."""
+    save: bool = param.Event(doc="""Click to save.""")
+
+    def __init__(self, walker: 'GraphicWalker', icon: str="download", name: str="Save", description: str="Click to save", include_settings: bool= True, **params):
+        layout_params = _extract_layout_params(params)
+        super().__init__(**params)
+        self._walker = walker
+
+
+        if include_settings:
+            settings = create_export_settings(walker, **layout_params)
+            if isinstance(walker.save_path, str):
+                settings.append(TextInput.from_param(walker.param.save_path))
+        else:
+            settings = []
+
+
+        layout_params.pop("width", None)
+        # Should be changed to IconButton once https://github.com/holoviz/panel/issues/7458 is fixed.
+        button = Button.from_param(
+            self.param.save, icon=icon, name=name, description=description, **layout_params
+        )
+        self._layout = Column(*settings, button,)
+
+    def __panel__(self):
+        return self._layout
+
+    @param.depends("save", watch=True)
+    async def _save(self):
+        await self._walker.save()
+
 
 
 class GraphicWalker(ReactComponent):
@@ -143,19 +201,46 @@ class GraphicWalker(ReactComponent):
         If not provided the appearance is derived from pn.config.theme.""",
     )
     theme: Literal["vega", "g2", "streamlit"]=param.Selector(
-        default="vega",
-        objects=["vega", "g2", "streamlit"],
+        default="g2",
+        objects=["g2", "streamlit", "vega"],
         doc="""The theme of the chart(s). One of 'vega' (default), 'g2' or 'streamlit'.""",
     )
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
     Can be generated via the `export` method.""")
 
+    export_mode: Literal["spec", "svg"] = param.Selector(label="Mode", default="spec", objects=["spec", "svg"], doc="""Used as default mode for export and save methods.""")
+    export_scope: Literal["all", "current"] = param.Selector(label="Scope", default="all", objects=["all", "current"], doc="""Used as default scope for export and save methods.""")
+    export_timeout: int = param.Integer(label="Timeout", default=5000, doc="""Export timeout in milliseconds. Used as default for export and save methods.""")
+    export: Callable[
+        Concatenate[
+            Literal['spec', 'svg', None],
+            Literal['current', 'all', None],
+            Optional[int],
+            P,
+        ],
+        Coroutine[Any, Any, str]
+    ] = param.Action(doc="""Exports the chart(s) as either a spec or SVG.""", constant=True, allow_refs=False)
+
+    save_path: str | PathLike = param.ClassSelector(label="Path", default="tmp_graphic_walker.json", class_=(str, PathLike), allow_None=False, doc="""Used as default path for the save method.""")
+    save: Callable[
+        Concatenate[
+            str | Path | None,
+            Literal['spec', 'svg', None],
+            Literal['current', 'all', None],
+            Optional[int],
+            P,
+        ],
+        Coroutine[Any, Any, None]
+    ] = param.Action(doc="""Saves the chart(s) as either a spec or SVG.""", constant=True, allow_refs=False)
+
     _importmap = {
         "imports": {
             "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"
         }
     }
+
+    _rename = {"export": None, "export_mode": None, "export_scope": None, "export_timeout": None, "save": None, "save_path": None}
 
     _esm = "_gwalker.js"
 
@@ -165,14 +250,17 @@ class GraphicWalker(ReactComponent):
     }
 
     def __init__(self, object=None, **params):
+        self.param.export.default = params.pop("export", self._export)
+        self.param.save.default = params.pop("save", self._save)
+
         if not "appearance" in params:
             params["appearance"] = self._get_appearance(config.theme)
-        if "_debug" in params:
-            _debug=params.pop("_debug")
-            if _debug:
-                configure_debug_log_level()
-        if state._is_pyodide and "server_computation" in params:
-            params.pop("server_computation")
+
+        if params.pop("_debug", False):
+            configure_debug_log_level()
+
+        if state._is_pyodide:
+            params.pop("server_computation", None)
 
         super().__init__(object=object, **params)
         self._exports = {}
@@ -250,11 +338,11 @@ class GraphicWalker(ReactComponent):
                 'result': self._compute(msg['payload'])
             })
 
-    async def export(
+    async def _export(
         self,
-        mode: Literal['spec', 'svg'] = 'spec',
-        scope: Literal['current', 'all'] = 'current',
-        timeout: int = 5000
+        mode: Literal['spec', 'svg', None] = None,
+        scope: Literal['current', 'all', None] = None,
+        timeout: int | None = None
     ):
         """
         Requests chart(s) on the frontend to be exported either
@@ -262,17 +350,21 @@ class GraphicWalker(ReactComponent):
 
         Arguments
         ---------
-        mode: 'code' | 'svg'
-           Whether to export the chart specification or SVG.
-        scope: 'current' | 'all'
-           Whether to export only the current chart or all charts.
-        timeout: int
-           How long to wait for the response before timing out.
+        mode: 'code' | 'svg' | None (default)
+           Whether to export the chart specification(s) or the SVG(s). If None the mode is set to the 'export_code' parameter value.
+        scope: 'current' | 'all' | None (default)
+           Whether to export only the current chart or all charts. If None the scope is set to the 'export_scope' parameter value.
+        timeout: int | None (default)
+           How long to wait for the response before timing out. If None the timeout is set to the 'export_timeout' parameter value.
 
         Returns
         -------
         Dictionary containing the exported chart(s).
         """
+        mode = mode or self.export_mode
+        scope = scope or self.export_scope
+        timeout = timeout or self.export_timeout
+
         event_id = uuid.uuid4().hex
         self._send_msg({
             'action': 'export',
@@ -292,11 +384,59 @@ class GraphicWalker(ReactComponent):
                 )
         return self._exports.pop(event_id)
 
-    def create_export_button(self)->ExportButton:
+    def create_export_settings(self, **params)->Column:
+        """Returns a UI component to configure the export settings.
+
+        >>> button = walker.create_export_settings(width=400)
+        """
+        return create_export_settings(self, **params)
+
+    def create_export_button(self, **params)->ExportButton:
         """Returns a UI component to export the chart(s) as either a spec or SVG.
 
-        >>> export = ExportButton(walker)
+        >>> button = walker.create_export_button(width=400)
 
-        The `value` parameter will hold the exported chart(s) spec or SVG.
+        The `value` parameter of the button will hold the exported chart(s) spec or SVG.
         """
-        return ExportButton(self)
+        return ExportButton(self, **params)
+
+    async def _save(
+        self,
+        path: str | PathLike | None=None,
+        mode: Literal['spec', 'svg', None] = None,
+        scope: Literal['current', 'all', None] = None,
+        timeout: int | None = None
+    )->None:
+        """
+        Saves chart(s) from the frontend either
+        as Vega specs or rendered to SVG.
+
+        Arguments
+        ---------
+        path: str |
+        mode: 'code' | 'svg' | None
+           Whether to export and save the chart specification(s) or SVG. If None the mode is set
+           to the 'export_code' parameter value.
+        scope: 'current' | 'all'
+           Whether to export and save only the current chart or all charts. If None the scope is
+           set to the 'export_scope' parameter value.
+        timeout: int
+           How long to wait for the response before timing out. If None the timeout is
+           set to the 'export_timeout' parameter value.
+        """
+        if not path:
+            path=self.save_path
+        spec = await self._export(mode=mode, scope=scope, timeout=timeout)
+        path = Path(path)
+        with path.open("w") as file:
+            json.dump(spec, file)
+        logger.debug("Saved spec to %s", path)
+
+    def create_save_button(self, **params)->SaveButton:
+        """Returns a UI component to save the chart(s) as either a spec or SVG.
+
+        >>> walker.create_save_button(width=400)
+
+        The spec or SVG will be saved to the path give by `save_path`.
+        """
+        return SaveButton(self, **params)

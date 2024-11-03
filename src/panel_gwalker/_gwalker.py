@@ -208,7 +208,7 @@ class GraphicWalker(ReactComponent):
         If not provided the appearance is derived from pn.config.theme.""",
     )
     theme_key: Literal["g2", "streamlit", "vega"]=param.Selector(
-        default="vega",
+        default="g2",
         objects=["g2", "streamlit", "vega"],
         doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
     )

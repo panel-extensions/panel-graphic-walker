@@ -110,7 +110,7 @@ def _update_walker(value):
 
 pn.template.FastListTemplate(
     logo=GW_LOGO,
-    title="Panel Graphic Walker",
+    title="Panel Graphic Walker Reference App",
     sidebar=[
         "## Data Input",
         file_upload,

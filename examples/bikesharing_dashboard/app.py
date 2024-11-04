@@ -28,13 +28,13 @@ main = pn.Tabs(
     renderer.explorer(name="explorer (GraphicWalker)"),
     renderer.profiler(name="profiler (TableWalker)"),
     renderer.viewer(name="viewer (GraphicRenderer)"),
-    pn.Column(
-        "### Registered per weekday",
-        renderer.chart(0, object=data.sample(10000)),
-        "### Registered per day",
-        renderer.chart(1, object=data.sample(10000)),
-        name="chart (PureRenderer)",
-    ), active=2
+    # pn.Column(
+    #     "### Registered per weekday",
+    #     renderer.chart(0, object=data.sample(10000)),
+    #     "### Registered per day",
+    #     renderer.chart(1, object=data.sample(10000)),
+    #     name="chart (PureRenderer)",
+    # ), active=2
 )
 
 button = renderer.create_save_button(include_settings=True, sizing_mode="fixed", width=300)

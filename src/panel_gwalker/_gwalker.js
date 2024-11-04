@@ -59,6 +59,7 @@ export function render({ model }) {
   const [spec] = model.useState('spec')
   const [serverComputation] = model.useState('server_computation')
   const [renderer] = model.useState('renderer')
+  const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
 
   // Data State
@@ -121,19 +122,18 @@ export function render({ model }) {
   }, [spec]);
 
   useEffect(() => {
-    console.log(transformedSpec)
-    if (transformedSpec!=null && transformedSpec.length > 0) {
-      const firstSpec = transformedSpec[0];
+    if (transformedSpec!=null && transformedSpec.length >= index + 1) {
+      const indexSpec = transformedSpec[index];
 
-      setVisualState(firstSpec.encodings || null);
-      setVisualConfig(firstSpec.config || null);
-      setVisualLayout(firstSpec.layout || null);
+      setVisualState(indexSpec.encodings || null);
+      setVisualConfig(indexSpec.config || null);
+      setVisualLayout(indexSpec.layout || null);
     } else {
       setVisualState(null);
       setVisualConfig(null);
       setVisualLayout(null);
     }
-  }, [transformedSpec])
+  }, [transformedSpec, index])
 
   const wait_for = async (event_id) => {
     while (!events.current.has(event_id)) {

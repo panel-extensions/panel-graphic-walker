@@ -227,6 +227,8 @@ Please note that if running on Pyodide the computations will always take place o
 - `spec` (str, dict, list): Optional chart specification as url, json, dict or list. Can be generated via the `export` method.
 - `server_computation` (bool): Optional. If True the computations will take place on the Panel server or in the Jupyter kernel instead of the client to scale to larger datasets. Default is False.
 - `renderer` (str): How to display the data. One of 'GraphicRenderer', 'GraphicWalker (default), 'PureRenderer' or 'TableWalker'.
+- `page_size` (int): The number of rows per page in the table of the `TableWalker`. Has no effect on other renderers.
+- `index` (int): The index of the chart to display in the `PureRenderer`. Default i 0.
 
 #### Style
 
@@ -248,14 +250,26 @@ Please note that if running on Pyodide the computations will always take place o
 
 ### Methods
 
-- `calculated_fields`: Returns a list of `fields` calculated from the `object`. This is a
-great starting point if you want to provide custom `fields`.
+#### Clone
+
+- `clone`: Clones the `GraphicWalker`. Takes additional keyword arguments. Example: `walker.clone(renderer='PureRenderer', index=1)`.
+- `chart`: Clones the `GraphicWalker` and sets `renderer=PureRenderer`. Example: `walker.chart(0)`.
+- `explorer`: Clones the `GraphicWalker` and sets `renderer=GraphicWalker`.Example: `walker.explorer()`.
+- `viewer`: Clones the `GraphicWalker` and sets `renderer=TableWalker`. Example: `walker.viewer()`.
+
+#### Export and Save Methods
+
 - `export`: Returns chart(s) from the frontend exported either as Vega specifications or as SVG strings. Uses the `export_mode`, `export_scope` or `export_timeout` values as defaults if `None` is provided as argument.
 - `save`: Saves chart(s) from the frontend exported either as Vega specifications or as SVG strings.Uses the `save_path`, `export_mode`, `export_scope` or `export_timeout` values as defaults if `None` is provided as argument.
 - `create_export_settings`: Returns a UI component to set the `export_scope`, `export_mode` and `export_timeout` parameters.
 - `create_export_button`: Returns a UI component to export the chart(s) as either a spec or SVG.
 The `value` parameter will hold the exported spec.
 - `create_save_button`: Returns a UI component to save the chart(s) as either a spec or SVG. Will save to `save_path` path.
+
+#### Other Methods
+
+- `calculated_fields`: Returns a list of `fields` calculated from the `object`. This is a
+great starting point if you want to provide custom `fields`.
 
 ## Vision
 

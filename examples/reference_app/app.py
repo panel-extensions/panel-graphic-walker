@@ -43,6 +43,7 @@ button_style = dict(button_type="primary", button_style="outline")
 walker = GraphicWalker(get_data(), spec=SPEC_CAPACITY_STATE, sizing_mode="stretch_both", server_computation=True, save_path="examples/features_dashboard/spec.json")
 
 is_not_table_walker = walker.param.renderer.rx().rx.is_not("TableWalker")
+is_not_pure_renderer = walker.param.renderer.rx().rx.is_not("PureRenderer")
 
 core_settings = pn.Column(
     walker.param.server_computation,
@@ -50,6 +51,7 @@ core_settings = pn.Column(
     walker.param.config,
     walker.param.renderer,
     pn.widgets.IntInput.from_param(walker.param.page_size, disabled=is_not_table_walker),
+    pn.widgets.IntInput.from_param(walker.param.index, disabled=is_not_pure_renderer),
     name="Core"
 
 )

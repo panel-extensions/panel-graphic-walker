@@ -22,23 +22,29 @@ def get_data():
 
 data = get_data()
 
-DEFAULT_BUTTON_PARAMS = {
-    "button_type": "primary",
-    "button_style": "outline",
-    "icon": "download",
-    "name": "",
-}
+renderer = GraphicWalker(data, theme_key="streamlit", spec=SPEC_PATH, save_path=SPEC_PATH.as_posix())
 
+main = pn.Tabs(
+    renderer.explorer(name="explorer (GraphicWalker)"),
+    renderer.profiler(name="profiler (TableWalker)"),
+    renderer.viewer(name="viewer (GraphicRenderer)"),
+    pn.Column(
+        "### Registered per weekday",
+        renderer.chart(0, object=data.sample(10000)),
+        "### Registered per day",
+        renderer.chart(1, object=data.sample(10000)),
+        name="chart (PureRenderer)",
+    ), active=2
+)
 
+button = renderer.create_save_button(include_settings=True, sizing_mode="fixed", width=300)
 
-walker = GraphicWalker(data, theme_key="streamlit", spec=SPEC_PATH, save_path=SPEC_PATH.as_posix())
-button = walker.create_save_button(include_settings=True, sizing_mode="fixed", width=300)
-
-app = pn.Column(walker, button, )
+app = pn.Column(renderer, button, )
 
 pn.template.FastListTemplate(
     title="Bike Sharing Visualization with panel-graphic-walker",
     main_layout=None,
     accent=ACCENT,
-    main=[app]
+    sidebar=[button],
+    main=[main]
 ).servable()

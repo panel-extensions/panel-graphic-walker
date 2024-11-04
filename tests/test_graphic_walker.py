@@ -39,8 +39,7 @@ def test_constructor(data, default_appearance):
     assert not gwalker.fields
     assert not gwalker.config
     assert gwalker.appearance == default_appearance
-    assert gwalker.theme_key == "vega"
-    assert gwalker.tab == "vis"
+    assert gwalker.theme_key == "g2"
 
 
 def test_process_parameter_change(data, default_appearance):
@@ -203,3 +202,42 @@ async def test_save_button(data, tmp_path: Path):
 def test_page_size(data):
     gwalker = GraphicWalker(object=data, export=_mock_export, page_size=50)
     assert gwalker.page_size==50
+
+def test_clone(data):
+    gwalker = GraphicWalker(object=data)
+    clone = gwalker.clone(renderer="PureRenderer", index=1, )
+    assert clone.object is data
+    assert clone.renderer=="PureRenderer"
+    assert clone.index==1
+
+def test_clone_to_chart(data):
+    gwalker = GraphicWalker(object=data, server_computation=True)
+    chart = gwalker.chart(1, width=400)
+    assert chart.object is data
+    assert chart.renderer=="PureRenderer"
+    assert chart.server_computation==False
+    assert chart.index==1
+    assert chart.width==400
+
+def test_clone_to_explorer(data):
+    gwalker = GraphicWalker(object=data, renderer="TableWalker", page_size=50)
+    explorer = gwalker.explorer(width=400)
+    assert explorer.object is data
+    assert explorer.renderer=="GraphicWalker"
+    assert explorer.page_size==50
+    assert explorer.width==400
+
+def test_clone_to_profiler(data):
+    gwalker = GraphicWalker(object=data)
+    viewer = gwalker.profiler(page_size=50, width=400)
+    assert viewer.object is data
+    assert viewer.renderer=="TableWalker"
+    assert viewer.page_size==50
+    assert viewer.width==400
+
+def test_clone_to_viewer(data):
+    gwalker = GraphicWalker(object=data)
+    viewer = gwalker.viewer(width=400)
+    assert viewer.object is data
+    assert viewer.renderer=="GraphicRenderer"
+    assert viewer.width==400

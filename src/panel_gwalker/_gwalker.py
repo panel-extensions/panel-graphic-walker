@@ -183,6 +183,9 @@ class GraphicWalker(ReactComponent):
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
     fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
+    # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
+    spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
+    Can be generated via the `export` method.""")
     server_computation: bool = param.Boolean(
         default=False,
         doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
@@ -200,6 +203,10 @@ class GraphicWalker(ReactComponent):
         'PureRenderer', 'TableWalker'. Please note the 'PureRenderer' does not work with
         `server_computation=True`."""
     )
+    index: int = param.Integer(0, bounds=(0, None), doc="""The index of the chart to display in the PureRenderer.
+    Has no effect on other renderers.""")
+    page_size: int = param.Integer(20, bounds=(1, None), doc="""The number of rows per page in the table of the TableWalker.
+    Has no effect on other renderers.""")
 
     appearance: Literal["media", "dark", "light"] = param.Selector(
         default="light",
@@ -212,10 +219,7 @@ class GraphicWalker(ReactComponent):
         objects=["g2", "streamlit", "vega"],
         doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
     )
-    # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
-    spec: SpecType = Spec(doc="""Optional chart specification as url, json, dict or list.
-    Can be generated via the `export` method.""")
-    page_size: int = param.Integer(20, bounds=(1, None), doc="""The number of rows per page in the table of the TableWalker.""")
+
     export_mode: Literal["spec", "svg"] = param.Selector(label="Mode", default="spec", objects=["spec", "svg"], doc="""Used as default mode for export and save methods.""")
     export_scope: Literal["all", "current"] = param.Selector(label="Scope", default="all", objects=["all", "current"], doc="""Used as default scope for export and save methods.""")
     export_timeout: int = param.Integer(label="Timeout", default=5000, doc="""Export timeout in milliseconds. Used as default for export and save methods.""")
@@ -240,8 +244,6 @@ class GraphicWalker(ReactComponent):
         ],
         Coroutine[Any, Any, None]
     ] = param.Action(doc="""Saves the chart(s) as either a spec or SVG.""", constant=True, allow_refs=False)
-
-    tab: Literal["data", "vis"] = param.Selector(default="vis", objects=["data", "vis"], doc="""default tab to show. One of 'data' or 'vis' (default).""")
 
     _importmap = {
         "imports": {
@@ -449,3 +451,38 @@ class GraphicWalker(ReactComponent):
         The spec or SVG will be saved to the path give by `save_path`.
         """
         return SaveButton(self, **params)
+
+    def chart(self, index: int|None=None, **params)->'GraphicWalker':
+        """Returns a clone with `renderer=PureRenderer` and `server_computation=False`.
+
+        >>> walker.chart(1, width=400)
+        """
+        if not index is None:
+            params["index"]=index
+        params["renderer"]="PureRenderer"
+        params["server_computation"]=False
+        return self.clone(**params)
+
+    def explorer(self, **params)->'GraphicWalker':
+        """Returns a clone with `renderer=GraphicWalker`.
+
+        >>> walker.explorer(width=400)
+        """
+        params["renderer"]="GraphicWalker"
+        return self.clone(**params)
+
+    def profiler(self, **params)->'GraphicWalker':
+        """Returns a clone with `renderer=TableWalker`.
+
+        >>> walker.profiler(page_size=50, width=400)
+        """
+        params["renderer"]="TableWalker"
+        return self.clone(**params)
+
+    def viewer(self, **params)->'GraphicWalker':
+        """Returns a clone with `renderer=GraphicRenderer`.
+
+        >>> walker.viewer(width=400)
+        """
+        params["renderer"]="GraphicRenderer"
+        return self.clone(**params)

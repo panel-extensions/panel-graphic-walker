@@ -16,11 +16,14 @@ GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-vi
 SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
 SPEC_SIMPLE = ROOT / "spec_simple.json"
 
+
 def _label(value):
     return pn.pane.Markdown(value, margin=(-20, 5))
 
+
 def _section_header(value):
     return pn.pane.Markdown(value, margin=(-5, 5))
+
 
 @pn.cache
 def get_data():
@@ -38,29 +41,40 @@ def get_example_download():
     sio.seek(0)
     return sio
 
+
 button_style = dict(button_type="primary", button_style="outline")
 
-walker = GraphicWalker(get_data(), spec=SPEC_CAPACITY_STATE, sizing_mode="stretch_both", server_computation=True, save_path="examples/features_dashboard/spec.json")
-
-is_not_table_walker = walker.param.renderer.rx().rx.is_not("TableWalker")
-is_not_pure_renderer = walker.param.renderer.rx().rx.is_not("PureRenderer")
+walker = GraphicWalker(
+    get_data(),
+    spec=SPEC_CAPACITY_STATE,
+    sizing_mode="stretch_both",
+    server_computation=True,
+    save_path="examples/features_dashboard/spec.json",
+)
 
 core_settings = pn.Column(
     walker.param.server_computation,
     walker.param.spec,
     walker.param.config,
     walker.param.renderer,
-    pn.widgets.IntInput.from_param(walker.param.page_size, disabled=is_not_table_walker),
-    pn.widgets.IntInput.from_param(walker.param.index, disabled=is_not_pure_renderer),
-    name="Core"
-
+    pn.widgets.IntInput.from_param(
+        walker.param.page_size, visible=walker.page_size_enabled
+    ),
+    pn.widgets.IntInput.from_param(walker.param.index, visible=walker.index_enabled),
+    pn.widgets.RadioButtonGroup.from_param(
+        walker.param.tab,
+        visible=walker.tab_enabled,
+        button_type="primary",
+        button_style="outline",
+    ),
+    name="Core",
 )
 style_settings = pn.Column(
     _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
     _label("Theme Key"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.theme_key, **button_style),
-    name="Style"
+    name="Style",
 )
 file_upload = pn.widgets.FileDropper(
     accepted_filetypes=["text/csv"],
@@ -79,27 +93,37 @@ exported = pn.rx("""
 {value}
 ```
 """).format(value=export_button.param.value)
-export_section = pn.Column(
-    export_button,
-    exported,
-    name="Export"
-)
-save_section = pn.Column(
-    walker.create_save_button(),
-    name="Save"
-)
+export_section = pn.Column(export_button, exported, name="Export")
+save_section = pn.Column(walker.create_save_button(), name="Save")
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 
 def _apply_spec(value):
-    if walker.spec==value:
+    if walker.spec == value:
         walker.param.trigger("spec")
     else:
-        walker.spec=value
+        walker.spec = value
 
-simple_spec = pn.widgets.Button(name="Simple", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(SPEC_SIMPLE))
-initial_spec = pn.widgets.Button(name="Initial", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(SPEC_CAPACITY_STATE))
-no_spec = pn.widgets.Button(name="No Spec", button_type="primary", button_style="outline", on_click=lambda event: _apply_spec(None))
+
+simple_spec = pn.widgets.Button(
+    name="Simple",
+    button_type="primary",
+    button_style="outline",
+    on_click=lambda event: _apply_spec(SPEC_SIMPLE),
+)
+initial_spec = pn.widgets.Button(
+    name="Initial",
+    button_type="primary",
+    button_style="outline",
+    on_click=lambda event: _apply_spec(SPEC_CAPACITY_STATE),
+)
+no_spec = pn.widgets.Button(
+    name="No Spec",
+    button_type="primary",
+    button_style="outline",
+    on_click=lambda event: _apply_spec(None),
+)
+
 
 @pn.depends(file_upload, watch=True)
 def _update_walker(value):
@@ -126,7 +150,7 @@ pn.template.FastListTemplate(
             export_section,
             save_section,
             width=320,
-            active=[0]
+            active=[0],
         ),
         docs_section,
     ],

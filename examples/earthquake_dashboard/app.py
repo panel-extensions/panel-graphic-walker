@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 
 import pandas as pd
@@ -10,6 +9,7 @@ ROOT = Path(__file__).parent
 CSS = ROOT / "app.css"
 DATASET = ROOT / "significant_earthquake_dataset_1900_2023.parquet"
 SPEC = ROOT / "spec.json"
+
 
 @pn.cache
 def get_css():

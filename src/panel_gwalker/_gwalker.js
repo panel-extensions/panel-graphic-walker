@@ -1,4 +1,4 @@
-import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer} from "graphic-walker"
+import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer, ISegmentKey} from "graphic-walker"
 import {useEffect, useState, useRef} from "react"
 
 function transform(data) {
@@ -61,12 +61,14 @@ export function render({ model }) {
   const [renderer] = model.useState('renderer')
   const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
+  const [tab] = model.useState('tab')
 
   // Data State
   const [computation, setComputation] = useState(null);
   const [transformedData, setTransformedData] = useState([]);
   const [transformedSpec, setTransformedSpec] = useState([]);
   const events = useRef(new Map());
+  const [transformedIndexSpec, setTransformedIndexSpec] = useState(null)
   const [visualState, setVisualState]=useState(null)
   const [visualConfig, setVisualConfig]=useState(null)
   const [visualLayout, setVisualLayout]=useState(null)
@@ -128,10 +130,12 @@ export function render({ model }) {
       setVisualState(indexSpec.encodings || null);
       setVisualConfig(indexSpec.config || null);
       setVisualLayout(indexSpec.layout || null);
+      setTransformedIndexSpec([indexSpec])
     } else {
       setVisualState(null);
       setVisualConfig(null);
       setVisualLayout(null);
+      setTransformedIndexSpec(null)
     }
   }, [transformedSpec, index])
 
@@ -162,6 +166,14 @@ export function render({ model }) {
       setComputation(null)
     }
   }, [serverComputation]);
+
+  useEffect(() => {
+    if (renderer=="GraphicWalker"){
+      const key = tab === "data" ? ISegmentKey.data : ISegmentKey.vis;
+      storeRef?.current?.setSegmentKey(key);
+    }
+  }, [tab, storeRef, renderer]);
+
   // "GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"
   if (renderer=='TableWalker') {
     return <TableWalker
@@ -179,11 +191,12 @@ export function render({ model }) {
 
   if (renderer=='GraphicRenderer') {
     return <GraphicRenderer
+      id={index}
       storeRef={storeRef}
       ref={graphicWalkerRef}
       data={transformedData}
       fields={fields}
-      chart={transformedSpec}
+      chart={transformedIndexSpec}
       computation={computation}
       appearance={appearance}
       vizThemeConfig={themeKey}
@@ -191,6 +204,8 @@ export function render({ model }) {
       /* hack to force re-render if the transformedSpec is reset to null */
       key={transformedSpec ? "withSpec" : "nullSpec"}
       {...config}
+      // Set height to 500px
+      height={500}
     />
   }
 

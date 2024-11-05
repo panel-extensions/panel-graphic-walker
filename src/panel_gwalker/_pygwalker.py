@@ -10,7 +10,9 @@ if TYPE_CHECKING:
 
 
 def get_sql_from_payload(
-    table_name: str, payload: Dict[str, Any], field_meta: List[Dict[str, str]] | None = None
+    table_name: str,
+    payload: Dict[str, Any],
+    field_meta: List[Dict[str, str]] | None = None,
 ) -> str:
     try:
         from gw_dsl_parser import get_sql_from_payload as _get_sql_from_payload
@@ -57,5 +59,5 @@ def get_data_parser(
             infer_number_to_dimension,
             other_params,
         )
-    msg=f"Data type {type(object)} is currently not supported"
+    msg = f"Data type {type(object)} is currently not supported"
     raise NotImplementedError(msg)

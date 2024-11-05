@@ -2,11 +2,9 @@ import json
 from asyncio import sleep
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 import param
 import pytest
-from param.parameterized import Event
 
 from panel_gwalker import GraphicWalker
 from panel_gwalker._utils import _raw_fields
@@ -46,8 +44,8 @@ def test_process_parameter_change(data, default_appearance):
     gwalker = GraphicWalker(object=data)
     params = _get_params(gwalker)
 
-    result = gwalker._process_param_change(params)
-    assert params["fields"]==gwalker.calculated_fields()
+    gwalker._process_param_change(params)
+    assert params["fields"] == gwalker.calculated_fields()
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
@@ -64,7 +62,7 @@ def test_process_parameter_change_with_fields(data, default_appearance):
     gwalker = GraphicWalker(object=data, fields=fields)
     params = _get_params(gwalker)
 
-    result = gwalker._process_param_change(params)
+    gwalker._process_param_change(params)
     assert params["fields"] is fields
     assert params["appearance"] == default_appearance
     assert not params["config"]
@@ -75,7 +73,7 @@ def test_process_parameter_change_with_config(data, default_appearance):
     gwalker = GraphicWalker(object=data, config=config)
     params = _get_params(gwalker)
 
-    result = gwalker._process_param_change(params)
+    gwalker._process_param_change(params)
     assert params["fields"]
     assert params["appearance"] == default_appearance
     assert params["config"] is config
@@ -88,6 +86,7 @@ def test_process_parameter_change_with_appearance(data):
     result = gwalker._process_param_change(params)
     assert result["appearance"] == appearance
 
+
 def test_process_parameter_change_resetting_server_computationt(data):
     gwalker = GraphicWalker(object=data, server_computation=True)
     gwalker.server_computation = False
@@ -98,28 +97,29 @@ def test_process_parameter_change_resetting_server_computationt(data):
 
 def test_server_computation(data):
     gwalker = GraphicWalker(object=data, server_computation=True)
-    gwalker.param.server_computation.constant=False
-    gwalker.server_computation=True
+    gwalker.param.server_computation.constant = False
+    gwalker.server_computation = True
 
     params = _get_params(gwalker)
     assert "object" not in gwalker._process_param_change(params)
 
-    gwalker.server_computation=False
+    gwalker.server_computation = False
     params = _get_params(gwalker)
     assert "object" in gwalker._process_param_change(params)
 
 
 def test_calculated_fields(data):
-     gwalker = GraphicWalker(object=data)
-     assert gwalker.calculated_fields() == _raw_fields(data)
+    gwalker = GraphicWalker(object=data)
+    assert gwalker.calculated_fields() == _raw_fields(data)
+
 
 def test_process_spec(data, tmp_path: Path):
     """If the spec is a string, it can be either a file path, a url path, or a JSON string."""
+
     def _process_spec(spec):
         gwalker = GraphicWalker(object=data, spec=spec, _debug=True)
         params = _get_params(gwalker)
         return gwalker._process_param_change(params)["spec"]
-
 
     # Test with None
     assert _process_spec(None) is None
@@ -143,7 +143,7 @@ def test_process_spec(data, tmp_path: Path):
 
     # Test with a file Path
     json_data = {"file_key": "file_value"}
-    tmp_file = tmp_path/"data.json"
+    tmp_file = tmp_path / "data.json"
 
     with open(tmp_file, "w") as file:
         json.dump(json_data, file)
@@ -156,18 +156,22 @@ def test_process_spec(data, tmp_path: Path):
     result = _process_spec(tmp_file_str)
     assert result == json_data, f"Expected JSON content from file, got {result}"
 
+
 async def _mock_export(*args, **kwargs):
     return {"args": args, "kwargs": kwargs}
+
 
 def test_can_create_export_settings(data):
     gwalker = GraphicWalker(object=data, export=_mock_export)
     assert gwalker.create_export_settings(width=400)
+
 
 @pytest.mark.asyncio
 async def test_export(data):
     gwalker = GraphicWalker(object=data, export=_mock_export)
     assert isinstance(gwalker.param.export, param.Action)
     assert await gwalker.export()
+
 
 @pytest.mark.asyncio
 async def test_export_button(data):
@@ -178,66 +182,98 @@ async def test_export_button(data):
     await sleep(0.01)
     assert button.value
 
+
 @pytest.mark.asyncio
 async def test_can_save(data, tmp_path, export=_mock_export):
     gwalker = GraphicWalker(object=data)
     assert isinstance(gwalker.param.save, param.Action)
 
-    gwalker._export=_mock_export # type: ignore[method-assign]
-    path = tmp_path/"spec.json"
+    gwalker._export = _mock_export  # type: ignore[method-assign]
+    path = tmp_path / "spec.json"
     await gwalker.save(path=path)
     assert path.exists()
+
 
 @pytest.mark.asyncio
 async def test_save_button(data, tmp_path: Path):
     gwalker = GraphicWalker(object=data, export=_mock_export)
-    gwalker._export=_mock_export # type: ignore[method-assign]
-    gwalker.save_path = tmp_path/"spec.json"
+    gwalker._export = _mock_export  # type: ignore[method-assign]
+    gwalker.save_path = tmp_path / "spec.json"
 
     button = gwalker.create_save_button(width=400)
     button.param.trigger("save")
     await sleep(0.1)
     assert gwalker.save_path.exists()
 
+
 def test_page_size(data):
     gwalker = GraphicWalker(object=data, export=_mock_export, page_size=50)
-    assert gwalker.page_size==50
+    assert gwalker.page_size == 50
+
 
 def test_clone(data):
     gwalker = GraphicWalker(object=data)
-    clone = gwalker.clone(renderer="PureRenderer", index=1, )
+    clone = gwalker.clone(
+        renderer="PureRenderer",
+        index=1,
+    )
     assert clone.object is data
-    assert clone.renderer=="PureRenderer"
-    assert clone.index==1
+    assert clone.renderer == "PureRenderer"
+    assert clone.index == 1
+
 
 def test_clone_to_chart(data):
     gwalker = GraphicWalker(object=data, server_computation=True)
     chart = gwalker.chart(1, width=400)
     assert chart.object is data
-    assert chart.renderer=="PureRenderer"
-    assert chart.server_computation==False
-    assert chart.index==1
-    assert chart.width==400
+    assert chart.renderer == "PureRenderer"
+    assert not chart.server_computation
+    assert chart.index == 1
+    assert chart.width == 400
+
 
 def test_clone_to_explorer(data):
     gwalker = GraphicWalker(object=data, renderer="TableWalker", page_size=50)
     explorer = gwalker.explorer(width=400)
     assert explorer.object is data
-    assert explorer.renderer=="GraphicWalker"
-    assert explorer.page_size==50
-    assert explorer.width==400
+    assert explorer.renderer == "GraphicWalker"
+    assert explorer.page_size == 50
+    assert explorer.width == 400
+
 
 def test_clone_to_profiler(data):
     gwalker = GraphicWalker(object=data)
     viewer = gwalker.profiler(page_size=50, width=400)
     assert viewer.object is data
-    assert viewer.renderer=="TableWalker"
-    assert viewer.page_size==50
-    assert viewer.width==400
+    assert viewer.renderer == "TableWalker"
+    assert viewer.page_size == 50
+    assert viewer.width == 400
+
 
 def test_clone_to_viewer(data):
     gwalker = GraphicWalker(object=data)
     viewer = gwalker.viewer(width=400)
     assert viewer.object is data
-    assert viewer.renderer=="GraphicRenderer"
-    assert viewer.width==400
+    assert viewer.renderer == "GraphicRenderer"
+    assert viewer.width == 400
+
+
+def test_page_size_enabled(data):
+    walker = GraphicWalker(object=data, renderer="GraphicWalker")
+    assert not walker.page_size_enabled()
+    walker.renderer = "TableWalker"
+    assert GraphicWalker(object=data, renderer="TableWalker").page_size_enabled()
+
+
+def test_index_enabled(data):
+    walker = GraphicWalker(object=data, renderer="GraphicWalker")
+    assert not walker.index_enabled()
+    walker.renderer = "PureRenderer"
+    assert walker.index_enabled()
+
+
+def test_tab_enabled(data):
+    walker = GraphicWalker(object=data, renderer="TableWalker")
+    assert not walker.tab_enabled()
+    walker.renderer = "GraphicWalker"
+    assert walker.tab_enabled()

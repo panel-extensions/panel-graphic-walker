@@ -124,20 +124,35 @@ export function render({ model }) {
   }, [spec]);
 
   useEffect(() => {
-    if (transformedSpec!=null && transformedSpec.length >= index + 1) {
-      const indexSpec = transformedSpec[index];
+    if (transformedSpec != null) {
+      let filteredSpecs;
 
-      setVisualState(indexSpec.encodings || null);
-      setVisualConfig(indexSpec.config || null);
-      setVisualLayout(indexSpec.layout || null);
-      setTransformedIndexSpec([indexSpec])
+      if (Array.isArray(index)) {
+        filteredSpecs = index.map(i => transformedSpec[i]).filter(item => item != null);
+      } else if (index != null && transformedSpec.length > index) {
+        filteredSpecs = [transformedSpec[index]];
+      } else {
+        filteredSpecs = transformedSpec;
+      }
+
+      if (filteredSpecs && filteredSpecs.length > 0) {
+        setVisualState(filteredSpecs[0].encodings || null);
+        setVisualConfig(filteredSpecs[0].config || null);
+        setVisualLayout(filteredSpecs[0].layout || null);
+        setTransformedIndexSpec(filteredSpecs);
+      } else {
+        setVisualState(null);
+        setVisualConfig(null);
+        setVisualLayout(null);
+        setTransformedIndexSpec(null);
+      }
     } else {
       setVisualState(null);
       setVisualConfig(null);
       setVisualLayout(null);
-      setTransformedIndexSpec(null)
+      setTransformedIndexSpec(null);
     }
-  }, [transformedSpec, index])
+  }, [transformedSpec, index]);
 
   const wait_for = async (event_id) => {
     while (!events.current.has(event_id)) {
@@ -190,22 +205,37 @@ export function render({ model }) {
   }
 
   if (renderer=='GraphicRenderer') {
-    return <GraphicRenderer
-      id={index}
-      storeRef={storeRef}
-      ref={graphicWalkerRef}
-      data={transformedData}
-      fields={fields}
-      chart={transformedIndexSpec}
-      computation={computation}
-      appearance={appearance}
-      vizThemeConfig={themeKey}
-      /* hack to force re-render if the transformedSpec is reset to null */
-      key={transformedSpec ? "withSpec" : "nullSpec"}
-      {...config}
-      // Set height to 500px
-      height={500}
-    />
+    // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
+    // const containerStyle = {
+    //     // height: "380px",
+    //     // width: "100%"
+    // }
+    const containerStyle=null
+    const globalProps={containerStyle: containerStyle}
+
+    return (
+      <>
+        {transformedIndexSpec?.map((chart, index) => (
+          <div key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
+            <h3 style={{ marginLeft: "15px" }}>{chart.name || `Chart ${index}`}</h3>
+            <GraphicRenderer
+              id={index}
+              storeRef={storeRef}
+              ref={graphicWalkerRef}
+              data={transformedData}
+              fields={fields}
+              chart={[chart]} // only 'chart' differs for each iteration
+              computation={computation}
+              appearance={appearance}
+              vizThemeConfig={themeKey}
+              {...globalProps}
+              {...config}
+              />
+              <hr/>
+          </div>
+        ))}
+      </>
+    );
   }
 
   if (renderer=="PureRenderer") {

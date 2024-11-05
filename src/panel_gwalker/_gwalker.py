@@ -246,10 +246,9 @@ class GraphicWalker(ReactComponent):
         'PureRenderer', 'TableWalker'. Please note the 'PureRenderer' does not work with
         `server_computation=True`.""",
     )
-    index: int = param.Integer(
-        0,
-        bounds=(0, None),
-        doc="""The index of the chart to display in the PureRenderer.
+    index: int | list[int] | None = param.ClassSelector(
+        class_=(int, list, type(None)),
+        doc="""An optional chart index or list of chart indices to display in the Graphic or PureRenderer.
     Has no effect on other renderers.""",
     )
     page_size: int = param.Integer(

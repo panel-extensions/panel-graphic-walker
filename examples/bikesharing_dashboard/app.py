@@ -23,28 +23,31 @@ def get_data():
 
 data = get_data()
 
-renderer = GraphicWalker(
-    data, theme_key="streamlit", spec=SPEC_PATH, save_path=SPEC_PATH.as_posix()
+walker = GraphicWalker(
+    data,
+    theme_key="streamlit",
+    spec=SPEC_PATH,
+    save_path=SPEC_PATH.as_posix(),
+    sizing_mode="stretch_both",
 )
 
 main = pn.Tabs(
-    # renderer.explorer(name="explorer (GraphicWalker)"),
+    walker.explorer(name="explorer (GraphicWalker)"),
     # renderer.profiler(name="profiler (TableWalker)"),
     pn.Column(
-        renderer.viewer(
+        walker.viewer(
             name="viewer (GraphicRenderer)",
-            index=1,
+            # index=[0,1],
             sizing_mode="stretch_width",
-            height=500,
+            height=1000,
         ),
-        renderer.viewer(
+        walker.viewer(
             name="viewer (GraphicRenderer)",
             index=1,
-            sizing_mode="stretch_width",
-            height=500,
+            sizing_mode="fixed",
         ),
         name="viewer (GraphicRenderer)",
-    )
+    ),
     # pn.Column(
     #     "### Registered per weekday",
     #     renderer.chart(0, object=data.sample(10000)),
@@ -52,15 +55,16 @@ main = pn.Tabs(
     #     renderer.chart(1, object=data.sample(10000)),
     #     name="chart (PureRenderer)",
     # ),
-    # active=2
+    active=1,
+    dynamic=True,
 )
 
-button = renderer.create_save_button(
+button = walker.create_save_button(
     include_settings=True, sizing_mode="fixed", width=300
 )
 
 app = pn.Column(
-    renderer,
+    walker,
     button,
 )
 
@@ -68,6 +72,6 @@ pn.template.FastListTemplate(
     title="Bike Sharing Visualization with panel-graphic-walker",
     main_layout=None,
     accent=ACCENT,
-    sidebar=[button],
+    sidebar=[button, walker.param.index],
     main=[main],
 ).servable()

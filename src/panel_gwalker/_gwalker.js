@@ -200,7 +200,6 @@ export function render({ model }) {
       computation={computation}
       appearance={appearance}
       vizThemeConfig={themeKey}
-      pageSize={pageSize}
       /* hack to force re-render if the transformedSpec is reset to null */
       key={transformedSpec ? "withSpec" : "nullSpec"}
       {...config}

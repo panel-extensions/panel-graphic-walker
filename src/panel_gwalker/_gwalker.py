@@ -577,15 +577,15 @@ class GraphicWalker(ReactComponent):
 
     @param.depends("renderer")
     def page_size_enabled(self):
-        """Returns True if the page_size parameter affects the current renderer."""
+        """Returns True if the page_size parameter applies to the current renderer."""
         return self.renderer == "TableWalker"
 
     @param.depends("renderer")
     def index_enabled(self):
-        """Returns True if the index parameter affects the current renderer."""
+        """Returns True if the index parameter applies to the current renderer."""
         return self.renderer == "PureRenderer"
 
     @param.depends("renderer")
     def tab_enabled(self):
-        """Returns True if the tab parameter affects the current renderer."""
+        """Returns True if the tab parameter applies to the current renderer."""
         return self.renderer == "GraphicWalker"

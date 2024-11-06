@@ -107,7 +107,21 @@ Please note that if running on Pyodide the computations will always take place o
 
 To learn more about all the parameters and methods of `GraphicWalker` try the `panel-graphic-walker` Reference App.
 
-[![Panel Graphic Walker Reference App](https://raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/static/panel-graphic-walker-app-demo.gif)(https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference_app/app.py&requirements=panel-graphic-walker%3E%3D0.4.0%0Afastparquet)
+[![Panel Graphic Walker Reference App](examples/reference_app/app.gif)(https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference_app/app.py&requirements=panel-graphic-walker%3E%3D0.4.0%0Afastparquet)
+
+## Examples
+
+### Bike Sharing Dashboard
+
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/bikesharing_dashboard/app.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/bikesharing_dashboard/app.py)
+
+![Bike Sharing Dashboard](examples/bikesharing_dashboard/app.png)
+
+### Earthquake Dashboard
+
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/earthquake_dashboard/app.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/earthquake_dashboard/app.py)
+
+![Earth Quake Dashboard](examples/earthquake_dashboard/app.png)
 
 ## API
 
@@ -128,7 +142,7 @@ To learn more about all the parameters and methods of `GraphicWalker` try the `p
 #### Style
 
 - `appearance` (str): Optional dark mode preference: 'light', 'dark' or 'media'. If not provided the appearance is derived from `pn.config.theme`.
-- `theme_key` (str): Optional chart theme: 'g2' (default), 'streamlit' or 'vega'. Try combining the `theme_key` 'streamlit' and the [`FastListTemplate`](https://panel.holoviz.org/reference/templates/FastListTemplate.html) `accent` color <div style="display:inline;background-color:#ff4a4a;color:white;padding:0 5px;border-radius:3px;">#ff4a4a</div>. Looks great.
+- `theme_key` (str): Optional chart theme: 'g2' (default), 'streamlit' or 'vega'. If using the [`FastListTemplate`](https://panel.holoviz.org/reference/templates/FastListTemplate.html) try combining the `theme_key` 'g2' with the `accent` color <div style="display:inline;background-color:#5B8FF9;color:white;padding:0 5px;border-radius:3px;">#5B8FF9</div>. Or 'streamlit' and <div style="display:inline;background-color:#ff4a4a;color:white;padding:0 5px;border-radius:3px;">#ff4a4a</div>. Or 'vega' and <div style="display:inline;background-color:#4c78a8;color:white;padding:0 5px;border-radius:3px;">#4c78a8</div>.
 
 #### Export and Save
 
@@ -174,7 +188,7 @@ Our dream is that this package is super simple to use and supports your use case
 - Great documentation including examples.
 - Supports your preferred data backend including Pandas, Polars and DuckDB.
 - Supports persisting and reusing Graphic Walker specifications.
-- Scales to even the largest datasets only limited by your server or cluster.
+- Scales to even the largest datasets only limited by your server, cluster or database.
 
 ## ❤️ Contributions
 

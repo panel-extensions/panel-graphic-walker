@@ -3,6 +3,7 @@
 Based on https://py.cafe/docs/api#snippet-links-with-code-and-requirements.
 """
 
+from pathlib import Path
 from urllib.parse import quote
 
 GH_USER = "panel-extensions"
@@ -13,12 +14,15 @@ BASE_REQUIREMENTS = ["panel-graphic-walker>=0.4.0"]
 PARQUET_REQUIREMENTS = BASE_REQUIREMENTS + ["fastparquet"]
 SERVER_REQUIREMENTS = ["panel-graphic-walker[server]>=0.4.0"]
 
+
 EXAMPLES = [
     ("examples/reference/basic.py", BASE_REQUIREMENTS),
     ("examples/reference/spec.py", BASE_REQUIREMENTS),
     ("examples/reference/renderer.py", BASE_REQUIREMENTS),
     ("examples/reference/server_computation.py", SERVER_REQUIREMENTS),
-    ("examples/reference_app/app.py", PARQUET_REQUIREMENTS),
+    ("examples/reference_app/app.py", SERVER_REQUIREMENTS),
+    ("examples/bikesharing_dashboard/app.py", SERVER_REQUIREMENTS),
+    ("examples/earthquake_dashboard/app.py", SERVER_REQUIREMENTS),
 ]
 
 
@@ -46,8 +50,15 @@ def create_example(file, pycafe_url: str, source_code_url: str):
     return badge
 
 
+def check_file(file):
+    path = Path(file)
+    if not path.exists():
+        raise FileNotFoundError(f"File {file} does not exist.")
+
+
 def create_badges():
     for file, requirements in EXAMPLES:
+        check_file(file)
         pycafe_url = create_pycafe_url(file, requirements)
         source_code_url = create_source_code_url(file)
         badges = create_example(file, pycafe_url, source_code_url)

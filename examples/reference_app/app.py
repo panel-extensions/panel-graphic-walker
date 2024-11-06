@@ -15,6 +15,7 @@ GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
 SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
 SPEC_SIMPLE = ROOT / "spec_simple.json"
+ACCENT = "#5B8FF9"
 
 
 def _label(value):
@@ -158,4 +159,5 @@ pn.template.FastListTemplate(
     ],
     main=[walker],
     main_layout=None,
+    accent="#5B8FF9",
 ).servable()

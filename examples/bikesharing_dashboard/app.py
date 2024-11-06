@@ -69,7 +69,6 @@ main = pn.Tabs(
         name="CHART",
         stylesheets=[CSS],
     ),
-    active=1,
     dynamic=True,
 )
 

@@ -95,6 +95,10 @@ The data is sourced from the
 
 This dashboard is built using the **[panel-graphic-walker](https://github.com/panel-extensions/panel-graphic-walker)** \
 and inspired by a [similar Streamlit app](https://pygwalkerdemo-cxz7f7pt5oc.streamlit.app/).
+
+## Notes
+
+The *range* filter was manually set in the [spec.json](spec.json) file. The Streamlit spec.json file was more complicated.
 """,
 )
 

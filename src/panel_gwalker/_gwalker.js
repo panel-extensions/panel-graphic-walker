@@ -70,9 +70,6 @@ export function render({ model }) {
   const [transformedSpec, setTransformedSpec] = useState([]);
   const events = useRef(new Map());
   const [transformedIndexSpec, setTransformedIndexSpec] = useState(null)
-  const [visualState, setVisualState]=useState(null)
-  const [visualConfig, setVisualConfig]=useState(null)
-  const [visualLayout, setVisualLayout]=useState(null)
   const [containerStyle, setContainerStyle] = useState({})
 
   // Refs
@@ -136,20 +133,11 @@ export function render({ model }) {
         filteredSpecs = transformedSpec;
       }
       if (filteredSpecs && filteredSpecs.length > 0) {
-        setVisualState(filteredSpecs[0].encodings || null);
-        setVisualConfig(filteredSpecs[0].config || null);
-        setVisualLayout(filteredSpecs[0].layout || null);
         setTransformedIndexSpec(filteredSpecs);
       } else {
-        setVisualState(null);
-        setVisualConfig(null);
-        setVisualLayout(null);
         setTransformedIndexSpec(null);
       }
     } else {
-      setVisualState(null);
-      setVisualConfig(null);
-      setVisualLayout(null);
       setTransformedIndexSpec(null);
     }
   }, [transformedSpec, index]);
@@ -183,7 +171,7 @@ export function render({ model }) {
   }, [serverComputation]);
 
   useEffect(() => {
-    if (renderer=="GraphicWalker"){
+    if (renderer=="explorer"){
       const key = tab === "data" ? ISegmentKey.data : ISegmentKey.vis;
       storeRef?.current?.setSegmentKey(key);
     }
@@ -196,8 +184,7 @@ export function render({ model }) {
     })
   }, [containerHeight])
 
-  // "GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"
-  if (renderer=='TableWalker') {
+  if (renderer=='profiler') {
     return <TableWalker
       storeRef={storeRef}
       ref={graphicWalkerRef}
@@ -211,7 +198,7 @@ export function render({ model }) {
     />
   }
 
-  if (renderer=='GraphicRenderer') {
+  if (renderer=='viewer') {
     // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
 
     return (
@@ -240,7 +227,7 @@ export function render({ model }) {
     );
   }
 
-  if (renderer=='PureRenderer') {
+  if (renderer=='chart') {
     // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
 
     return (

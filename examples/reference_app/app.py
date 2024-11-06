@@ -48,7 +48,7 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    server_computation=False,
+    server_computation=True,
     save_path="examples/features_dashboard/spec.json",
 )
 core_settings = pn.Column(

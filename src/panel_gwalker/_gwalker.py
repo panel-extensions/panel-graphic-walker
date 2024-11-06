@@ -230,41 +230,38 @@ class GraphicWalker(ReactComponent):
         default=False,
         doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
         instead of the client to scale to larger datasets. Default is False. In Pyodide this will
-        always be set to False.""",
+        always be set to False. For the chart renderer computations will always be done in the client.""",
         constant=state._is_pyodide,
     )
     config: dict = param.Dict(
         doc="""Optional extra Graphic Walker configuration. For example `{"i18nLang": "ja-JP"}`. See the
     [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details."""
     )
-    renderer: Literal[
-        "GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"
-    ] = param.Selector(
-        default="GraphicWalker",
-        objects=["GraphicRenderer", "GraphicWalker", "PureRenderer", "TableWalker"],
-        doc="""How to display the data. One of 'GraphicRenderer', 'GraphicWalker (default),
-        'PureRenderer', 'TableWalker'. Please note the 'PureRenderer' does not work with
-        `server_computation=True`.""",
+    renderer: Literal["explorer", "profiler", "viewer", "chart"] = param.Selector(
+        default="explorer",
+        objects=["explorer", "profiler", "viewer", "chart"],
+        doc="""How to display the data. One of 'explorer' (default), 'profiler,
+        'viewer' or 'chart'.""",
     )
     index: int | list[int] | None = param.ClassSelector(
         class_=(int, list, type(None)),
-        doc="""An optional chart index or list of chart indices to display in the Graphic or PureRenderer.
+        doc="""An optional chart index or list of chart indices to display in the 'viewer' or 'chart' renderer.
     Has no effect on other renderers.""",
     )
     page_size: int = param.Integer(
         20,
         bounds=(1, None),
-        doc="""The number of rows per page in the table of the TableWalker.
+        doc="""The number of rows per page in the table of the 'profiler' render.
     Has no effect on other renderers.""",
     )
     tab: Literal["data", "vis"] = param.Selector(
         default="vis",
         objects=["data", "vis"],
-        doc="""Set the active tab to 'data' or 'vis' (default). Only applicable for the GraphicWalker/ explorer renderer. Not bi-directionally synced with client.""",
+        doc="""Set the active tab to 'data' or 'vis' (default). Only applicable for the 'explorer' renderer. Not bi-directionally synced with client.""",
     )
     container_height: str = param.String(
         default="400px",
-        doc="""The height of a single chart in the `GraphicRenderer`. For example '500px' (pixels) or '30vh' (viewport height).""",
+        doc="""The height of a single chart in the 'viewer' or 'chart' renderer. For example '500px' (pixels) or '30vh' (viewport height).""",
     )
 
     appearance: Literal["media", "dark", "light"] = param.Selector(
@@ -544,54 +541,54 @@ class GraphicWalker(ReactComponent):
         return SaveButton(self, **params)
 
     def chart(self, index: int | list | None = None, **params) -> "GraphicWalker":
-        """Returns a clone with `renderer=PureRenderer` and `server_computation=False`.
+        """Returns a clone with `renderer='chart'` and `server_computation=False`.
 
         >>> walker.chart(1, width=400)
         """
         params["index"] = index
-        params["renderer"] = "PureRenderer"
+        params["renderer"] = "chart"
         params["server_computation"] = False
         return self.clone(**params)
 
     def explorer(self, **params) -> "GraphicWalker":
-        """Returns a clone with `renderer=GraphicWalker`.
+        """Returns a clone with `renderer='explorer'`.
 
         >>> walker.explorer(width=400)
         """
-        params["renderer"] = "GraphicWalker"
+        params["renderer"] = "explorer"
         return self.clone(**params)
 
     def profiler(self, **params) -> "GraphicWalker":
-        """Returns a clone with `renderer=TableWalker`.
+        """Returns a clone with `renderer='profiler'`.
 
         >>> walker.profiler(page_size=50, width=400)
         """
-        params["renderer"] = "TableWalker"
+        params["renderer"] = "profiler"
         return self.clone(**params)
 
     def viewer(self, **params) -> "GraphicWalker":
-        """Returns a clone with `renderer=GraphicRenderer`.
+        """Returns a clone with `renderer='viewer'`.
 
         >>> walker.viewer(width=400)
         """
-        params["renderer"] = "GraphicRenderer"
+        params["renderer"] = "viewer"
         return self.clone(**params)
 
     @param.depends("renderer")
     def page_size_enabled(self):
         """Returns True if the page_size parameter applies to the current renderer."""
-        return self.renderer == "TableWalker"
+        return self.renderer == "profiler"
 
     @param.depends("renderer")
     def index_enabled(self):
         """Returns True if the index parameter applies to the current renderer."""
-        return self.renderer == "PureRenderer"
+        return self.renderer == "chart"
 
     @param.depends("renderer")
     def tab_enabled(self):
         """Returns True if the tab parameter applies to the current renderer."""
-        return self.renderer == "GraphicWalker"
+        return self.renderer == "explorer"
 
     @param.depends("renderer")
     def container_height_enabled(self):
-        return self.renderer in ["GraphicRenderer" or "PureRenderer"]
+        return self.renderer in ["viewer" or "chart"]

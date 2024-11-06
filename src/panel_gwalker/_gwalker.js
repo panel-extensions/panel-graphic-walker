@@ -229,7 +229,7 @@ export function render({ model }) {
 
   if (renderer=='chart') {
     if (!data | !transformedData) {
-      return <div>No data to render.</div>;
+      return <div>No data to render. Set 'server_computation=False' when creating GraphicWalker.</div>;
     }
     return (
       <>

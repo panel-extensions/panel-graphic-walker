@@ -58,17 +58,19 @@ core_settings = pn.Column(
     walker.param.config,
     walker.param.renderer,
     pn.widgets.IntInput.from_param(
-        walker.param.page_size, visible=walker.page_size_enabled
+        walker.param.page_size, visible=walker.is_enabled("page_size")
     ),
-    pn.widgets.IntInput.from_param(walker.param.index, visible=walker.index_enabled),
+    pn.widgets.IntInput.from_param(
+        walker.param.index, visible=walker.is_enabled("index")
+    ),
     pn.widgets.RadioButtonGroup.from_param(
         walker.param.tab,
-        visible=walker.tab_enabled,
+        visible=walker.is_enabled("tab"),
         button_type="primary",
         button_style="outline",
     ),
     pn.widgets.TextInput.from_param(
-        walker.param.container_height, visible=walker.container_height_enabled
+        walker.param.container_height, visible=walker.is_enabled("container_height")
     ),
     name="Core",
 )

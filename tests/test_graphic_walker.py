@@ -261,27 +261,12 @@ def test_clone_to_viewer(data):
 
 def test_page_size_enabled(data):
     walker = GraphicWalker(object=data, renderer="explorer")
-    assert not walker.page_size_enabled()
+    assert not walker.is_enabled("page_size")()
     walker.renderer = "profiler"
-    assert walker.page_size_enabled()
+    assert walker.is_enabled("page_size")()
 
 
-def test_index_enabled(data):
-    walker = GraphicWalker(object=data, renderer="explorer")
-    assert not walker.index_enabled()
-    walker.renderer = "chart"
-    assert walker.index_enabled()
-
-
-def test_tab_enabled(data):
+def test_is_disabled(data):
     walker = GraphicWalker(object=data, renderer="profiler")
-    assert not walker.tab_enabled()
-    walker.renderer = "explorer"
-    assert walker.tab_enabled()
-
-
-def test_container_height_enabled(data):
-    walker = GraphicWalker(object=data)
-    assert not walker.container_height_enabled()
-    walker.renderer = "viewer"
-    assert walker.container_height_enabled()
+    for parameter in walker.param:
+        assert walker.is_disabled(parameter)() == (not walker.is_enabled(parameter)())

@@ -2,6 +2,7 @@ import asyncio
 import json
 import sys
 import uuid
+from functools import partial
 from os import PathLike
 from pathlib import Path
 from typing import Any, Callable, Concatenate, Coroutine, Literal, Optional, ParamSpec
@@ -574,21 +575,32 @@ class GraphicWalker(ReactComponent):
         params["renderer"] = "viewer"
         return self.clone(**params)
 
-    @param.depends("renderer")
-    def page_size_enabled(self):
-        """Returns True if the page_size parameter applies to the current renderer."""
-        return self.renderer == "profiler"
+    _PARAMETER_IS_ENABLED = {
+        "page_size": ["profiler"],
+        "index": ["viewer", "chart"],
+        "tab": ["explorer"],
+        "container_height": ["viewer", "chart"],
+    }
 
-    @param.depends("renderer")
-    def index_enabled(self):
-        """Returns True if the index parameter applies to the current renderer."""
-        return self.renderer == "chart"
+    @classmethod
+    def _is_enabled(cls, renderer, parameter) -> bool:
+        """Returns True if the parameter is enabled for the renderer."""
+        if not parameter in cls._PARAMETER_IS_ENABLED:
+            return True
 
-    @param.depends("renderer")
-    def tab_enabled(self):
-        """Returns True if the tab parameter applies to the current renderer."""
-        return self.renderer == "explorer"
+        return renderer in cls._PARAMETER_IS_ENABLED[parameter]
 
-    @param.depends("renderer")
-    def container_height_enabled(self):
-        return self.renderer in ["viewer" or "chart"]
+    @classmethod
+    def _is_disabled(cls, renderer, parameter) -> bool:
+        """Returns True if the parameter is disabled for the renderer."""
+        return not cls._is_enabled(renderer, parameter)
+
+    def is_enabled(self, parameter: str):
+        """Returns a bound function. The function will evaluate to True if the parameter is
+        enabled for the current renderer."""
+        return param.bind(self._is_enabled, self.param.renderer, parameter)
+
+    def is_disabled(self, parameter: str):
+        """Returns a bound function. The function will return True if the parameter is disabled
+        for the current renderer."""
+        return param.bind(self._is_disabled, self.param.renderer, parameter)

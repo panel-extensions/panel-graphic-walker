@@ -228,8 +228,9 @@ export function render({ model }) {
   }
 
   if (renderer=='chart') {
-    // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
-
+    if (!data | !transformedData) {
+      return <div>No data to render.</div>;
+    }
     return (
       <>
         {transformedIndexSpec?.map((chart, index) => (

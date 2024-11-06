@@ -230,6 +230,7 @@ Please note that if running on Pyodide the computations will always take place o
 - `page_size` (int): The number of rows per page in the table. Only applicable for the `TableWalker`.
 - `index` (int): The index of the chart to display. Default i 0. Only applicable for the `PureRenderer`.
 - `tab` ('data' | 'vis'): Set the active tab to 'data' or 'vis' (default). Only applicable for the `GraphicWalker` renderer. Not bi-directionally synced with client.
+- `container_height` (str): The height of a single chart in the `GraphicRenderer`. For example '500px' (pixels) or '30vh' (viewport height).
 
 #### Style
 

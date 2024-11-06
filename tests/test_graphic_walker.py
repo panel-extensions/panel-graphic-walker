@@ -277,3 +277,10 @@ def test_tab_enabled(data):
     assert not walker.tab_enabled()
     walker.renderer = "GraphicWalker"
     assert walker.tab_enabled()
+
+
+def test_container_height_enabled(data):
+    walker = GraphicWalker(object=data)
+    assert not walker.container_height_enabled()
+    walker.renderer = "GraphicRenderer"
+    assert walker.container_height_enabled()

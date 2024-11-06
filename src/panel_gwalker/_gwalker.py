@@ -262,6 +262,10 @@ class GraphicWalker(ReactComponent):
         objects=["data", "vis"],
         doc="""Set the active tab to 'data' or 'vis' (default). Only applicable for the GraphicWalker/ explorer renderer. Not bi-directionally synced with client.""",
     )
+    container_height: str = param.String(
+        default="400px",
+        doc="""The height of a single chart in the `GraphicRenderer`. For example '500px' (pixels) or '30vh' (viewport height).""",
+    )
 
     appearance: Literal["media", "dark", "light"] = param.Selector(
         default="light",
@@ -539,13 +543,12 @@ class GraphicWalker(ReactComponent):
         """
         return SaveButton(self, **params)
 
-    def chart(self, index: int | None = None, **params) -> "GraphicWalker":
+    def chart(self, index: int | list | None = None, **params) -> "GraphicWalker":
         """Returns a clone with `renderer=PureRenderer` and `server_computation=False`.
 
         >>> walker.chart(1, width=400)
         """
-        if index is not None:
-            params["index"] = index
+        params["index"] = index
         params["renderer"] = "PureRenderer"
         params["server_computation"] = False
         return self.clone(**params)
@@ -588,3 +591,7 @@ class GraphicWalker(ReactComponent):
     def tab_enabled(self):
         """Returns True if the tab parameter applies to the current renderer."""
         return self.renderer == "GraphicWalker"
+
+    @param.depends("renderer")
+    def container_height_enabled(self):
+        return self.renderer in ["GraphicRenderer" or "PureRenderer"]

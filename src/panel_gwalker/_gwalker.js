@@ -62,6 +62,7 @@ export function render({ model }) {
   const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
   const [tab] = model.useState('tab')
+  const [containerHeight] = model.useState('container_height')
 
   // Data State
   const [computation, setComputation] = useState(null);
@@ -72,6 +73,7 @@ export function render({ model }) {
   const [visualState, setVisualState]=useState(null)
   const [visualConfig, setVisualConfig]=useState(null)
   const [visualLayout, setVisualLayout]=useState(null)
+  const [containerStyle, setContainerStyle] = useState({})
 
   // Refs
   const graphicWalkerRef = useRef(null);
@@ -126,7 +128,6 @@ export function render({ model }) {
   useEffect(() => {
     if (transformedSpec != null) {
       let filteredSpecs;
-
       if (Array.isArray(index)) {
         filteredSpecs = index.map(i => transformedSpec[i]).filter(item => item != null);
       } else if (index != null && transformedSpec.length > index) {
@@ -134,7 +135,6 @@ export function render({ model }) {
       } else {
         filteredSpecs = transformedSpec;
       }
-
       if (filteredSpecs && filteredSpecs.length > 0) {
         setVisualState(filteredSpecs[0].encodings || null);
         setVisualConfig(filteredSpecs[0].config || null);
@@ -189,6 +189,13 @@ export function render({ model }) {
     }
   }, [tab, storeRef, renderer]);
 
+  useEffect(() => {
+    setContainerStyle({
+        height: containerHeight,
+        width: "100%"
+    })
+  }, [containerHeight])
+
   // "GraphicWalker", "TableWalker", "GraphicRenderer", "PureRenderer"
   if (renderer=='TableWalker') {
     return <TableWalker
@@ -206,17 +213,11 @@ export function render({ model }) {
 
   if (renderer=='GraphicRenderer') {
     // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
-    // const containerStyle = {
-    //     // height: "380px",
-    //     // width: "100%"
-    // }
-    const containerStyle=null
-    const globalProps={containerStyle: containerStyle}
 
     return (
       <>
         {transformedIndexSpec?.map((chart, index) => (
-          <div key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
+          <div className="pn-gw-container" key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
             <h3 style={{ marginLeft: "15px" }}>{chart.name || `Chart ${index}`}</h3>
             <GraphicRenderer
               id={index}
@@ -228,28 +229,45 @@ export function render({ model }) {
               computation={computation}
               appearance={appearance}
               vizThemeConfig={themeKey}
-              {...globalProps}
+              containerStyle={containerStyle}
               {...config}
+              /* hack to force re-render if the transformedSpec is reset to null */
+              key={transformedSpec ? "withSpec" : "nullSpec"}
               />
-              <hr/>
           </div>
         ))}
       </>
     );
   }
 
-  if (renderer=="PureRenderer") {
-    return <PureRenderer
-      ref={graphicWalkerRef}
-      rawData={transformedData}
-      visualState={visualState}
-      visualConfig={visualConfig}
-      visualLayout={visualLayout}
-      appearance={appearance}
-      vizThemeConfig={themeKey}
-      /* hack to force re-render if the transformedSpec is reset to null */
-      key={transformedSpec ? "withSpec" : "nullSpec"}
-    />
+  if (renderer=='PureRenderer') {
+    // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
+
+    return (
+      <>
+        {transformedIndexSpec?.map((chart, index) => (
+          <div className="pn-gw-container" key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
+            <h3 style={{ marginLeft: "15px" }}>{chart.name || `Chart ${index}`}</h3>
+            <div style={{"height": containerHeight}}>
+              <PureRenderer
+                id={index}
+                storeRef={storeRef}
+                ref={graphicWalkerRef}
+                rawData={transformedData}
+                visualState={chart.encodings || null}
+                visualConfig={chart.config || null}
+                visualLayout={chart.layout || null}
+                appearance={appearance}
+                vizThemeConfig={themeKey}
+                {...config}
+                /* hack to force re-render if the transformedSpec is reset to null */
+                key={transformedSpec ? "withSpec" : "nullSpec"}
+                />
+            </div>
+          </div>
+        ))}
+      </>
+    );
   }
 
   return <GraphicWalker

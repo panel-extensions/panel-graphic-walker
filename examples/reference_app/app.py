@@ -48,10 +48,9 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    server_computation=True,
+    server_computation=False,
     save_path="examples/features_dashboard/spec.json",
 )
-
 core_settings = pn.Column(
     walker.param.server_computation,
     walker.param.spec,
@@ -66,6 +65,9 @@ core_settings = pn.Column(
         visible=walker.tab_enabled,
         button_type="primary",
         button_style="outline",
+    ),
+    pn.widgets.TextInput.from_param(
+        walker.param.container_height, visible=walker.container_height_enabled
     ),
     name="Core",
 )

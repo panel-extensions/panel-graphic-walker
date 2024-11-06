@@ -51,6 +51,8 @@ df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.
 GraphicWalker(df).servable()
 ```
 
+You can put the code in a file `app.py` and serve it with `panel serve app.py`.
+
 ![panel-graphic-walker-table](https://github.com/panel-extensions/panel-graphic-walker/blob/main/static/panel-graphic-walker_table.png?raw=true)
 ![panel-graphic-walker-plot](https://github.com/panel-extensions/panel-graphic-walker/blob/main/static/panel-graphic-walker_plot.png?raw=true)
 

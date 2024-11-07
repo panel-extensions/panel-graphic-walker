@@ -97,7 +97,8 @@ and inspired by a [similar Streamlit app](https://pygwalkerdemo-cxz7f7pt5oc.stre
 
 ## Notes
 
-The *range* filter was manually set in the [spec.json](spec.json) file. The Streamlit spec.json file was more complicated.
+I've simplified the [spec.json](spec.json) file and inserted the `range` filter manually \
+[#654](https://github.com/Kanaries/pygwalker/issues/654).
 """,
 )
 

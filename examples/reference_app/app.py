@@ -49,11 +49,11 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    server_computation=True,
+    kernel_computation=True,
     save_path="examples/features_dashboard/spec.json",
 )
 core_settings = pn.Column(
-    walker.param.server_computation,
+    walker.param.kernel_computation,
     walker.param.spec,
     walker.param.config,
     walker.param.renderer,

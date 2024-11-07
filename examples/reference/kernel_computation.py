@@ -13,9 +13,9 @@ pn.extension(sizing_mode="stretch_width")
 df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz")
 
 # Enable server-side computation for scalable data processing
-walker = GraphicWalker(df, spec=SPEC, server_computation=True)
+walker = GraphicWalker(df, spec=SPEC, kernel_computation=True)
 
 pn.Column(
     walker,
-    walker.param.server_computation,
+    walker.param.kernel_computation,
 ).servable()

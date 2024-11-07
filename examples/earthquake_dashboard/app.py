@@ -45,7 +45,7 @@ Source: [Data]({DATASET}), Credits: [earthquake-dashboard-pygwalker](https://ear
 
 walker = GraphicWalker(
     df,
-    server_computation=True,
+    kernel_computation=True,
     theme_key="g2",
     appearance="dark",
     spec=SPEC,

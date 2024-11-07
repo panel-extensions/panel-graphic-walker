@@ -227,11 +227,11 @@ class GraphicWalker(ReactComponent):
         doc="""Optional chart specification as url, json, dict or list.
     Can be generated via the `export` method."""
     )
-    server_computation: bool = param.Boolean(
+    kernel_computation: bool = param.Boolean(
         default=False,
-        doc="""If True the computations will take place on the Panel server or in the Jupyter kernel
+        doc="""If True the computations will take place on the server or in the Jupyter kernel
         instead of the client to scale to larger datasets. Default is False. In Pyodide this will
-        always be set to False. For the chart renderer computations will always be done in the client.""",
+        always be set to False. The 'chart' renderer will only work with client side rendering.""",
         constant=state._is_pyodide,
     )
     config: dict = param.Dict(
@@ -363,7 +363,7 @@ class GraphicWalker(ReactComponent):
             configure_debug_log_level()
 
         if state._is_pyodide:
-            params.pop("server_computation", None)
+            params.pop("kernel_computation", None)
 
         super().__init__(object=object, **params)
         self._exports = {}
@@ -399,7 +399,7 @@ class GraphicWalker(ReactComponent):
                 params["fields"] = self.calculated_fields()
             if not self.config:
                 params["config"] = {}
-            if self.server_computation:
+            if self.kernel_computation:
                 del params["object"]
         if "spec" in params:
             params["spec"] = process_spec(params["spec"])
@@ -542,13 +542,13 @@ class GraphicWalker(ReactComponent):
         return SaveButton(self, **params)
 
     def chart(self, index: int | list | None = None, **params) -> "GraphicWalker":
-        """Returns a clone with `renderer='chart'` and `server_computation=False`.
+        """Returns a clone with `renderer='chart'` and `kernel_computation=False`.
 
         >>> walker.chart(1, width=400)
         """
         params["index"] = index
         params["renderer"] = "chart"
-        params["server_computation"] = False
+        params["kernel_computation"] = False
         return self.clone(**params)
 
     def explorer(self, **params) -> "GraphicWalker":

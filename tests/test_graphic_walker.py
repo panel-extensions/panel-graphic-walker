@@ -27,7 +27,7 @@ def _get_params(gwalker):
         "appearance": gwalker.appearance,
         "config": gwalker.config,
         "spec": gwalker.spec,
-        "server_computation": gwalker.server_computation,
+        "kernel_computation": gwalker.kernel_computation,
     }
 
 
@@ -88,23 +88,23 @@ def test_process_parameter_change_with_appearance(data):
 
 
 @pytest.mark.xfail(reason="Don't know how to implement this")
-def test_process_parameter_change_resetting_server_computation(data):
-    gwalker = GraphicWalker(object=data, server_computation=True)
-    gwalker.server_computation = False
-    params = {"server_computation": gwalker.server_computation}
+def test_process_parameter_change_resetting_kernel_computation(data):
+    gwalker = GraphicWalker(object=data, kernel_computation=True)
+    gwalker.kernel_computation = False
+    params = {"kernel_computation": gwalker.kernel_computation}
     result = gwalker._process_param_change(params)
     assert result["object"] is gwalker.object
 
 
-def test_server_computation(data):
-    gwalker = GraphicWalker(object=data, server_computation=True)
-    gwalker.param.server_computation.constant = False
-    gwalker.server_computation = True
+def test_kernel_computation(data):
+    gwalker = GraphicWalker(object=data, kernel_computation=True)
+    gwalker.param.kernel_computation.constant = False
+    gwalker.kernel_computation = True
 
     params = _get_params(gwalker)
     assert "object" not in gwalker._process_param_change(params)
 
-    gwalker.server_computation = False
+    gwalker.kernel_computation = False
     params = _get_params(gwalker)
     assert "object" in gwalker._process_param_change(params)
 
@@ -224,11 +224,11 @@ def test_clone(data):
 
 
 def test_clone_to_chart(data):
-    gwalker = GraphicWalker(object=data, server_computation=True)
+    gwalker = GraphicWalker(object=data, kernel_computation=True)
     chart = gwalker.chart(1, width=400)
     assert chart.object is data
     assert chart.renderer == "chart"
-    assert not chart.server_computation
+    assert not chart.kernel_computation
     assert chart.index == 1
     assert chart.width == 400
 

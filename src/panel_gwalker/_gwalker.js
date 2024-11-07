@@ -57,7 +57,7 @@ export function render({ model }) {
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
   const [spec] = model.useState('spec')
-  const [serverComputation] = model.useState('server_computation')
+  const [kernelComputation] = model.useState('kernel_computation')
   const [renderer] = model.useState('renderer')
   const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
@@ -112,11 +112,11 @@ export function render({ model }) {
   // Data Transforms
   useEffect(() => {
     let result = null
-    if (!serverComputation){
+    if (!kernelComputation){
       result = transform(data);
     }
     setTransformedData(result);
-  }, [data, serverComputation]);
+  }, [data, kernelComputation]);
 
   useEffect(() => {
     setTransformedSpec(transformSpec(spec))
@@ -162,13 +162,13 @@ export function render({ model }) {
   }
 
   useEffect(() => {
-    if (serverComputation){
+    if (kernelComputation){
       setComputation(() => computationFunc)
     }
     else {
       setComputation(null)
     }
-  }, [serverComputation]);
+  }, [kernelComputation]);
 
   useEffect(() => {
     if (renderer=="explorer"){
@@ -229,7 +229,7 @@ export function render({ model }) {
 
   if (renderer=='chart') {
     if (!data | !transformedData) {
-      return <div>No data to render. Set 'server_computation=False' when creating GraphicWalker.</div>;
+      return <div>No data to render. Set 'kernel_computation=False' when creating GraphicWalker.</div>;
     }
     return (
       <>

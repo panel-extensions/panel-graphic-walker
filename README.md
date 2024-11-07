@@ -81,20 +81,20 @@ GraphicWalker(df, renderer='profiler')
 
 ### Scaling with Server-Side Computation
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/server_computation.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/server_computation.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/kernel_computation.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/kernel_computation.py)
 
-In some environments, you may encounter message or client-side data limits. To handle larger datasets, you can offload the *computation* to the *server*.
+In some environments, you may encounter message or client-side data limits. To handle larger datasets, you can offload the *computation* to the *server* or Jupyter *kernel*.
 
 First, you will need to install extra dependencies:
 
 ```bash
-pip install panel-graphic-walker[server]
+pip install panel-graphic-walker[kernel]
 ```
 
-Then you can use server-side computation with `server_computation=True`:
+Then you can use server-side computation with `kernel_computation=True`:
 
 ```python
-walker = GraphicWalker(df, server_computation=True)
+walker = GraphicWalker(df, kernel_computation=True)
 ```
 
 This setup allows your application to manage larger datasets efficiently by leveraging server resources for data processing.
@@ -132,7 +132,7 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, the existing chart(s) will not be deleted, and you will have to create a new one manually to use the new dataset.
 - `fields` (list): Optional specification of fields (columns).
 - `spec` (str, dict, list): Optional chart specification as URL, JSON, dict, or list. Can be generated via the `export` method.
-- `server_computation` (bool): Optional. If True, the computations will take place on the Panel server or in the Jupyter kernel instead of the client to scale to larger datasets. Default is False.
+- `kernel_computation` (bool): Optional. If True, the computations will take place on the server or in the Jupyter kernel instead of the client to scale to larger datasets. The 'chart' renderer will only work with client side rendering. Default is False.
 - `renderer` (str): How to display the data. One of 'explorer' (default), 'profiler', 'viewer', or 'chart'. These correspond to `GraphicWalker`, `TableWalker`, `GraphicRenderer`, and `PureRender` in the `graphic-walker` React library.
 - `page_size` (int): The number of rows per page in the table. Only applicable for the `profiler` renderer.
 - `index` (int | list): Optional index or indices to display. Default is None (all). Only applicable for the `viewer` or `chart` renderer.

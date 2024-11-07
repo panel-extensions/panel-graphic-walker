@@ -12,14 +12,14 @@ GH_PREFIX = "refs/heads/main/examples/"
 
 BASE_REQUIREMENTS = ["panel-graphic-walker>=0.4.0"]
 PARQUET_REQUIREMENTS = BASE_REQUIREMENTS + ["fastparquet"]
-SERVER_REQUIREMENTS = ["panel-graphic-walker[server]>=0.4.0"]
+SERVER_REQUIREMENTS = ["panel-graphic-walker[kernel]>=0.4.0"]
 
 
 EXAMPLES = [
     ("examples/reference/basic.py", BASE_REQUIREMENTS),
     ("examples/reference/spec.py", BASE_REQUIREMENTS),
     ("examples/reference/renderer.py", BASE_REQUIREMENTS),
-    ("examples/reference/server_computation.py", SERVER_REQUIREMENTS),
+    ("examples/reference/kernel_computation.py", SERVER_REQUIREMENTS),
     ("examples/reference_app/app.py", SERVER_REQUIREMENTS),
     ("examples/bikesharing_dashboard/app.py", SERVER_REQUIREMENTS),
     ("examples/earthquake_dashboard/app.py", SERVER_REQUIREMENTS),

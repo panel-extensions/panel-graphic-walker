@@ -4,15 +4,19 @@ from pathlib import Path
 
 import pandas as pd
 import param
+import polars as pl
 import pytest
 
 from panel_gwalker import GraphicWalker
 from panel_gwalker._utils import _raw_fields
 
 
-@pytest.fixture
-def data():
-    return pd.DataFrame({"a": [1, 2, 3]})
+@pytest.fixture(params=["pandas", "polars"])
+def data(request):
+    if request.param == "pandas":
+        return pd.DataFrame({"a": [1, 2, 3]})
+    elif request.param == "polars":
+        return pl.DataFrame({"a": [1, 2, 3]})
 
 
 @pytest.fixture

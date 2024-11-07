@@ -66,12 +66,27 @@ def _infer_prop(s: pd.Series, i=None) -> dict:
     }
 
 
+POLARS_SAMPLE_ROWS = 100
+
+
 @pn.cache(max_items=20, ttl=60 * 5, policy="LRU")
-def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
+def _raw_fields_core(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
     if isinstance(data, dict):
         return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
     else:
         return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+
+
+def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
+    # Workaround for Polars caching issue. See https://github.com/holoviz/panel/issues/7467.
+    if not isinstance(data, (dict, pd.DataFrame)):
+        try:
+            if len(data) > POLARS_SAMPLE_ROWS:
+                data = data.sample(n=POLARS_SAMPLE_ROWS)
+            data = data.to_pandas()
+        except:
+            pass
+    return _raw_fields_core(data)
 
 
 SpecType = None | str | Path | dict | list[dict]

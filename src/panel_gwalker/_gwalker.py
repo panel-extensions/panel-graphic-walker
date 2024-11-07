@@ -19,6 +19,7 @@ from panel.viewable import Viewer
 from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
+from panel_gwalker._tabular_data import TabularData, TabularDataType
 from panel_gwalker._utils import (
     SPECTYPES,
     SpecType,
@@ -217,7 +218,7 @@ class GraphicWalker(ReactComponent):
         Servable `GraphicWalker` object that creates a UI for visual exploration of the input DataFrame.
     """
 
-    object: pd.DataFrame = param.DataFrame(
+    object: TabularDataType = TabularData(
         doc="""The data to explore.
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )

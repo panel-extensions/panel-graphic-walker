@@ -1,0 +1,27 @@
+{
+    "GraphicWalkerApp": {
+        "prefix": "graphicwalker",
+        "body": [
+            "import panel as pn",
+            "from panel_gwalker import GraphicWalker",
+            "import pandas as pd",
+            "",
+            "pn.extension()",
+            "",
+            "DATA_URL = \"https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv\"",
+            "",
+            "@pn.cache()",
+            "def get_data():",
+            "    data = pd.read_csv(DATA_URL)",
+            "    data.to_parquet(\"bike_sharing_dc.parquet\")",
+            "    return data",
+            "",
+            "data = get_data()",
+            "",
+            "walker = GraphicWalker(data)",
+            "",
+            "app = pn.Column(walker).servable()"
+        ],
+        "description": "Set up a basic Panel app with GraphicWalker and cached data loading"
+    }
+}

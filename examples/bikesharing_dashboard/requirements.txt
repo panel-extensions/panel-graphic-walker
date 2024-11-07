@@ -1,0 +1,4 @@
+gw-dsl-parser ; sys_platform != 'emscripten'
+pandas
+panel-graphic-walker
+pygwalker ; sys_platform != 'emscripten'

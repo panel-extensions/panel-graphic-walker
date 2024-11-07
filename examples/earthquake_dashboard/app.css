@@ -1,0 +1,20 @@
+body {
+  position: relative;
+  background: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://i.ytimg.com/vi/1YLStcrROgw/hq720.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  opacity: 0.3; /* Adjust transparency level here (0 = fully transparent, 1 = fully opaque) */
+  z-index: -1;
+}

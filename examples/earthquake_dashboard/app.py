@@ -7,7 +7,7 @@ from panel_gwalker import GraphicWalker
 
 ROOT = Path(__file__).parent
 CSS = ROOT / "app.css"
-DATASET = ROOT / "significant_earthquake_dataset_1900_2023.parquet"
+DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
 SPEC = ROOT / "spec.json"
 
 
@@ -20,7 +20,6 @@ def get_css():
 def get_df() -> pd.DataFrame:
     df = pd.read_parquet(DATASET)
     df["Time"] = pd.to_datetime(df["Time"]).dt.strftime("%Y-%m-%d %H:%M:%S")
-    df.to_parquet("significant_earthquake_dataset_1900_2023.parquet", index=False)
     return df
 
 
@@ -45,8 +44,8 @@ Source: [Data]({DATASET}), Credits: [earthquake-dashboard-pygwalker](https://ear
 
 walker = GraphicWalker(
     df,
-    kernel_computation=True,
-    theme_key="g2",
+    server_computation=True,
+    theme="g2",
     appearance="dark",
     spec=SPEC,
     margin=(0, 25, 25, 25),

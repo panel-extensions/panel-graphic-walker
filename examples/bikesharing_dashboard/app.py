@@ -9,7 +9,7 @@ pn.extension(sizing_mode="stretch_width")
 
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
-DATA_PATH = ROOT / "bike_sharing_dc.parquet"
+DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
 SPEC_PATH = ROOT / "spec.json"
 ACCENT = "#ff4a4a"
 
@@ -37,16 +37,15 @@ CSS = """
 
 @pn.cache
 def get_data():
-    return pd.read_parquet(DATA_PATH)
+    return pd.read_parquet(DATASET)
 
 
 data = get_data()
 
 walker = GraphicWalker(
     data,
-    theme_key="streamlit",
+    theme="streamlit",
     spec=SPEC_PATH,
-    save_path=SPEC_PATH.as_posix(),
     sizing_mode="stretch_both",
 )
 
@@ -72,14 +71,6 @@ main = pn.Tabs(
     dynamic=True,
 )
 
-button = walker.create_save_button(
-    include_settings=True, sizing_mode="fixed", width=300
-)
-
-app = pn.Column(
-    walker,
-    button,
-)
 
 sidebar = pn.Column(
     "https://images.fastcompany.com/image/upload/f_webp,q_auto,c_fit/fc/3036624-poster-p-1-is-this-the-worlds-best-bike-share-bike.jpg",

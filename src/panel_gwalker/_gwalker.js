@@ -52,7 +52,7 @@ function transformSpec(spec, fields) {
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
-  const [themeKey] = model.useState('theme_key')
+  const [themeKey] = model.useState('theme')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
@@ -97,7 +97,7 @@ export function render({ model }) {
       if (e.mode === 'spec') {
         exported = exporter.currentVis
       } else {
-        exported = await window.graphicWalker.current.exportChart()
+        exported = await graphicWalkerRef.current.exportChart()
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {

@@ -1,0 +1,320 @@
+[
+    {
+        "config": {
+            "defaultAggregated": true,
+            "geoms": [
+                "auto"
+            ],
+            "coordSystem": "generic",
+            "limit": -1
+        },
+        "encodings": {
+            "dimensions": [
+                {
+                    "fid": "faa_ors",
+                    "name": "faa_ors",
+                    "basename": "faa_ors",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "faa_asn",
+                    "name": "faa_asn",
+                    "basename": "faa_asn",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_state",
+                    "name": "t_state",
+                    "basename": "t_state",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_county",
+                    "name": "t_county",
+                    "basename": "t_county",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "p_name",
+                    "name": "p_name",
+                    "basename": "p_name",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_manu",
+                    "name": "t_manu",
+                    "basename": "t_manu",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_model",
+                    "name": "t_model",
+                    "basename": "t_model",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "retrofit",
+                    "name": "retrofit",
+                    "basename": "retrofit",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_conf_atr",
+                    "name": "t_conf_atr",
+                    "basename": "t_conf_atr",
+                    "semanticType": "ordinal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_conf_loc",
+                    "name": "t_conf_loc",
+                    "basename": "t_conf_loc",
+                    "semanticType": "ordinal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_img_date",
+                    "name": "t_img_date",
+                    "basename": "t_img_date",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "t_img_srce",
+                    "name": "t_img_srce",
+                    "basename": "t_img_srce",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension"
+                },
+                {
+                    "fid": "gw_mea_key_fid",
+                    "name": "Measure names",
+                    "analyticType": "dimension",
+                    "semanticType": "nominal"
+                }
+            ],
+            "measures": [
+                {
+                    "fid": "case_id",
+                    "name": "case_id",
+                    "basename": "case_id",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "usgs_pr_id",
+                    "name": "usgs_pr_id",
+                    "basename": "usgs_pr_id",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "eia_id",
+                    "name": "eia_id",
+                    "basename": "eia_id",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_fips",
+                    "name": "t_fips",
+                    "basename": "t_fips",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "p_year",
+                    "name": "p_year",
+                    "basename": "p_year",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "p_tnum",
+                    "name": "p_tnum",
+                    "basename": "p_tnum",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "p_cap",
+                    "name": "p_cap",
+                    "basename": "p_cap",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_cap",
+                    "name": "t_cap",
+                    "basename": "t_cap",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_hh",
+                    "name": "t_hh",
+                    "basename": "t_hh",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_rd",
+                    "name": "t_rd",
+                    "basename": "t_rd",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_rsa",
+                    "name": "t_rsa",
+                    "basename": "t_rsa",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "t_ttlh",
+                    "name": "t_ttlh",
+                    "basename": "t_ttlh",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "retrofit_year",
+                    "name": "retrofit_year",
+                    "basename": "retrofit_year",
+                    "analyticType": "measure",
+                    "semanticType": "ordinal",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "xlong",
+                    "name": "xlong",
+                    "basename": "xlong",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "ylat",
+                    "name": "ylat",
+                    "basename": "ylat",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "easting",
+                    "name": "easting",
+                    "basename": "easting",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "northing",
+                    "name": "northing",
+                    "basename": "northing",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                },
+                {
+                    "fid": "gw_count_fid",
+                    "name": "Row count",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum",
+                    "computed": true,
+                    "expression": {
+                        "op": "one",
+                        "params": [],
+                        "as": "gw_count_fid"
+                    }
+                },
+                {
+                    "fid": "gw_mea_val_fid",
+                    "name": "Measure values",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                }
+            ],
+            "rows": [
+                {
+                    "fid": "p_cap",
+                    "name": "p_cap",
+                    "basename": "p_cap",
+                    "analyticType": "measure",
+                    "semanticType": "quantitative",
+                    "aggName": "sum"
+                }
+            ],
+            "columns": [
+                {
+                    "fid": "t_manu",
+                    "name": "t_manu",
+                    "basename": "t_manu",
+                    "semanticType": "nominal",
+                    "analyticType": "dimension",
+                    "sort": "descending"
+                }
+            ],
+            "color": [],
+            "opacity": [],
+            "size": [],
+            "shape": [],
+            "radius": [],
+            "theta": [],
+            "longitude": [],
+            "latitude": [],
+            "geoId": [],
+            "details": [],
+            "filters": [],
+            "text": []
+        },
+        "layout": {
+            "showActions": false,
+            "showTableSummary": false,
+            "stack": "stack",
+            "interactiveScale": false,
+            "zeroScale": true,
+            "size": {
+                "mode": "full",
+                "width": 320,
+                "height": 200
+            },
+            "format": {},
+            "geoKey": "name",
+            "resolve": {
+                "x": false,
+                "y": false,
+                "color": false,
+                "opacity": false,
+                "shape": false,
+                "size": false
+            }
+        },
+        "visId": "gw_5F0r",
+        "name": "Capacity of Manufacturer"
+    }
+]

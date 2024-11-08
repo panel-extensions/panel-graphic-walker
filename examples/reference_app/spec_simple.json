@@ -1,0 +1,69 @@
+{
+    "encodings": {
+        "dimensions": [
+            {
+                "fid": "t_county",
+                "name": "t_county",
+                "basename": "t_county",
+                "semanticType": "nominal",
+                "analyticType": "dimension"
+            },
+            {
+                "fid": "t_manu",
+                "name": "t_manu",
+                "basename": "t_manu",
+                "semanticType": "nominal",
+                "analyticType": "dimension"
+            }
+        ],
+        "measures": [
+            {
+                "fid": "gw_count_fid",
+                "name": "Row count",
+                "analyticType": "measure",
+                "semanticType": "quantitative",
+                "aggName": "sum",
+                "computed": true,
+                "expression": {
+                    "op": "one",
+                    "params": [],
+                    "as": "gw_count_fid"
+                }
+            }
+        ],
+        "rows": [
+            {
+                "fid": "gw_count_fid",
+                "name": "Row count",
+                "analyticType": "measure",
+                "semanticType": "quantitative",
+                "aggName": "sum",
+                "computed": true,
+                "expression": {
+                    "op": "one",
+                    "params": [],
+                    "as": "gw_count_fid"
+                }
+            }
+        ],
+        "columns": [
+            {
+                "fid": "t_county",
+                "name": "t_county",
+                "basename": "t_county",
+                "semanticType": "nominal",
+                "analyticType": "dimension",
+                "sort": "descending"
+            }
+        ],
+        "color": [
+            {
+                "fid": "t_manu",
+                "name": "t_manu",
+                "basename": "t_manu",
+                "semanticType": "nominal",
+                "analyticType": "dimension"
+            }
+        ]
+    }
+}

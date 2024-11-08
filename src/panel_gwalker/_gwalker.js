@@ -1,7 +1,10 @@
-import {GraphicWalker} from "graphic-walker"
+import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer, ISegmentKey} from "graphic-walker"
 import {useEffect, useState, useRef} from "react"
 
 function transform(data) {
+  if (data==null) {
+    return {}
+  }
   const keys = Object.keys(data);
   const length = data[keys[0]].length;
 
@@ -19,19 +22,56 @@ function cleanToDict(value){
     return value
 }
 
+function fetchSpec(url) {
+  return fetch(url)
+    .then(response => response.json())
+    .catch(err => {
+      console.error('Error fetching spec from URL', err);
+    });
+}
+
+function transformSpec(spec, fields) {
+  /* The spec must be an null or array of objects */
+  if (spec === null) {
+    return null;
+  }
+  if (typeof spec === 'string') {
+    if (spec.startsWith('http://') || spec.startsWith('https://')) {
+      spec = fetchSpec(spec);
+    } else {
+      spec = JSON.parse(spec);
+    }
+  }
+
+  if (!Array.isArray(spec)) {
+    return [spec];
+  }
+  return spec;
+}
+
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
-  const [theme] = model.useState('theme')
+  const [themeKey] = model.useState('theme')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')
-  const [serverComputation] = model.useState('server_computation')
+  const [spec] = model.useState('spec')
+  const [kernelComputation] = model.useState('kernel_computation')
+  const [renderer] = model.useState('renderer')
+  const [index] = model.useState('index')
+  const [pageSize] = model.useState('page_size')
+  const [hideProfiling] = model.useState('hide_profiling')
+  const [tab] = model.useState('tab')
+  const [containerHeight] = model.useState('container_height')
 
   // Data State
   const [computation, setComputation] = useState(null);
   const [transformedData, setTransformedData] = useState([]);
+  const [transformedSpec, setTransformedSpec] = useState([]);
   const events = useRef(new Map());
+  const [transformedIndexSpec, setTransformedIndexSpec] = useState(null)
+  const [containerStyle, setContainerStyle] = useState({})
 
   // Refs
   const graphicWalkerRef = useRef(null);
@@ -57,7 +97,7 @@ export function render({ model }) {
       if (e.mode === 'spec') {
         exported = exporter.currentVis
       } else {
-        exported = exporter.currentVis
+        exported = await graphicWalkerRef.current.exportChart()
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {
@@ -73,11 +113,35 @@ export function render({ model }) {
   // Data Transforms
   useEffect(() => {
     let result = null
-    if (!serverComputation){
+    if (!kernelComputation){
       result = transform(data);
     }
     setTransformedData(result);
-  }, [data, serverComputation]);
+  }, [data, kernelComputation]);
+
+  useEffect(() => {
+    setTransformedSpec(transformSpec(spec))
+  }, [spec]);
+
+  useEffect(() => {
+    if (transformedSpec != null) {
+      let filteredSpecs;
+      if (Array.isArray(index)) {
+        filteredSpecs = index.map(i => transformedSpec[i]).filter(item => item != null);
+      } else if (index != null && transformedSpec.length > index) {
+        filteredSpecs = [transformedSpec[index]];
+      } else {
+        filteredSpecs = transformedSpec;
+      }
+      if (filteredSpecs && filteredSpecs.length > 0) {
+        setTransformedIndexSpec(filteredSpecs);
+      } else {
+        setTransformedIndexSpec(null);
+      }
+    } else {
+      setTransformedIndexSpec(null);
+    }
+  }, [transformedSpec, index]);
 
   const wait_for = async (event_id) => {
     while (!events.current.has(event_id)) {
@@ -99,22 +163,115 @@ export function render({ model }) {
   }
 
   useEffect(() => {
-    if (serverComputation){
+    if (kernelComputation){
       setComputation(() => computationFunc)
     }
     else {
       setComputation(null)
     }
-  }, [serverComputation]);
+  }, [kernelComputation]);
+
+  useEffect(() => {
+    if (renderer=="explorer"){
+      const key = tab === "data" ? ISegmentKey.data : ISegmentKey.vis;
+      storeRef?.current?.setSegmentKey(key);
+    }
+  }, [tab, storeRef, renderer]);
+
+  useEffect(() => {
+    setContainerStyle({
+        height: containerHeight,
+        width: "100%"
+    })
+  }, [containerHeight])
+
+  if (renderer=='profiler') {
+    return <TableWalker
+      storeRef={storeRef}
+      ref={graphicWalkerRef}
+      data={transformedData}
+      fields={fields}
+      computation={computation}
+      appearance={appearance}
+      vizThemeConfig={themeKey}
+      pageSize={pageSize}
+      hideProfiling={hideProfiling}
+      {...config}
+    />
+  }
+
+  if (renderer=='viewer') {
+    // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
+
+    return (
+      <>
+        {transformedIndexSpec?.map((chart, index) => (
+          <div className="pn-gw-container" key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
+            <h3 style={{ marginLeft: "15px" }}>{chart.name || `Chart ${index}`}</h3>
+            <GraphicRenderer
+              id={index}
+              storeRef={storeRef}
+              ref={graphicWalkerRef}
+              data={transformedData}
+              fields={fields}
+              chart={[chart]} // only 'chart' differs for each iteration
+              computation={computation}
+              appearance={appearance}
+              vizThemeConfig={themeKey}
+              containerStyle={containerStyle}
+              {...config}
+              /* hack to force re-render if the transformedSpec is reset to null */
+              key={transformedSpec ? "withSpec" : "nullSpec"}
+              />
+          </div>
+        ))}
+      </>
+    );
+  }
+
+  if (renderer=='chart') {
+    if (!data | !transformedData) {
+      return <div>No data to render. Set 'kernel_computation=False' when creating GraphicWalker.</div>;
+    }
+    return (
+      <>
+        {transformedIndexSpec?.map((chart, index) => (
+          <div className="pn-gw-container" key={transformedIndexSpec ? `withSpec-${index}` : `nullSpec-${index}`}>
+            <h3 style={{ marginLeft: "15px" }}>{chart.name || `Chart ${index}`}</h3>
+            <div style={{"height": containerHeight}}>
+              <PureRenderer
+                id={index}
+                storeRef={storeRef}
+                ref={graphicWalkerRef}
+                rawData={transformedData}
+                visualState={chart.encodings || null}
+                visualConfig={chart.config || null}
+                visualLayout={chart.layout || null}
+                appearance={appearance}
+                vizThemeConfig={themeKey}
+                {...config}
+                /* hack to force re-render if the transformedSpec is reset to null */
+                key={transformedSpec ? "withSpec" : "nullSpec"}
+                />
+            </div>
+          </div>
+        ))}
+      </>
+    );
+  }
 
   return <GraphicWalker
     storeRef={storeRef}
     ref={graphicWalkerRef}
     data={transformedData}
     fields={fields}
+    chart={transformedSpec}
+    hideProfiling={hideProfiling}
     computation={computation}
     appearance={appearance}
-    vizThemeConfig={theme}
+    vizThemeConfig={themeKey}
+    /* hack to force re-render if the transformedSpec is reset to null */
+    key={transformedSpec ? "withSpec" : "nullSpec"}
     {...config}
-   />
+  />
 }

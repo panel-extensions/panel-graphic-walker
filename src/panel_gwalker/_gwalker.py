@@ -255,6 +255,10 @@ class GraphicWalker(ReactComponent):
         doc="""The number of rows per page in the table of the 'profiler' render.
     Has no effect on other renderers.""",
     )
+    hide_profiling: bool = param.Boolean(
+        default=False,
+        doc="""Whether to hide the profiling part of the 'profiler' renderer. Does not apply to other renderers.""",
+    )
     tab: Literal["data", "vis"] = param.Selector(
         default="vis",
         objects=["data", "vis"],
@@ -577,6 +581,7 @@ class GraphicWalker(ReactComponent):
 
     _PARAMETER_IS_ENABLED = {
         "page_size": ["profiler"],
+        "hide_profiling": ["profiler"],
         "index": ["viewer", "chart"],
         "tab": ["explorer"],
         "container_height": ["viewer", "chart"],

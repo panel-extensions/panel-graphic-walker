@@ -60,6 +60,9 @@ core_settings = pn.Column(
     pn.widgets.IntInput.from_param(
         walker.param.page_size, visible=walker.is_enabled("page_size")
     ),
+    pn.widgets.Checkbox.from_param(
+        walker.param.hide_profiling, visible=walker.is_enabled("hide_profiling")
+    ),
     pn.widgets.IntInput.from_param(
         walker.param.index, visible=walker.is_enabled("index")
     ),

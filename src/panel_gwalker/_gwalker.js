@@ -61,6 +61,7 @@ export function render({ model }) {
   const [renderer] = model.useState('renderer')
   const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
+  const [hideProfiling] = model.useState('hide_profiling')
   const [tab] = model.useState('tab')
   const [containerHeight] = model.useState('container_height')
 
@@ -194,6 +195,7 @@ export function render({ model }) {
       appearance={appearance}
       vizThemeConfig={themeKey}
       pageSize={pageSize}
+      hideProfiling={hideProfiling}
       {...config}
     />
   }
@@ -264,6 +266,7 @@ export function render({ model }) {
     data={transformedData}
     fields={fields}
     chart={transformedSpec}
+    hideProfiling={hideProfiling}
     computation={computation}
     appearance={appearance}
     vizThemeConfig={themeKey}

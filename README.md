@@ -135,6 +135,7 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 - `kernel_computation` (bool): Optional. If True, the computations will take place on the server or in the Jupyter kernel instead of the client to scale to larger datasets. The 'chart' renderer will only work with client side rendering. Default is False.
 - `renderer` (str): How to display the data. One of 'explorer' (default), 'profiler', 'viewer', or 'chart'. These correspond to `GraphicWalker`, `TableWalker`, `GraphicRenderer`, and `PureRender` in the `graphic-walker` React library.
 - `page_size` (int): The number of rows per page in the table. Only applicable for the `profiler` renderer.
+- `hide_profiling` (bool): Whether to hide the profiling part of the 'profiler' renderer. Default is False. Does not apply to other renderers.
 - `index` (int | list): Optional index or indices to display. Default is None (all). Only applicable for the `viewer` or `chart` renderer.
 - `tab` ('data' | 'vis'): Set the active tab to 'data' or 'vis' (default). Only applicable for the `explorer` renderer. Not bi-directionally synced.
 - `container_height` (str): The height of a single chart in the `viewer` or `chart` renderer. For example, '500px' (pixels) or '30vh' (viewport height).

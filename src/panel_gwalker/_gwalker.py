@@ -237,7 +237,9 @@ class GraphicWalker(ReactComponent):
         doc="""The data to explore.
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
-    fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
+    field_specs: list = param.List(
+        doc="""Optional fields, i.e. columns, specification."""
+    )
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(
         doc="""Optional chart specification as url, json, dict or list.
@@ -340,7 +342,7 @@ class GraphicWalker(ReactComponent):
         return config.get(theme, self.param.appearance.default)
 
     @param.depends("object")
-    def calculated_fields(self) -> list[dict]:
+    def calculated_field_specs(self) -> list[dict]:
         """Returns all the fields calculated from the object.
 
         The calculated fields are a great starting point if you want to customize the fields.
@@ -349,8 +351,8 @@ class GraphicWalker(ReactComponent):
 
     def _process_param_change(self, params):
         if params.get("object") is not None:
-            if not self.fields:
-                params["fields"] = self.calculated_fields()
+            if not self.field_specs:
+                params["field_specs"] = self.calculated_field_specs()
             if not self.config:
                 params["config"] = {}
             if self.kernel_computation:
@@ -363,7 +365,7 @@ class GraphicWalker(ReactComponent):
 
     def _compute(self, payload):
         logger.debug("request: %s", payload)
-        field_specs = self.fields or self.calculated_fields()
+        field_specs = self.field_specs or self.calculated_field_specs()
         parser = get_data_parser(
             self.object,
             field_specs=field_specs,

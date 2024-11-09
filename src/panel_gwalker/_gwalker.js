@@ -30,7 +30,7 @@ function fetchSpec(url) {
     });
 }
 
-function transformSpec(spec, fields) {
+function transformSpec(spec) {
   /* The spec must be an null or array of objects */
   if (spec === null) {
     return null;
@@ -55,7 +55,7 @@ export function render({ model }) {
   const [themeKey] = model.useState('theme_key')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
-  const [fields] = model.useState('fields')
+  const [fields] = model.useState('field_specs')
   const [spec] = model.useState('spec')
   const [kernelComputation] = model.useState('kernel_computation')
   const [renderer] = model.useState('renderer')

@@ -130,7 +130,7 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 #### Core
 
 - `object` (DataFrame): The data for exploration. Please note that if you update the `object`, the existing chart(s) will not be deleted, and you will have to create a new one manually to use the new dataset.
-- `fields` (list): Optional specification of fields (columns).
+- `field_specs` (list): Optional specification of fields (columns).
 - `spec` (str, dict, list): Optional chart specification as URL, JSON, dict, or list. Can be generated via the `export` method.
 - `kernel_computation` (bool): Optional. If True, the computations will take place on the server or in the Jupyter kernel instead of the client to scale to larger datasets. The 'chart' renderer will only work with client side rendering. Default is False.
 
@@ -171,7 +171,7 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 
 #### Other Methods
 
-- `calculated_fields`: Returns a list of `fields` calculated from the `object`. This is a great starting point if you want to provide custom `fields`.
+- `calculated_field_specs`: Returns a list of *fields* calculated from the `object`. This is a great starting point if you want to provide custom `field_specs`.
 
 ## Vision
 

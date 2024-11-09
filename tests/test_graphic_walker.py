@@ -24,7 +24,7 @@ def default_appearance():
 def _get_params(gwalker):
     return {
         "object": gwalker.object,
-        "fields": gwalker.fields,
+        "field_specs": gwalker.field_specs,
         "appearance": gwalker.appearance,
         "config": gwalker.config,
         "spec": gwalker.spec,
@@ -35,7 +35,7 @@ def _get_params(gwalker):
 def test_constructor(data, default_appearance):
     gwalker = GraphicWalker(object=data)
     assert gwalker.object is data
-    assert not gwalker.fields
+    assert not gwalker.field_specs
     assert not gwalker.config
     assert gwalker.appearance == default_appearance
     assert gwalker.theme_key == "g2"
@@ -46,13 +46,13 @@ def test_process_parameter_change(data, default_appearance):
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"] == gwalker.calculated_fields()
+    assert params["field_specs"] == gwalker.calculated_field_specs()
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
 
 def test_process_parameter_change_with_fields(data, default_appearance):
-    fields = fields = [
+    field_specs = [
         {
             "fid": "t_county",
             "name": "t_county",
@@ -60,11 +60,11 @@ def test_process_parameter_change_with_fields(data, default_appearance):
             "analyticType": "dimension",
         },
     ]
-    gwalker = GraphicWalker(object=data, fields=fields)
+    gwalker = GraphicWalker(object=data, field_specs=field_specs)
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"] is fields
+    assert params["field_specs"] is field_specs
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
@@ -75,7 +75,7 @@ def test_process_parameter_change_with_config(data, default_appearance):
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"]
+    assert params["field_specs"]
     assert params["appearance"] == default_appearance
     assert params["config"] is config
 
@@ -112,7 +112,7 @@ def test_kernel_computation(data):
 
 def test_calculated_fields(data):
     gwalker = GraphicWalker(object=data)
-    assert gwalker.calculated_fields() == _raw_fields(data)
+    assert gwalker.calculated_field_specs() == _raw_fields(data)
 
 
 def test_process_spec(data, tmp_path: Path):

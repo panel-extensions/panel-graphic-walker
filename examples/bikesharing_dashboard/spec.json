@@ -21,7 +21,7 @@
                     "fid": "month",
                     "name": "month",
                     "basename": "month",
-                    "semanticType": "ordinal",
+                    "semanticType": "quantitative",
                     "analyticType": "dimension"
                 },
                 {
@@ -307,7 +307,7 @@
                     "fid": "month",
                     "name": "month",
                     "basename": "month",
-                    "semanticType": "ordinal",
+                    "semanticType": "quantitative",
                     "analyticType": "dimension",
                     "rule": {
                         "type": "range",

@@ -6,7 +6,16 @@ import uuid
 from functools import partial
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, Callable, Concatenate, Coroutine, Literal, Optional, ParamSpec
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Concatenate,
+    Coroutine,
+    Literal,
+    Optional,
+    ParamSpec,
+)
 
 import numpy as np
 import pandas as pd
@@ -17,9 +26,7 @@ from panel.io.state import state
 from panel.layout import Column
 from panel.pane import Markdown
 from panel.viewable import Viewer
-from panel.widgets import (
-    Button, IntInput, RadioButtonGroup, TextInput
-)
+from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 from panel_gwalker._utils import (
@@ -114,10 +121,7 @@ class ExportControls(Viewer):
                     button_type="primary",
                     **layout_params,
                 ),
-                IntInput.from_param(
-                    self.param.timeout,
-                    **layout_params
-                )
+                IntInput.from_param(self.param.timeout, **layout_params),
             )
         # Should be changed to IconButton once https://github.com/holoviz/panel/issues/7458 is fixed.
         button = Button.from_param(
@@ -180,13 +184,12 @@ class SaveControls(ExportControls):
             name=name,
             description=description,
             include_settings=include_settings,
-            **dict(params, **layout_params)
+            **dict(params, **layout_params),
         )
         if include_settings:
-            save_path = TextInput.from_param(
-                self.param.save_path, **layout_params
-            )
-            self._layout.insert(3, save_path)
+            if isinstance(self.save_path, str):
+                save_path = TextInput.from_param(self.param.save_path, **layout_params)
+                self._layout.insert(3, save_path)
 
     @param.depends("run", watch=True)
     async def _export(self):
@@ -280,7 +283,7 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark' or 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    theme: Literal["g2", "streamlit", "vega"] = param.Selector(
+    theme_key: Literal["g2", "streamlit", "vega"] = param.Selector(
         default="g2",
         objects=["g2", "streamlit", "vega"],
         doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
@@ -370,6 +373,7 @@ class GraphicWalker(ReactComponent):
                 {"pygwalker_mid_table": parser.field_metas},
             )
             logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
+            result = pd.DataFrame()
 
         df = pd.DataFrame.from_records(result)
         logger.debug("response:\n%s", df)
@@ -391,8 +395,8 @@ class GraphicWalker(ReactComponent):
 
     async def export_chart(
         self,
-        mode: Literal["spec", "svg"] = 'spec',
-        scope: Literal["current", "all"] = 'current',
+        mode: Literal["spec", "svg"] = "spec",
+        scope: Literal["current", "all"] = "current",
         timeout: int = 5000,
     ):
         """
@@ -465,14 +469,16 @@ class GraphicWalker(ReactComponent):
         """
         return ExportControls(self, **params)
 
-    def save_controls(self, save_path: str | os.PathLike | IO, **params) -> SaveControls:
+    def save_controls(
+        self, save_path: str | os.PathLike | IO, **params
+    ) -> SaveControls:
         """Returns a UI component to save the chart(s) as either a spec or SVG.
 
         >>> walker.create_save_button(width=400)
 
         The spec or SVG will be saved to the path give by `save_path`.
         """
-        return SaveControls(self, **params)
+        return SaveControls(self, save_path=save_path, **params)
 
     def chart(self, index: int | list | None = None, **params) -> "GraphicWalker":
         """Returns a clone with `renderer='chart'` and `kernel_computation=False`.

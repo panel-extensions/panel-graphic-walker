@@ -9,7 +9,7 @@ pn.extension(sizing_mode="stretch_width")
 
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
-DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
+DATASET = "https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv"
 SPEC_PATH = ROOT / "spec.json"
 ACCENT = "#ff4a4a"
 
@@ -37,7 +37,7 @@ CSS = """
 
 @pn.cache
 def get_data():
-    return pd.read_parquet(DATASET)
+    return pd.read_csv(DATASET)
 
 
 data = get_data()
@@ -47,6 +47,7 @@ walker = GraphicWalker(
     theme="streamlit",
     spec=SPEC_PATH,
     sizing_mode="stretch_both",
+    kernel_computation=True,
 )
 
 main = pn.Tabs(

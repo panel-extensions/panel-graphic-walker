@@ -49,7 +49,7 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    kernel_computation=True
+    kernel_computation=True,
 )
 core_settings = pn.Column(
     walker.param.kernel_computation,
@@ -80,7 +80,7 @@ style_settings = pn.Column(
     _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
     _label("Theme Key"),
-    pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.theme_key, **button_style),
     name="Style",
 )
 file_upload = pn.widgets.FileDropper(
@@ -101,7 +101,9 @@ exported = pn.rx("""
 ```
 """).format(value=export_controls.param.value)
 export_section = pn.Column(export_controls, exported, name="Export")
-save_section = pn.Column(walker.save_controls("examples/reference_app/spec.json"), name="Save")
+save_section = pn.Column(
+    walker.save_controls("examples/reference_app/spec.json"), name="Save"
+)
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 

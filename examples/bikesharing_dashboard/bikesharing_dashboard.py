@@ -9,8 +9,7 @@ pn.extension(sizing_mode="stretch_width")
 
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
-DATASET = "https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv"
-# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json
+DATASET = "https://datasets.holoviz.org/bikesharing_dc/v1/bikesharing_dc.parquet"
 SPEC_PATH = ROOT / "bikesharing_dashboard.json"
 ACCENT = "#ff4a4a"
 
@@ -35,11 +34,9 @@ CSS = """
 }
 """
 
-
 @pn.cache
 def get_data():
-    return pd.read_csv(DATASET)
-
+    return pd.read_parquet(DATASET)
 
 data = get_data()
 

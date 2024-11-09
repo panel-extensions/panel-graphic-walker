@@ -20,9 +20,9 @@ EXAMPLES = [
     ("reference/spec.py", BASE_REQUIREMENTS),
     ("reference/renderer.py", BASE_REQUIREMENTS),
     ("reference/kernel_computation.py", SERVER_REQUIREMENTS),
-    ("reference_app/app.py", SERVER_REQUIREMENTS),
-    ("bikesharing_dashboard/app.py", SERVER_REQUIREMENTS),
-    ("earthquake_dashboard/app.py", SERVER_REQUIREMENTS),
+    ("reference_app/reference_app.py", SERVER_REQUIREMENTS),
+    ("bikesharing_dashboard/bikesharing_dashboard.py", SERVER_REQUIREMENTS),
+    ("earthquake_dashboard/earthquake_dashboard.py", SERVER_REQUIREMENTS),
 ]
 
 

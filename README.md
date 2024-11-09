@@ -1,7 +1,7 @@
 # ✨ Welcome to Panel Graphic Walker
 
 [![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/licenses/MIT)
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/reference_app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet)
 
 **A simple way to explore your data through a *[Tableau-like](https://www.tableau.com/)* interface directly in your [Panel](https://panel.holoviz.org/) data applications.**
 
@@ -103,25 +103,25 @@ Please note that if running on Pyodide, computations will always take place on t
 
 ### Explore all the Parameters and Methods
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference_app/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/reference_app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference_app/reference_app.py)
 
 To learn more about all the parameters and methods of `GraphicWalker`, try the `panel-graphic-walker` Reference App.
 
-![Panel Graphic Walker Reference App](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference_app/app.gif)
+![Panel Graphic Walker Reference App](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference_app/reference_app.gif)
 
 ## Examples
 
 ### Bike Sharing Dashboard
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/bikesharing_dashboard/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/bikesharing_dashboard/bikesharing_dashboard.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/bikesharing_dashboard.py)
 
-![Bike Sharing Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/app.png)
+![Bike Sharing Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/bikesharing_dashboard.png)
 
 ### Earthquake Dashboard
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/earthquake_dashboard/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/earthquake_dashboard/earthquake_dashboard.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/earthquake_dashboard.py)
 
-![Earthquake Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/app.png)
+![Earthquake Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/earthquake_dashboard.png)
 
 ## API
 

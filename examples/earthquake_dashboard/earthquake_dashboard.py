@@ -6,9 +6,9 @@ import panel as pn
 from panel_gwalker import GraphicWalker
 
 ROOT = Path(__file__).parent
-CSS = ROOT / "app.css"
+CSS = ROOT / "earthquake_dashboard.css"
 DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
-SPEC = ROOT / "spec.json"
+SPEC = ROOT / "earthquake_dashboard.json"
 
 
 @pn.cache

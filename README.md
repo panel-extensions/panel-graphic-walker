@@ -182,6 +182,16 @@ Our dream is that this package is super simple to use and supports your use case
 - Supports persisting and reusing Graphic Walker specifications.
 - Scales to even the largest datasets, only limited by your server, cluster, or database.
 
+## Supported Backends
+
+| Name | `kernel_computation=False` | `kernel_computation=True` | Comment |
+| ---- | - | - | - |
+| Pandas | ✅ | ✅ | |
+| Polars | ✅ | ✅ | |
+| Dask | ✅ | ❌ | Not supported by Pygwalker |
+| DuckDB Relation | ✅ | ❌ | Not supported by Pygwalker |
+| Pygwalker Database Connector | ❌ | ❌ | [Not supported by Narwhals](https://github.com/narwhals-dev/narwhals/issues/1289) |
+
 ## ❤️ Contributions
 
 Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/panel-extensions/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.

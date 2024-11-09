@@ -7,7 +7,7 @@ authors = [
     { name = "Philipp Rudiger", email = "philipp.jfr@gmail.com" }
 ]
 requires-python = ">=3.9"
-dependencies = ["panel>=1.5.2"]
+dependencies = ["panel>=1.5.2", "narwhals"]
 
 [build-system]
 requires = ["hatchling"]
@@ -24,19 +24,23 @@ dev = [
     "watchfiles",
 ]
 tests = [
+  "aiohttp",
+  "dask[dataframe]",
   "duckdb",
   "fastparquet",
   "gw-dsl-parser",
+  "polars",
   "pygwalker",
   "pytest-asyncio",
   "pytest",
-  "polars",
-  "pytest-asyncio"
+  "requests",
 ]
 examples = [
+  "dask[dataframe]",
   "duckdb",
   "fastparquet",
   "gw-dsl-parser",
+  "polars",
   "pygwalker",
 ]
 kernel = [

@@ -1,33 +1,34 @@
 from typing import TYPE_CHECKING, Any, Union
 
 import bokeh.core.properties as bp
+import narwhals as nw
 import param
 from bokeh.core.property.bases import Property
 from bokeh.models import ColumnDataSource
+from narwhals.dependencies import (
+    is_dask_dataframe,
+    is_duckdb_relation,
+    is_into_dataframe,
+    is_polars_lazyframe,
+)
+from narwhals.typing import FrameT, IntoFrame
 from panel.io.datamodel import PARAM_MAPPING
 
-if TYPE_CHECKING:
-    import pandas as pd
-    import polars as pl
-    from pygwalker.data_parsers.database_parser import Connector
-
-TabularDataType = Union["pd.DataFrame", "pl.DataFrame", "Connector"]
-
-_VALID_CLASSES = (
-    "<class 'pandas.core.frame.DataFrame'>",
-    "<class 'polars.dataframe.frame.DataFrame'>",
-    "<class 'pygwalker.data_parsers.database_parser.Connector'>",
-)
+TabularDataType = IntoFrame
 
 
-def _validate(val):
-    try:
-        if str(val.__class__) in _VALID_CLASSES:
-            return
-    except:
-        pass
+def _validate(val: Any):
+    # is_into_dataframe does not support dataframe interchange protocol in general
+    # https://github.com/narwhals-dev/narwhals/issues/1337#issuecomment-2466142486
+    if (
+        is_into_dataframe(val)
+        or is_dask_dataframe(val)
+        or is_polars_lazyframe(val)
+        or is_duckdb_relation(val)
+    ):
+        return
 
-    msg = f"Expected TabularDataType but got '{type(val)}'"
+    msg = f"Expected object that can be converted into Narwhals Dataframe but got '{type(val)}'"
     raise ValueError(msg)
 
 
@@ -38,10 +39,12 @@ class TabularData(param.Parameter):
 
 
 # See https://github.com/holoviz/panel/issues/7468
-def _column_datasource_from_tabular_df(df):
-    if hasattr(df, "to_pandas"):
-        df = df.to_pandas()
-    return ColumnDataSource._data_from_df(df)
+@nw.narwhalify
+def _column_datasource_from_tabular_df(data: FrameT):
+    if isinstance(data, nw.LazyFrame):
+        data = data.collect()
+    data = data.to_pandas()
+    return ColumnDataSource._data_from_df(data)
 
 
 class BkTabularData(Property["TabularDataType"]):

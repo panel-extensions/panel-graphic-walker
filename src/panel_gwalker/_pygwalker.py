@@ -47,20 +47,47 @@ def get_data_parser(
     try:
         from pygwalker import data_parsers
         from pygwalker.data_parsers.base import FieldSpec
+        from pygwalker.services.data_parsers import _get_data_parser
     except ImportError as exc:
         raise ImportError(
             "Server dependencies are not installed. Please: pip install panel-graphic-walker[kernel]."
         ) from exc
 
     _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]
-
-    if isinstance(object, pd.DataFrame):
-        return data_parsers.pandas_parser.PandasDataFrameDataParser(
-            object,
-            _field_specs,
-            infer_string_to_date,
-            infer_number_to_dimension,
-            other_params,
-        )
+    parser, name = _get_data_parser(object)
+    return parser(
+        object,
+        _field_specs,
+        infer_string_to_date,
+        infer_number_to_dimension,
+        other_params,
+    )
+    breakpoint()
     msg = f"Data type {type(object)} is currently not supported"
     raise NotImplementedError(msg)
+
+
+def add_dataframe_interchange_protocol_to_connector():
+    from pygwalker.data_parsers.database_parser import Connector
+
+    def __dataframe__(self: Connector):
+        import pandas as pd
+        import pyarrow as pa
+        from sqlalchemy import text
+
+        with self.engine.connect() as connection:
+            df = pd.read_sql(text(self.view_sql), connection)
+            table = pa.Table.from_pandas(df)
+        return table
+
+    from panel.io.cache import _hash_funcs
+
+    _hash_funcs[Connector] = lambda obj: (obj.url + obj.view_sql).encode()
+
+    Connector.__dataframe__ = __dataframe__
+
+
+try:
+    add_dataframe_interchange_protocol_to_connector()
+except:
+    pass

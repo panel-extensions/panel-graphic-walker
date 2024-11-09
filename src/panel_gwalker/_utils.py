@@ -5,12 +5,17 @@ import sys
 from pathlib import Path
 from typing import Dict
 
+import narwhals as nw
 import numpy as np
 import pandas as pd
 import panel as pn
+from narwhals.dataframe import LazyFrame
+from narwhals.dependencies import is_into_dataframe
+from narwhals.typing import FrameT
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+from narwhals.typing import FrameT
 
 
 def configure_debug_log_level():
@@ -66,27 +71,29 @@ def _infer_prop(s: pd.Series, i=None) -> dict:
     }
 
 
-POLARS_SAMPLE_ROWS = 100
+SAMPLE_ROWS = 100
 
 
 @pn.cache(max_items=20, ttl=60 * 5, policy="LRU")
-def _raw_fields_core(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
-    if isinstance(data, dict):
-        return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
+def _raw_fields_core(data: pd.DataFrame) -> list[dict]:
+    return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+
+
+@nw.narwhalify
+def _raw_fields(data: FrameT) -> list[dict]:
+    # Workaround for caching issue. See https://github.com/holoviz/panel/issues/7467.
+    # Should probably use Narwhals schema to one day infer this
+    if isinstance(data, LazyFrame):
+        data = data.head(100).collect()
     else:
-        return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
-
-
-def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
-    # Workaround for Polars caching issue. See https://github.com/holoviz/panel/issues/7467.
-    if not isinstance(data, (dict, pd.DataFrame)):
         try:
-            if len(data) > POLARS_SAMPLE_ROWS:
-                data = data.sample(n=POLARS_SAMPLE_ROWS)
-            data = data.to_pandas()
-        except:
+            if len(data) > SAMPLE_ROWS:
+                data = data.sample(SAMPLE_ROWS)
+        except Exception as ex:
             pass
-    return _raw_fields_core(data)
+
+    pandas_data = data.to_pandas()
+    return _raw_fields_core(pandas_data)
 
 
 SpecType = None | str | Path | dict | list[dict]

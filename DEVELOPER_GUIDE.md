@@ -37,7 +37,7 @@ pytest tests
 ### Serve the Examples
 
 ```bash
-panel serve examples/app_*.py --dev
+panel serve $(find examples -name "*.py") --dev
 ```
 
 ### 🚢 Release a new package on Pypi

@@ -30,7 +30,7 @@ function fetchSpec(url) {
     });
 }
 
-function transformSpec(spec, fields) {
+function transformSpec(spec) {
   /* The spec must be an null or array of objects */
   if (spec === null) {
     return null;
@@ -55,12 +55,13 @@ export function render({ model }) {
   const [themeKey] = model.useState('theme_key')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
-  const [fields] = model.useState('fields')
+  const [fields] = model.useState('field_specs')
   const [spec] = model.useState('spec')
   const [kernelComputation] = model.useState('kernel_computation')
   const [renderer] = model.useState('renderer')
   const [index] = model.useState('index')
   const [pageSize] = model.useState('page_size')
+  const [hideProfiling] = model.useState('hide_profiling')
   const [tab] = model.useState('tab')
   const [containerHeight] = model.useState('container_height')
 
@@ -96,7 +97,7 @@ export function render({ model }) {
       if (e.mode === 'spec') {
         exported = exporter.currentVis
       } else {
-        exported = await window.graphicWalker.current.exportChart()
+        exported = await graphicWalkerRef.current.exportChart()
       }
       value = cleanToDict(exported)
     } else if (e.scope === 'all') {
@@ -194,6 +195,7 @@ export function render({ model }) {
       appearance={appearance}
       vizThemeConfig={themeKey}
       pageSize={pageSize}
+      hideProfiling={hideProfiling}
       {...config}
     />
   }
@@ -264,6 +266,7 @@ export function render({ model }) {
     data={transformedData}
     fields={fields}
     chart={transformedSpec}
+    hideProfiling={hideProfiling}
     computation={computation}
     appearance={appearance}
     vizThemeConfig={themeKey}

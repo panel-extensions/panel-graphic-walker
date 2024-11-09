@@ -6,14 +6,16 @@ import panel as pn
 
 from panel_gwalker import GraphicWalker
 
-pn.extension("filedropper", sizing_mode="stretch_width")
+pn.extension("filedropper", sizing_mode="stretch_width", notifications=True)
 
 ROOT = Path(__file__).parent
 PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json
 SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json
 SPEC_SIMPLE = ROOT / "spec_simple.json"
 ACCENT = "#5B8FF9"
 
@@ -50,7 +52,6 @@ walker = GraphicWalker(
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
     kernel_computation=True,
-    save_path="examples/features_dashboard/spec.json",
 )
 core_settings = pn.Column(
     walker.param.kernel_computation,
@@ -59,6 +60,9 @@ core_settings = pn.Column(
     walker.param.renderer,
     pn.widgets.IntInput.from_param(
         walker.param.page_size, visible=walker.is_enabled("page_size")
+    ),
+    pn.widgets.Checkbox.from_param(
+        walker.param.hide_profiling, visible=walker.is_enabled("hide_profiling")
     ),
     pn.widgets.IntInput.from_param(
         walker.param.index, visible=walker.is_enabled("index")
@@ -92,14 +96,14 @@ file_download = pn.widgets.FileDownload(
     callback=get_example_download, filename="example.csv"
 )
 
-export_button = walker.create_export_button()
+export_controls = walker.export_controls()
 exported = pn.rx("""
 ```bash
 {value}
 ```
-""").format(value=export_button.param.value)
-export_section = pn.Column(export_button, exported, name="Export")
-save_section = pn.Column(walker.create_save_button(), name="Save")
+""").format(value=export_controls.param.value)
+export_section = pn.Column(export_controls, exported, name="Export")
+save_section = pn.Column(walker.save_controls(), name="Save")
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 
@@ -137,6 +141,10 @@ def _update_walker(value):
         df = pd.read_csv(StringIO(text))
         if not df.empty:
             walker.object = df
+        # Can be removed once https://github.com/panel-extensions/panel-graphic-walker/issues/33 is resolved
+        pn.state.notifications.success(
+            "New dataset uploaded. Add a new chart to use it.", duration=5000
+        )
 
 
 pn.template.FastListTemplate(

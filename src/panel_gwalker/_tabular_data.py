@@ -38,8 +38,9 @@ class TabularData(param.Parameter):
 
 
 # See https://github.com/holoviz/panel/issues/7468
-def _column_datasource_from_polars_df(df):
-    df = df.to_pandas()
+def _column_datasource_from_tabular_df(df):
+    if hasattr(df, "to_pandas"):
+        df = df.to_pandas()
     return ColumnDataSource._data_from_df(df)
 
 
@@ -62,7 +63,7 @@ PARAM_MAPPING.update(
     {
         TabularData: lambda p, kwargs: (
             bp.ColumnData(bp.Any, bp.Seq(bp.Any), **kwargs),
-            [(BkTabularData, _column_datasource_from_polars_df)],
+            [(BkTabularData, _column_datasource_from_tabular_df)],
         ),
     }
 )

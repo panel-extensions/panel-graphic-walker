@@ -9,8 +9,9 @@ pn.extension(sizing_mode="stretch_width")
 
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
-DATA_PATH = ROOT / "bike_sharing_dc.parquet"
-SPEC_PATH = ROOT / "spec.json"
+DATASET = "https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json
+SPEC_PATH = ROOT / "bikesharing_dashboard.json"
 ACCENT = "#ff4a4a"
 
 if pn.config.theme == "dark":
@@ -37,7 +38,7 @@ CSS = """
 
 @pn.cache
 def get_data():
-    return pd.read_parquet(DATA_PATH)
+    return pd.read_csv(DATASET)
 
 
 data = get_data()
@@ -46,8 +47,8 @@ walker = GraphicWalker(
     data,
     theme_key="streamlit",
     spec=SPEC_PATH,
-    save_path=SPEC_PATH.as_posix(),
     sizing_mode="stretch_both",
+    kernel_computation=True,
 )
 
 main = pn.Tabs(
@@ -72,14 +73,6 @@ main = pn.Tabs(
     dynamic=True,
 )
 
-button = walker.create_save_button(
-    include_settings=True, sizing_mode="fixed", width=300
-)
-
-app = pn.Column(
-    walker,
-    button,
-)
 
 sidebar = pn.Column(
     "https://images.fastcompany.com/image/upload/f_webp,q_auto,c_fit/fc/3036624-poster-p-1-is-this-the-worlds-best-bike-share-bike.jpg",
@@ -94,11 +87,6 @@ The data is sourced from the
 
 This dashboard is built using the **[panel-graphic-walker](https://github.com/panel-extensions/panel-graphic-walker)** \
 and inspired by a [similar Streamlit app](https://pygwalkerdemo-cxz7f7pt5oc.streamlit.app/).
-
-## Notes
-
-I've simplified the [spec.json](spec.json) file and inserted the `range` filter manually \
-[#654](https://github.com/Kanaries/pygwalker/issues/654).
 """,
 )
 

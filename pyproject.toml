@@ -25,8 +25,10 @@ dev = [
 ]
 tests = [
   "duckdb",
+  "fastparquet",
   "gw-dsl-parser",
   "pygwalker",
+  "pytest-asyncio",
   "pytest",
   "polars",
   "pytest-asyncio"
@@ -38,9 +40,9 @@ examples = [
   "pygwalker",
 ]
 kernel = [
-  "duckdb",
-  "gw-dsl-parser",
-  "pygwalker",
+  "duckdb ; platform_system != 'Emscripten'",
+  "gw-dsl-parser ; platform_system != 'Emscripten'",
+  "pygwalker ; platform_system != 'Emscripten'"
 ]
 
 [tool.hatch.build.targets.wheel]

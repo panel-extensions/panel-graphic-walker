@@ -62,7 +62,6 @@ def get_data_parser(
         infer_number_to_dimension,
         other_params,
     )
-    breakpoint()
     msg = f"Data type {type(object)} is currently not supported"
     raise NotImplementedError(msg)
 

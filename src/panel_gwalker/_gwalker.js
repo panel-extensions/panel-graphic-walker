@@ -185,7 +185,14 @@ export function render({ model }) {
     })
   }, [containerHeight])
 
-  if (renderer=='profiler') {
+  useEffect(() => {
+    if (storeRef.current === null) {
+      return
+    }
+    storeRef.current.resetVisualization()
+  }, [fields])
+
+  if (renderer === "profiler") {
     return <TableWalker
       storeRef={storeRef}
       ref={graphicWalkerRef}
@@ -198,11 +205,8 @@ export function render({ model }) {
       hideProfiling={hideProfiling}
       {...config}
     />
-  }
-
-  if (renderer=='viewer') {
+  } else if (renderer === "viewer") {
     // See https://github.com/Kanaries/pygwalker/blob/main/app/src/index.tsx#L466
-
     return (
       <>
         {transformedIndexSpec?.map((chart, index) => (
@@ -227,9 +231,7 @@ export function render({ model }) {
         ))}
       </>
     );
-  }
-
-  if (renderer=='chart') {
+  } else if (renderer === "chart") {
     if (!data | !transformedData) {
       return <div>No data to render. Set 'kernel_computation=False' when creating GraphicWalker.</div>;
     }

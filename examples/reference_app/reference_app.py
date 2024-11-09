@@ -13,7 +13,9 @@ PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json
 SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json
 SPEC_SIMPLE = ROOT / "spec_simple.json"
 ACCENT = "#5B8FF9"
 
@@ -101,9 +103,7 @@ exported = pn.rx("""
 ```
 """).format(value=export_controls.param.value)
 export_section = pn.Column(export_controls, exported, name="Export")
-save_section = pn.Column(
-    walker.save_controls("examples/reference_app/spec.json"), name="Save"
-)
+save_section = pn.Column(walker.save_controls(), name="Save")
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 

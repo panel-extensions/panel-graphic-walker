@@ -29,4 +29,6 @@ jobs:
         uses: pre-commit/action@v3.0.1
 
       - name: Run pytest
-        run: pytest tests
+        run: |
+          source .venv/bin/activate
+          pytest tests

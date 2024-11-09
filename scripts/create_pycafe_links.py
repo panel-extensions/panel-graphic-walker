@@ -12,17 +12,17 @@ GH_PREFIX = "refs/heads/main/examples/"
 
 BASE_REQUIREMENTS = ["panel-graphic-walker>=0.4.0"]
 PARQUET_REQUIREMENTS = BASE_REQUIREMENTS + ["fastparquet"]
-SERVER_REQUIREMENTS = ["panel-graphic-walker[kernel]>=0.4.0"]
+SERVER_REQUIREMENTS = ["panel-graphic-walker[kernel]>=0.4.0", "fastparquet"]
 
 
 EXAMPLES = [
-    ("examples/reference/basic.py", BASE_REQUIREMENTS),
-    ("examples/reference/spec.py", BASE_REQUIREMENTS),
-    ("examples/reference/renderer.py", BASE_REQUIREMENTS),
-    ("examples/reference/kernel_computation.py", SERVER_REQUIREMENTS),
-    ("examples/reference_app/app.py", SERVER_REQUIREMENTS),
-    ("examples/bikesharing_dashboard/app.py", SERVER_REQUIREMENTS),
-    ("examples/earthquake_dashboard/app.py", SERVER_REQUIREMENTS),
+    ("reference/basic.py", BASE_REQUIREMENTS),
+    ("reference/spec.py", BASE_REQUIREMENTS),
+    ("reference/renderer.py", BASE_REQUIREMENTS),
+    ("reference/kernel_computation.py", SERVER_REQUIREMENTS),
+    ("reference_app/reference_app.py", SERVER_REQUIREMENTS),
+    ("bikesharing_dashboard/bikesharing_dashboard.py", SERVER_REQUIREMENTS),
+    ("earthquake_dashboard/earthquake_dashboard.py", SERVER_REQUIREMENTS),
 ]
 
 
@@ -51,7 +51,7 @@ def create_example(file, pycafe_url: str, source_code_url: str):
 
 
 def check_file(file):
-    path = Path(file)
+    path = Path("examples") / file
     if not path.exists():
         raise FileNotFoundError(f"File {file} does not exist.")
 

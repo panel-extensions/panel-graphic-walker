@@ -1,6 +1,7 @@
 import json
 from asyncio import sleep
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 import param
@@ -23,7 +24,7 @@ def default_appearance():
 def _get_params(gwalker):
     return {
         "object": gwalker.object,
-        "fields": gwalker.fields,
+        "field_specs": gwalker.field_specs,
         "appearance": gwalker.appearance,
         "config": gwalker.config,
         "spec": gwalker.spec,
@@ -34,7 +35,7 @@ def _get_params(gwalker):
 def test_constructor(data, default_appearance):
     gwalker = GraphicWalker(object=data)
     assert gwalker.object is data
-    assert not gwalker.fields
+    assert not gwalker.field_specs
     assert not gwalker.config
     assert gwalker.appearance == default_appearance
     assert gwalker.theme_key == "g2"
@@ -45,13 +46,13 @@ def test_process_parameter_change(data, default_appearance):
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"] == gwalker.calculated_fields()
+    assert params["field_specs"] == gwalker.calculated_field_specs()
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
 
 def test_process_parameter_change_with_fields(data, default_appearance):
-    fields = fields = [
+    field_specs = [
         {
             "fid": "t_county",
             "name": "t_county",
@@ -59,11 +60,11 @@ def test_process_parameter_change_with_fields(data, default_appearance):
             "analyticType": "dimension",
         },
     ]
-    gwalker = GraphicWalker(object=data, fields=fields)
+    gwalker = GraphicWalker(object=data, field_specs=field_specs)
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"] is fields
+    assert params["field_specs"] is field_specs
     assert params["appearance"] == default_appearance
     assert not params["config"]
 
@@ -74,7 +75,7 @@ def test_process_parameter_change_with_config(data, default_appearance):
     params = _get_params(gwalker)
 
     gwalker._process_param_change(params)
-    assert params["fields"]
+    assert params["field_specs"]
     assert params["appearance"] == default_appearance
     assert params["config"] is config
 
@@ -111,7 +112,7 @@ def test_kernel_computation(data):
 
 def test_calculated_fields(data):
     gwalker = GraphicWalker(object=data)
-    assert gwalker.calculated_fields() == _raw_fields(data)
+    assert gwalker.calculated_field_specs() == _raw_fields(data)
 
 
 def test_process_spec(data, tmp_path: Path):
@@ -158,57 +159,56 @@ def test_process_spec(data, tmp_path: Path):
     assert result == json_data, f"Expected JSON content from file, got {result}"
 
 
-async def _mock_export(*args, **kwargs):
+async def _mock_export(self, *args, **kwargs):
     return {"args": args, "kwargs": kwargs}
 
 
 def test_can_create_export_settings(data):
-    gwalker = GraphicWalker(object=data, export=_mock_export)
-    assert gwalker.create_export_settings(width=400)
+    gwalker = GraphicWalker(object=data)
+    assert gwalker.export_controls(width=400)
 
 
 @pytest.mark.asyncio
 async def test_export(data):
-    gwalker = GraphicWalker(object=data, export=_mock_export)
-    assert isinstance(gwalker.param.export, param.Action)
-    assert await gwalker.export()
+    with patch.object(GraphicWalker, "export_chart", _mock_export):
+        gwalker = GraphicWalker(object=data)
+        assert await gwalker.export_chart()
 
 
 @pytest.mark.asyncio
 async def test_export_button(data):
-    gwalker = GraphicWalker(object=data, export=_mock_export)
-    button = gwalker.create_export_button(width=400)
-    assert not button.value
-    button.param.trigger("export")
-    await sleep(0.01)
-    assert button.value
+    with patch.object(GraphicWalker, "export_chart", _mock_export):
+        gwalker = GraphicWalker(object=data)
+        button = gwalker.export_controls(width=400)
+        assert not button.value
+        button.param.trigger("run")
+        await sleep(0.01)
+        assert button.value
 
 
 @pytest.mark.asyncio
 async def test_can_save(data, tmp_path, export=_mock_export):
-    gwalker = GraphicWalker(object=data)
-    assert isinstance(gwalker.param.save, param.Action)
-
-    gwalker._export = _mock_export  # type: ignore[method-assign]
-    path = tmp_path / "spec.json"
-    await gwalker.save(path=path)
-    assert path.exists()
+    with patch.object(GraphicWalker, "export_chart", _mock_export):
+        gwalker = GraphicWalker(object=data)
+        path = tmp_path / "spec.json"
+        await gwalker.save_chart(path=path)
+        assert path.exists()
 
 
 @pytest.mark.asyncio
 async def test_save_button(data, tmp_path: Path):
-    gwalker = GraphicWalker(object=data, export=_mock_export)
-    gwalker._export = _mock_export  # type: ignore[method-assign]
-    gwalker.save_path = tmp_path / "spec.json"
+    with patch.object(GraphicWalker, "export_chart", _mock_export):
+        gwalker = GraphicWalker(object=data)
 
-    button = gwalker.create_save_button(width=400)
-    button.param.trigger("save")
-    await sleep(0.1)
-    assert gwalker.save_path.exists()
+        save_path = tmp_path / "spec.json"
+        button = gwalker.save_controls(save_path=save_path, width=400)
+        button.param.trigger("run")
+        await sleep(0.1)
+        assert save_path.exists()
 
 
 def test_page_size(data):
-    gwalker = GraphicWalker(object=data, export=_mock_export, page_size=50)
+    gwalker = GraphicWalker(object=data, page_size=50)
     assert gwalker.page_size == 50
 
 

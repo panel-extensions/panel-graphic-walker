@@ -6,14 +6,31 @@ import panel as pn
 from panel_gwalker import GraphicWalker
 
 ROOT = Path(__file__).parent
-CSS = ROOT / "app.css"
+CSS = """
+body {
+  position: relative;
+  background: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("https://i.ytimg.com/vi/1YLStcrROgw/hq720.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: center;
+  opacity: 0.3; /* Adjust transparency level here (0 = fully transparent, 1 = fully opaque) */
+  z-index: -1;
+}
+"""
 DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
-SPEC = ROOT / "spec.json"
-
-
-@pn.cache
-def get_css():
-    return CSS.read_text()
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/earthquake_dashboard/earthquake_dashboard.json
+SPEC = ROOT / "earthquake_dashboard.json"
 
 
 @pn.cache
@@ -23,7 +40,7 @@ def get_df() -> pd.DataFrame:
     return df
 
 
-pn.extension(raw_css=[get_css()], theme="dark", sizing_mode="stretch_width")
+pn.extension(raw_css=[CSS], theme="dark", sizing_mode="stretch_width")
 
 df = get_df()
 
@@ -45,7 +62,7 @@ Source: [Data]({DATASET}), Credits: [earthquake-dashboard-pygwalker](https://ear
 walker = GraphicWalker(
     df,
     kernel_computation=True,
-    theme="g2",
+    theme_key="g2",
     appearance="dark",
     spec=SPEC,
     margin=(0, 25, 25, 25),

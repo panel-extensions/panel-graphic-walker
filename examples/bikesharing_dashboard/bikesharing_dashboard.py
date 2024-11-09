@@ -9,8 +9,8 @@ pn.extension(sizing_mode="stretch_width")
 
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
-DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
-SPEC_PATH = ROOT / "spec.json"
+DATASET = "https://datasets.holoviz.org/bikesharing_dc/v1/bikesharing_dc.parquet"
+SPEC_PATH = ROOT / "bikesharing_dashboard.json"
 ACCENT = "#ff4a4a"
 
 if pn.config.theme == "dark":
@@ -34,19 +34,18 @@ CSS = """
 }
 """
 
-
 @pn.cache
 def get_data():
     return pd.read_parquet(DATASET)
-
 
 data = get_data()
 
 walker = GraphicWalker(
     data,
-    theme="streamlit",
+    theme_key="streamlit",
     spec=SPEC_PATH,
     sizing_mode="stretch_both",
+    kernel_computation=True,
 )
 
 main = pn.Tabs(
@@ -85,11 +84,6 @@ The data is sourced from the
 
 This dashboard is built using the **[panel-graphic-walker](https://github.com/panel-extensions/panel-graphic-walker)** \
 and inspired by a [similar Streamlit app](https://pygwalkerdemo-cxz7f7pt5oc.streamlit.app/).
-
-## Notes
-
-I've simplified the [spec.json](spec.json) file and inserted the `range` filter manually \
-[#654](https://github.com/Kanaries/pygwalker/issues/654).
 """,
 )
 

@@ -6,7 +6,16 @@ import uuid
 from functools import partial
 from os import PathLike
 from pathlib import Path
-from typing import IO, Any, Callable, Concatenate, Coroutine, Literal, Optional, ParamSpec
+from typing import (
+    IO,
+    Any,
+    Callable,
+    Concatenate,
+    Coroutine,
+    Literal,
+    Optional,
+    ParamSpec,
+)
 
 import numpy as np
 import pandas as pd
@@ -17,9 +26,7 @@ from panel.io.state import state
 from panel.layout import Column
 from panel.pane import Markdown
 from panel.viewable import Viewer
-from panel.widgets import (
-    Button, IntInput, RadioButtonGroup, TextInput
-)
+from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 from panel_gwalker._utils import (
@@ -114,10 +121,7 @@ class ExportControls(Viewer):
                     button_type="primary",
                     **layout_params,
                 ),
-                IntInput.from_param(
-                    self.param.timeout,
-                    **layout_params
-                )
+                IntInput.from_param(self.param.timeout, **layout_params),
             )
         # Should be changed to IconButton once https://github.com/holoviz/panel/issues/7458 is fixed.
         button = Button.from_param(
@@ -149,9 +153,9 @@ class ExportControls(Viewer):
 
 class SaveControls(ExportControls):
     """
-    A UI component to save the Chart(s) spec of SVG(s).
+    A UI component to save the Chart(s) spec or SVG(s).
 
-    Will save to `save_path` path of the `walker`.
+    Will save to the `save_path` path.
     """
 
     save_path: str | PathLike = param.ClassSelector(
@@ -180,13 +184,12 @@ class SaveControls(ExportControls):
             name=name,
             description=description,
             include_settings=include_settings,
-            **dict(params, **layout_params)
+            **dict(params, **layout_params),
         )
         if include_settings:
-            save_path = TextInput.from_param(
-                self.param.save_path, **layout_params
-            )
-            self._layout.insert(3, save_path)
+            if isinstance(self.save_path, str):
+                save_path = TextInput.from_param(self.param.save_path, **layout_params)
+                self._layout.insert(3, save_path)
 
     @param.depends("run", watch=True)
     async def _export(self):
@@ -221,17 +224,26 @@ class GraphicWalker(ReactComponent):
     # Display the interactive graphic interface
     GraphicWalker(df).servable()
     ```
+
+    If the `GraphicWalker` does not display you may have hit a limit and need to enable the
+    `kernel_computation`:
+
+    ```python
+    GraphicWalker(df, kernel_computation=True).servable()
+    ```
     """
 
     object: pd.DataFrame = param.DataFrame(
         doc="""The data to explore.
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
-    fields: list = param.List(doc="""Optional fields, i.e. columns, specification.""")
+    field_specs: list = param.List(
+        doc="""Optional fields, i.e. columns, specification."""
+    )
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(
         doc="""Optional chart specification as url, json, dict or list.
-    Can be generated via the `export` method."""
+    Can be generated via the `export_chart` method."""
     )
     kernel_computation: bool = param.Boolean(
         default=False,
@@ -280,7 +292,7 @@ class GraphicWalker(ReactComponent):
         doc="""Dark mode preference: 'light', 'dark' or 'media'.
         If not provided the appearance is derived from pn.config.theme.""",
     )
-    theme: Literal["g2", "streamlit", "vega"] = param.Selector(
+    theme_key: Literal["g2", "streamlit", "vega"] = param.Selector(
         default="g2",
         objects=["g2", "streamlit", "vega"],
         doc="""The theme of the chart(s). One of 'g2', 'streamlit' or 'vega' (default).""",
@@ -330,7 +342,7 @@ class GraphicWalker(ReactComponent):
         return config.get(theme, self.param.appearance.default)
 
     @param.depends("object")
-    def calculated_fields(self) -> list[dict]:
+    def calculated_field_specs(self) -> list[dict]:
         """Returns all the fields calculated from the object.
 
         The calculated fields are a great starting point if you want to customize the fields.
@@ -339,8 +351,8 @@ class GraphicWalker(ReactComponent):
 
     def _process_param_change(self, params):
         if params.get("object") is not None:
-            if not self.fields:
-                params["fields"] = self.calculated_fields()
+            if not self.field_specs:
+                params["field_specs"] = self.calculated_field_specs()
             if not self.config:
                 params["config"] = {}
             if self.kernel_computation:
@@ -353,7 +365,7 @@ class GraphicWalker(ReactComponent):
 
     def _compute(self, payload):
         logger.debug("request: %s", payload)
-        field_specs = self.fields or self.calculated_fields()
+        field_specs = self.field_specs or self.calculated_field_specs()
         parser = get_data_parser(
             self.object,
             field_specs=field_specs,
@@ -370,6 +382,7 @@ class GraphicWalker(ReactComponent):
                 {"pygwalker_mid_table": parser.field_metas},
             )
             logger.exception("SQL raised exception:\n%s\n\npayload:%s", sql, payload)
+            result = pd.DataFrame()
 
         df = pd.DataFrame.from_records(result)
         logger.debug("response:\n%s", df)
@@ -381,18 +394,16 @@ class GraphicWalker(ReactComponent):
         if action == "export" and event_id in self._exports:
             self._exports[event_id] = msg["data"]
         elif action == "compute":
-            self._send_msg(
-                {
-                    "action": "compute",
-                    "id": event_id,
-                    "result": self._compute(msg["payload"]),
-                }
-            )
+            self._send_msg({
+                "action": "compute",
+                "id": event_id,
+                "result": self._compute(msg["payload"]),
+            })
 
     async def export_chart(
         self,
-        mode: Literal["spec", "svg"] = 'spec',
-        scope: Literal["current", "all"] = 'current',
+        mode: Literal["spec", "svg"] = "spec",
+        scope: Literal["current", "all"] = "current",
         timeout: int = 5000,
     ):
         """
@@ -465,14 +476,18 @@ class GraphicWalker(ReactComponent):
         """
         return ExportControls(self, **params)
 
-    def save_controls(self, save_path: str | os.PathLike | IO, **params) -> SaveControls:
+    def save_controls(
+        self,
+        save_path: str | os.PathLike | IO = SaveControls.param.save_path.default,
+        **params,
+    ) -> SaveControls:
         """Returns a UI component to save the chart(s) as either a spec or SVG.
 
-        >>> walker.create_save_button(width=400)
+        >>> walker.save_controls(width=400)
 
-        The spec or SVG will be saved to the path give by `save_path`.
+        The spec or SVG will be saved to the path given by `save_path`.
         """
-        return SaveControls(self, **params)
+        return SaveControls(self, save_path=save_path, **params)
 
     def chart(self, index: int | list | None = None, **params) -> "GraphicWalker":
         """Returns a clone with `renderer='chart'` and `kernel_computation=False`.

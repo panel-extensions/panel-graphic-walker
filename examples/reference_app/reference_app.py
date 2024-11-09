@@ -6,14 +6,16 @@ import panel as pn
 
 from panel_gwalker import GraphicWalker
 
-pn.extension("filedropper", sizing_mode="stretch_width")
+pn.extension("filedropper", sizing_mode="stretch_width", notifications=True)
 
 ROOT = Path(__file__).parent
 PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json
 SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
+# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json
 SPEC_SIMPLE = ROOT / "spec_simple.json"
 ACCENT = "#5B8FF9"
 
@@ -49,7 +51,7 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    kernel_computation=True
+    kernel_computation=True,
 )
 core_settings = pn.Column(
     walker.param.kernel_computation,
@@ -80,7 +82,7 @@ style_settings = pn.Column(
     _label("Appearance"),
     pn.widgets.RadioButtonGroup.from_param(walker.param.appearance, **button_style),
     _label("Theme Key"),
-    pn.widgets.RadioButtonGroup.from_param(walker.param.theme, **button_style),
+    pn.widgets.RadioButtonGroup.from_param(walker.param.theme_key, **button_style),
     name="Style",
 )
 file_upload = pn.widgets.FileDropper(
@@ -101,7 +103,7 @@ exported = pn.rx("""
 ```
 """).format(value=export_controls.param.value)
 export_section = pn.Column(export_controls, exported, name="Export")
-save_section = pn.Column(walker.save_controls("examples/reference_app/spec.json"), name="Save")
+save_section = pn.Column(walker.save_controls(), name="Save")
 docs_section = f"## Docs\n\n- [panel-graphic-walker]({PANEL_GW_URL})\n- [Graphic Walker Usage Guide]({GW_GUIDE_URL})\n- [Graphic Walker API]({GW_API})"
 
 
@@ -139,6 +141,10 @@ def _update_walker(value):
         df = pd.read_csv(StringIO(text))
         if not df.empty:
             walker.object = df
+        # Can be removed once https://github.com/panel-extensions/panel-graphic-walker/issues/33 is resolved
+        pn.state.notifications.success(
+            "New dataset uploaded. Add a new chart to use it.", duration=5000
+        )
 
 
 pn.template.FastListTemplate(

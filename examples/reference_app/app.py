@@ -6,7 +6,7 @@ import panel as pn
 
 from panel_gwalker import GraphicWalker
 
-pn.extension("filedropper", sizing_mode="stretch_width")
+pn.extension("filedropper", sizing_mode="stretch_width", notifications=True)
 
 ROOT = Path(__file__).parent
 PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
@@ -141,6 +141,10 @@ def _update_walker(value):
         df = pd.read_csv(StringIO(text))
         if not df.empty:
             walker.object = df
+        # Can be removed once https://github.com/panel-extensions/panel-graphic-walker/issues/33 is resolved
+        pn.state.notifications.success(
+            "New dataset uploaded. Add a new chart to use it.", duration=5000
+        )
 
 
 pn.template.FastListTemplate(

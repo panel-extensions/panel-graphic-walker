@@ -185,6 +185,13 @@ export function render({ model }) {
     })
   }, [containerHeight])
 
+  useEffect(() => {
+    if (storeRef.current === null) {
+      return
+    }
+    storeRef.current.resetVisualization()
+  }, [fields])
+
   if (renderer === "profiler") {
     return <TableWalker
       storeRef={storeRef}

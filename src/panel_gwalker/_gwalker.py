@@ -17,7 +17,9 @@ from panel.io.state import state
 from panel.layout import Column
 from panel.pane import Markdown
 from panel.viewable import Viewer
-from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
+from panel.widgets import (
+    Button, IntInput, RadioButtonGroup, TextInput
+)
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
 from panel_gwalker._utils import (
@@ -64,39 +66,35 @@ class ExportControls(Viewer):
     """A UI component to export the Chart(s) spec of SVG(s)"""
 
     mode: Literal["spec", "svg"] = param.Selector(
-        label="Mode",
         default="spec",
         objects=["spec", "svg"],
-        doc="""Used as default mode for export and save methods.""",
+        doc="Whether to export the chart as a specification or as SVG.",
     )
 
     scope: Literal["all", "current"] = param.Selector(
-        label="Scope",
         default="all",
         objects=["all", "current"],
-        doc="""Used as default scope for export and save methods.""",
+        doc="Whether to export the current chart or all charts.",
     )
 
     timeout: int = param.Integer(
-        label="Timeout",
         default=5000,
-        doc="""Export timeout in milliseconds. Used as default for export and save methods.""",
+        doc="Export timeout in milliseconds.",
     )
 
     value: list | dict = param.ClassSelector(
-        class_=(list, dict), doc="""The exported Chart(s) spec or SVG."""
+        class_=(list, dict), doc="The exported Chart(s) spec or SVG."
     )
 
-    run: bool = param.Event(doc="""Click to export.""", label="Export")
+    run: bool = param.Event(doc="Click to export.", label="Export")
 
     def __init__(
         self,
         walker: "GraphicWalker",
         icon: str = "download",
-        name: str = "Export",
+        name: str | None = "Export",
         description: str = "Click to export",
         include_settings: bool = True,
-        export_settings: dict = {},
         **params,
     ):
         layout_params = _extract_layout_params(params)
@@ -125,7 +123,6 @@ class ExportControls(Viewer):
         button = Button.from_param(
             self.param.run,
             icon=icon,
-            name=name,
             description=description,
             **layout_params,
         )
@@ -138,7 +135,7 @@ class ExportControls(Viewer):
     async def _export(self):
         self.param.run.constant = True
         try:
-            self.value = await self._walker.export(
+            self.value = await self._walker.export_chart(
                 mode=self.mode, scope=self.scope, timeout=self.timeout
             )
         except TimeoutError as ex:
@@ -160,18 +157,42 @@ class SaveControls(ExportControls):
     save_path: str | PathLike = param.ClassSelector(
         label="Path",
         default="tmp_graphic_walker.json",
-        class_=(str, PathLike),
-        allow_None=False,
+        class_=(str, PathLike, IO),
         doc="""Used as default path for the save method.""",
     )
 
     run: bool = param.Event(doc="Click to save.", label="Save")
 
+    def __init__(
+        self,
+        walker: "GraphicWalker",
+        *,
+        icon: str = "download",
+        name: str | None = "Save",
+        description: str = "Click to save",
+        include_settings: bool = True,
+        **params,
+    ):
+        layout_params = _extract_layout_params(params)
+        super().__init__(
+            walker,
+            icon=icon,
+            name=name,
+            description=description,
+            include_settings=include_settings,
+            **dict(params, **layout_params)
+        )
+        if include_settings:
+            save_path = TextInput.from_param(
+                self.param.save_path, **layout_params
+            )
+            self._layout.insert(3, save_path)
+
     @param.depends("run", watch=True)
     async def _export(self):
         self.param.run.constant = True
         try:
-            await self._walker.save(
+            await self._walker.save_chart(
                 self.save_path, mode=self.mode, scope=self.scope, timeout=self.timeout
             )
         finally:
@@ -186,27 +207,20 @@ class GraphicWalker(ReactComponent):
     Reference: https://github.com/panel-extensions/panel-graphic-walker.
 
     Example:
-        ```python
-        import pandas as pd
-        import panel as pn
-        from panel_gwalker import GraphicWalker
 
-        pn.extension()
+    ```python
+    import pandas as pd
+    import panel as pn
+    from panel_gwalker import GraphicWalker
 
-        # Load a sample dataset
-        df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz")
+    pn.extension()
 
-        # Display the interactive graphic interface
-        GraphicWalker(df).servable()
-        ```
+    # Load a sample dataset
+    df = pd.read_csv("https://datasets.holoviz.org/windturbines/v1/windturbines.csv.gz")
 
-    Args:
-        `object`: The DataFrame to explore.
-        `config`: The Graphic Walker configuration, i.e. the keys `rawFields` and `spec`.
-            `i18nLang` is currently not
-
-    Returns:
-        Servable `GraphicWalker` object that creates a UI for visual exploration of the input DataFrame.
+    # Display the interactive graphic interface
+    GraphicWalker(df).servable()
+    ```
     """
 
     object: pd.DataFrame = param.DataFrame(
@@ -260,7 +274,6 @@ class GraphicWalker(ReactComponent):
         default="400px",
         doc="""The height of a single chart in the 'viewer' or 'chart' renderer. For example '500px' (pixels) or '30vh' (viewport height).""",
     )
-
     appearance: Literal["media", "dark", "light"] = param.Selector(
         default="light",
         objects=["light", "dark", "media"],
@@ -334,7 +347,7 @@ class GraphicWalker(ReactComponent):
                 del params["object"]
         if "spec" in params:
             params["spec"] = process_spec(params["spec"])
-        if params.get("server_computation") is False and "object" not in params:
+        if params.get("kernel_computation") is False and "object" not in params:
             params["object"] = self.object
         return super()._process_param_change(params)
 
@@ -376,11 +389,11 @@ class GraphicWalker(ReactComponent):
                 }
             )
 
-    async def export(
+    async def export_chart(
         self,
-        mode: Literal["spec", "svg", None] = 'spec',
-        scope: Literal["current", "all", None] = 'current',
-        timeout: int | None = 5000,
+        mode: Literal["spec", "svg"] = 'spec',
+        scope: Literal["current", "all"] = 'current',
+        timeout: int = 5000,
     ):
         """
         Requests chart(s) on the frontend to be exported either
@@ -388,9 +401,9 @@ class GraphicWalker(ReactComponent):
 
         Arguments
         ---------
-        mode: 'code' | 'svg' | None (default)
+        mode: 'code' | 'svg'
             Whether to export the chart specification(s) or the SVG(s).
-        scope: 'current' | 'all' | None (default)
+        scope: 'current' | 'all'
             Whether to export only the current chart or all charts.
         timeout: int | None (default)
             How long to wait for the response before timing out (in milliseconds).
@@ -413,20 +426,20 @@ class GraphicWalker(ReactComponent):
                 raise TimeoutError(f"Exporting {scope} chart(s) timed out.")
         return self._exports.pop(event_id)
 
-    async def save(
+    async def save_chart(
         self,
-        path: str | PathLike | None = None,
-        mode: Literal["spec", "svg", None] = None,
-        scope: Literal["current", "all", None] = None,
-        timeout: int | None = None,
+        path: str | PathLike | IO,
+        mode: Literal["spec", "svg"] = "spec",
+        scope: Literal["current", "all"] = "current",
+        timeout: int = 5000,
     ) -> None:
         """
         Saves chart(s) from the frontend either as Vega specs or rendered to SVG.
 
         Arguments
         ---------
-        path: str |
-        mode: 'code' | 'svg' | None
+        path: str | PathLike | IO
+        mode: 'code' | 'svg'
            Whether to export and save the chart specification(s) or SVG. If None the mode is set
            to the 'export_code' parameter value.
         scope: 'current' | 'all'
@@ -436,12 +449,13 @@ class GraphicWalker(ReactComponent):
            How long to wait for the response before timing out. If None the timeout is
            set to the 'export_timeout' parameter value.
         """
-        if not path:
-            path = self.save_path
-        spec = await self.export(mode=mode, scope=scope, timeout=timeout)
-        path = Path(path)
-        with path.open("w") as file:
-            json.dump(spec, file)
+        spec = await self.export_chart(mode=mode, scope=scope, timeout=timeout)
+        if isinstance(path, IO):
+            json.dump(spec, path)
+        else:
+            path = Path(path)
+            with path.open("w") as file:
+                json.dump(spec, file)
         logger.debug("Saved spec to %s", path)
 
     def export_controls(self, **params) -> SaveControls:

@@ -145,15 +145,6 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 - `appearance` (str): Optional dark mode preference: 'light', 'dark', or 'media'. If not provided, the appearance is derived from `pn.config.theme`.
 - `theme_key` (str): Optional chart theme: 'g2' (default), 'streamlit', or 'vega'. If using the [`FastListTemplate`](https://panel.holoviz.org/reference/templates/FastListTemplate.html), try combining the `theme_key` 'g2' with the `accent` color <div style="display:inline;background-color:#5B8FF9;color:white;padding:0 5px;border-radius:3px;">#5B8FF9</div>, or 'streamlit' and <div style="display:inline;background-color:#ff4a4a;color:white;padding:0 5px;border-radius:3px;">#ff4a4a</div>, or 'vega' and <div style="display:inline;background-color:#4c78a8;color:white;padding:0 5px;border-radius:3px;">#4c78a8</div>.
 
-#### Export and Save
-
-- `export_mode` ('spec' | 'svg'): Used as default by `export` and `save`. Default is 'spec'.
-- `export_scope` ('all' | 'current'): Used as default scope for `export` and `save`.
-- `export_timeout` (int): Export timeout in milliseconds. Used as default for `export` and `save`.
-- `export` (action): Export the chart(s) as either a spec or SVG.
-- `save_path` (str | PathLike): Used as default path for saving. Default is 'tmp_graphic_walker.json'.
-- `save` (action): Saves the chart(s) as either a spec or SVG.
-
 #### Other
 
 - `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
@@ -170,11 +161,10 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 
 #### Export and Save Methods
 
-- `export`: Returns chart(s) from the frontend exported as either Vega specifications or SVG strings. Uses the `export_mode`, `export_scope`, or `export_timeout` values as defaults if `None` is provided as argument.
-- `save`: Saves chart(s) from the frontend exported as either Vega specifications or SVG strings. Uses the `save_path`, `export_mode`, `export_scope`, or `export_timeout` values as defaults if `None` is provided as argument.
-- `create_export_settings`: Returns a UI component to set the `export_scope`, `export_mode`, and `export_timeout` parameters.
-- `create_export_button`: Returns a UI component to export the chart(s) as either a spec or SVG. The `value` parameter will hold the exported spec.
-- `create_save_button`: Returns a UI component to save the chart(s) as either a spec or SVG. Will save to `save_path`.
+- `export_chart`: Returns chart(s) from the frontend exported as either Vega specifications or SVG strings.
+- `save_chart`: Saves chart(s) from the frontend exported as either Vega specifications or SVG strings.
+- `export_controls`: Returns a UI component to export the charts(s) and interactively set `scope`, `mode`, and `timeout` parameters. The `value` parameter will hold the exported spec.
+- `save_controls`: Returns a UI component to export and save the chart(s) acting much like `export_controls`.
 
 #### Other Methods
 

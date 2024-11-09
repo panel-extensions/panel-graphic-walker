@@ -1,7 +1,7 @@
 # ✨ Welcome to Panel Graphic Walker
 
 [![License](https://img.shields.io/badge/License-MIT%202.0-blue.svg)](https://opensource.org/licenses/MIT)
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference_app/app.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0)
 
 **A simple way to explore your data through a *[Tableau-like](https://www.tableau.com/)* interface directly in your [Panel](https://panel.holoviz.org/) data applications.**
 
@@ -34,7 +34,7 @@ pip install panel-graphic-walker
 
 ### Basic Graphic Walker Pane
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/basic.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/basic.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference/basic.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference/basic.py)
 
 Here’s an example of how to create a simple `GraphicWalker` pane:
 
@@ -57,7 +57,7 @@ You can put the code in a file `app.py` and serve it with `panel serve app.py`.
 
 ### Setting the Chart Specification
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/spec.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/spec.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference/spec.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference/spec.py)
 
 In the `GraphicWalker` UI, you can save your chart specification as a JSON file. You can then open the `GraphicWalker` with the same `spec`:
 
@@ -69,7 +69,7 @@ GraphicWalker(df, spec="spec.json")
 
 ### Changing the renderer
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/renderer.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/renderer.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference/renderer.py&requirements=panel-graphic-walker%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference/renderer.py)
 
 You may change the `renderer` to one of 'explorer' (default), 'profiler', 'viewer' or 'chart':
 
@@ -81,7 +81,7 @@ GraphicWalker(df, renderer='profiler')
 
 ### Scaling with Server-Side Computation
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference/kernel_computation.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference/kernel_computation.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference/kernel_computation.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference/kernel_computation.py)
 
 In some environments, you may encounter message or client-side data limits. To handle larger datasets, you can offload the *computation* to the *server* or Jupyter *kernel*.
 
@@ -103,7 +103,7 @@ Please note that if running on Pyodide, computations will always take place on t
 
 ### Explore all the Parameters and Methods
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/reference_app/app.py&requirements=panel-graphic-walker%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/reference_app/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/reference_app/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/reference_app/app.py)
 
 To learn more about all the parameters and methods of `GraphicWalker`, try the `panel-graphic-walker` Reference App.
 
@@ -113,13 +113,13 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 
 ### Bike Sharing Dashboard
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/bikesharing_dashboard/app.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/bikesharing_dashboard/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/bikesharing_dashboard/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/app.py)
 
 ![Bike Sharing Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/bikesharing_dashboard/app.png)
 
 ### Earthquake Dashboard
 
-[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/examples/earthquake_dashboard/app.py&requirements=panel-graphic-walker%5Bserver%5D%3E%3D0.4.0) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/examples/earthquake_dashboard/app.py)
+[![py.cafe](https://py.cafe/badge.svg)](https://py.cafe/snippet/panel/v1#code=https%3A//raw.githubusercontent.com/panel-extensions/panel-graphic-walker/refs/heads/main/examples/earthquake_dashboard/app.py&requirements=panel-graphic-walker%5Bkernel%5D%3E%3D0.4.0%0Afastparquet) [![Static Badge](https://img.shields.io/badge/source-code-blue)](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/app.py)
 
 ![Earthquake Dashboard](https://github.com/panel-extensions/panel-graphic-walker/blob/main/examples/earthquake_dashboard/app.png)
 
@@ -133,12 +133,15 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 - `fields` (list): Optional specification of fields (columns).
 - `spec` (str, dict, list): Optional chart specification as URL, JSON, dict, or list. Can be generated via the `export` method.
 - `kernel_computation` (bool): Optional. If True, the computations will take place on the server or in the Jupyter kernel instead of the client to scale to larger datasets. The 'chart' renderer will only work with client side rendering. Default is False.
+
+#### Renderer
+
 - `renderer` (str): How to display the data. One of 'explorer' (default), 'profiler', 'viewer', or 'chart'. These correspond to `GraphicWalker`, `TableWalker`, `GraphicRenderer`, and `PureRender` in the `graphic-walker` React library.
-- `page_size` (int): The number of rows per page in the table. Only applicable for the `profiler` renderer.
+- `container_height` (str): The height of a single chart in the `viewer` or `chart` renderer. For example, '500px' (pixels) or '30vh' (viewport height).
 - `hide_profiling` (bool): Whether to hide the profiling part of the 'profiler' renderer. Default is False. Does not apply to other renderers.
 - `index` (int | list): Optional index or indices to display. Default is None (all). Only applicable for the `viewer` or `chart` renderer.
+- `page_size` (int): The number of rows per page in the table. Only applicable for the `profiler` renderer.
 - `tab` ('data' | 'vis'): Set the active tab to 'data' or 'vis' (default). Only applicable for the `explorer` renderer. Not bi-directionally synced.
-- `container_height` (str): The height of a single chart in the `viewer` or `chart` renderer. For example, '500px' (pixels) or '30vh' (viewport height).
 
 #### Style
 
@@ -147,7 +150,7 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 
 #### Other
 
-- `config` (dict): Optional additional configuration for Graphic Walker. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
+- `config` (dict): Optional additional configuration for Graphic Walker. For example `{"i18nLang": "ja-JP"}`. See the [Graphic Walker API](https://github.com/Kanaries/graphic-walker#api) for more details.
 
 ### Methods
 

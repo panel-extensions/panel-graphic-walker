@@ -153,9 +153,9 @@ class ExportControls(Viewer):
 
 class SaveControls(ExportControls):
     """
-    A UI component to save the Chart(s) spec of SVG(s).
+    A UI component to save the Chart(s) spec or SVG(s).
 
-    Will save to `save_path` path of the `walker`.
+    Will save to the `save_path` path.
     """
 
     save_path: str | PathLike = param.ClassSelector(
@@ -224,6 +224,13 @@ class GraphicWalker(ReactComponent):
     # Display the interactive graphic interface
     GraphicWalker(df).servable()
     ```
+
+    If the `GraphicWalker` does not display you may have hit a limit and need to enable the
+    `kernel_computation`:
+
+    ```python
+    GraphicWalker(df, kernel_computation=True).servable()
+    ```
     """
 
     object: pd.DataFrame = param.DataFrame(
@@ -234,7 +241,7 @@ class GraphicWalker(ReactComponent):
     # Can be replaced with ClassSelector once https://github.com/holoviz/panel/pull/7454 is released
     spec: SpecType = Spec(
         doc="""Optional chart specification as url, json, dict or list.
-    Can be generated via the `export` method."""
+    Can be generated via the `export_chart` method."""
     )
     kernel_computation: bool = param.Boolean(
         default=False,
@@ -470,13 +477,15 @@ class GraphicWalker(ReactComponent):
         return ExportControls(self, **params)
 
     def save_controls(
-        self, save_path: str | os.PathLike | IO, **params
+        self,
+        save_path: str | os.PathLike | IO = SaveControls.param.save_path.default,
+        **params,
     ) -> SaveControls:
         """Returns a UI component to save the chart(s) as either a spec or SVG.
 
-        >>> walker.create_save_button(width=400)
+        >>> walker.save_controls(width=400)
 
-        The spec or SVG will be saved to the path give by `save_path`.
+        The spec or SVG will be saved to the path given by `save_path`.
         """
         return SaveControls(self, save_path=save_path, **params)
 

@@ -52,7 +52,7 @@ function transformSpec(spec, fields) {
 export function render({ model }) {
   // Model state
   const [appearance] = model.useState('appearance')
-  const [themeKey] = model.useState('theme')
+  const [themeKey] = model.useState('theme_key')
   const [config] = model.useState('config')
   const [data] = model.useState('object')
   const [fields] = model.useState('fields')

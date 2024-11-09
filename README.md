@@ -192,6 +192,8 @@ Our dream is that this package is super simple to use and supports your use case
 | DuckDB Relation | ✅ | ❌ | Not supported by Pygwalker |
 | Pygwalker Database Connector | ❌ | ❌ | [Not supported by Narwhals](https://github.com/narwhals-dev/narwhals/issues/1289) |
 
+Other backends might be supported if they are supported by both [Narwhals](https://github.com/narwhals-dev/narwhals) and [PygWalker](https://github.com/Kanaries/pygwalker).
+
 ## ❤️ Contributions
 
 Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/panel-extensions/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.

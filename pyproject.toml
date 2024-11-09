@@ -18,6 +18,7 @@ dev = [
     "jedi-language-server;sys_platform == 'linux'",
     "mypy",
     "pandas-stubs",
+    "types-requests",
     "pre-commit",
     "pytest",
     "ruff",
@@ -42,6 +43,7 @@ examples = [
   "gw-dsl-parser",
   "polars",
   "pygwalker",
+  "requests",
 ]
 kernel = [
   "duckdb ; platform_system != 'Emscripten'",
@@ -53,5 +55,5 @@ kernel = [
 packages = ["src/panel_gwalker"]
 
 [[tool.mypy.overrides]]
-module = "param.*,pygwalker.*,gw_dsl_parser.*"
+module = "param.*,pygwalker.*,gw_dsl_parser.*,requests.*"
 ignore_missing_imports = true

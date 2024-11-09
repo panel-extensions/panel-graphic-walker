@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import panel as pn
+import requests
 
 from panel_gwalker import GraphicWalker
 
@@ -29,7 +30,7 @@ body::after {
 }
 """
 DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
-SPEC = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/earthquake_dashboard/earthquake_dashboard.json"
+SPEC_URL = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/earthquake_dashboard/earthquake_dashboard.json"
 
 
 @pn.cache
@@ -37,6 +38,14 @@ def get_df() -> pd.DataFrame:
     df = pd.read_parquet(DATASET)
     df["Time"] = pd.to_datetime(df["Time"]).dt.strftime("%Y-%m-%d %H:%M:%S")
     return df
+
+
+@pn.cache
+def get_spec(url):
+    return requests.get(url).json()
+
+
+SPEC = get_spec(SPEC_URL)
 
 
 pn.extension(raw_css=[CSS], theme="dark", sizing_mode="stretch_width")

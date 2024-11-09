@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import panel as pn
+import requests
 
 from panel_gwalker import GraphicWalker
 
@@ -13,8 +14,8 @@ PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
-SPEC_CAPACITY_STATE = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json"
-SPEC_SIMPLE = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json"
+SPEC_CAPACITY_STATE_URL = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json"
+SPEC_SIMPLE_URL = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json"
 ACCENT = "#5B8FF9"
 
 
@@ -31,6 +32,15 @@ def get_data():
     return pd.read_parquet(
         "https://datasets.holoviz.org/windturbines/v1/windturbines.parq"
     )
+
+
+@pn.cache
+def get_spec(url):
+    return requests.get(url).json()
+
+
+SPEC_CAPACITY_STATE = get_spec(SPEC_CAPACITY_STATE_URL)
+SPEC_SIMPLE = get_spec(SPEC_SIMPLE_URL)
 
 
 def get_example_download():

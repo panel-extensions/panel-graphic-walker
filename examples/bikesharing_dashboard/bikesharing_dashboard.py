@@ -11,7 +11,7 @@ pn.extension(sizing_mode="stretch_width")
 ROOT = Path(__file__).parent
 # Source: https://kanaries-app.s3.ap-northeast-1.amazonaws.com/public-datasets/bike_sharing_dc.csv
 DATASET = "https://datasets.holoviz.org/bikesharing_dc/v1/bikesharing_dc.parquet"
-SPEC_URL = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json"
+SPEC = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json"
 ACCENT = "#ff4a4a"
 
 if pn.config.theme == "dark":
@@ -39,14 +39,6 @@ CSS = """
 @pn.cache
 def get_data():
     return pd.read_parquet(DATASET)
-
-
-@pn.cache
-def get_spec(url):
-    return requests.get(url).json()
-
-
-SPEC = get_spec(SPEC_URL)
 
 
 data = get_data()

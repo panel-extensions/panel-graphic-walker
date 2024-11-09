@@ -9,6 +9,7 @@ import narwhals as nw
 import numpy as np
 import pandas as pd
 import panel as pn
+import requests
 from narwhals.dataframe import LazyFrame
 from narwhals.dependencies import is_into_dataframe
 from narwhals.typing import FrameT
@@ -114,16 +115,28 @@ def _load_json(spec):
 
 
 def _is_url(spec):
-    return spec.startswith(("http", "https"))
+    return isinstance(spec, str) and spec.startswith(("http", "https"))
+
+
+@pn.cache(max_items=25, policy="LRU", ttl=60 * 5)
+def _get_spec(url) -> dict:
+    # currently client side loading of url does not work
+    return requests.get(url).json()
 
 
 def process_spec(spec: SpecType):
+    if not spec:
+        return spec
+
     if (
         isinstance(spec, str) and os.path.isfile(spec) and spec.endswith(".json")
     ) or isinstance(spec, Path):
         return _read_and_load_json(spec)
 
-    if isinstance(spec, str) and not _is_url(spec):
+    if _is_url(spec):
+        return _get_spec(spec)
+
+    if isinstance(spec, str):
         return _load_json(spec)
 
     return spec

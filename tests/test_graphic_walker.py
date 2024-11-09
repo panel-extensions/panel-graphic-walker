@@ -135,8 +135,8 @@ def test_process_spec(data, tmp_path: Path):
     assert _process_spec(list_spec) == list_spec
 
     # Test with a URL (assuming we are just checking format, not accessing the URL)
-    url = "http://example.com/data.json"
-    assert _process_spec(url) == url
+    url = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json"
+    assert isinstance(_process_spec(url), list)
 
     # Test with a JSON string
     json_string = '{"key": "value"}'

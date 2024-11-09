@@ -394,13 +394,11 @@ class GraphicWalker(ReactComponent):
         if action == "export" and event_id in self._exports:
             self._exports[event_id] = msg["data"]
         elif action == "compute":
-            self._send_msg(
-                {
-                    "action": "compute",
-                    "id": event_id,
-                    "result": self._compute(msg["payload"]),
-                }
-            )
+            self._send_msg({
+                "action": "compute",
+                "id": event_id,
+                "result": self._compute(msg["payload"]),
+            })
 
     async def export_chart(
         self,

@@ -25,10 +25,11 @@ dev = [
 ]
 tests = [
   "duckdb",
+  "fastparquet",
   "gw-dsl-parser",
   "pygwalker",
+  "pytest-asyncio",
   "pytest",
-  "pytest-asyncio"
 ]
 examples = [
   "duckdb",

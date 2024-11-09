@@ -24,8 +24,8 @@ jobs:
           python -m pip install --upgrade uv
           uv pip install -e .[dev,tests]
 
-      - name Run pre-commit
-      - uses: pre-commit/action@v3.0.1
+      - name: Run pre-commit
+        uses: pre-commit/action@v3.0.1
 
       - name: Run pytest
         run: pytest

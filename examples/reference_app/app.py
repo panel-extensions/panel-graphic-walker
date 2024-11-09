@@ -49,7 +49,7 @@ walker = GraphicWalker(
     get_data(),
     spec=SPEC_CAPACITY_STATE,
     sizing_mode="stretch_both",
-    server_computation=True,
+    kernel_computation=True
 )
 core_settings = pn.Column(
     walker.param.kernel_computation,

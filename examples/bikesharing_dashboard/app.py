@@ -44,7 +44,7 @@ data = get_data()
 
 walker = GraphicWalker(
     data,
-    theme="streamlit",
+    theme_key="streamlit",
     spec=SPEC_PATH,
     sizing_mode="stretch_both",
     kernel_computation=True,

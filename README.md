@@ -194,6 +194,8 @@ Our dream is that this package is super simple to use and supports your use case
 
 Other backends might be supported if they are supported by both [Narwhals](https://github.com/narwhals-dev/narwhals) and [PygWalker](https://github.com/Kanaries/pygwalker).
 
+Via the [backends](examples/reference/backends.py) example its possible to explore backends. In the [`data` test fixture](tests/conftest.py) you can see which backends we currently test.
+
 ## ❤️ Contributions
 
 Contributions and co-maintainers are very welcome! Please submit issues or pull requests to the [GitHub repository](https://github.com/panel-extensions/panel-graphic-walker). Check out the [DEVELOPER_GUIDE](DEVELOPER_GUIDE.md) for more information.

@@ -2,7 +2,7 @@ name: PR Checks
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, draft]
   push:
     branches: [main]
 

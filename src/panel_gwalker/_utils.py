@@ -5,12 +5,18 @@ import sys
 from pathlib import Path
 from typing import Dict
 
+import narwhals as nw
 import numpy as np
 import pandas as pd
 import panel as pn
+import requests
+from narwhals.dataframe import LazyFrame
+from narwhals.dependencies import is_into_dataframe
+from narwhals.typing import FrameT
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
+from narwhals.typing import FrameT
 
 
 def configure_debug_log_level():
@@ -66,12 +72,29 @@ def _infer_prop(s: pd.Series, i=None) -> dict:
     }
 
 
+SAMPLE_ROWS = 100
+
+
 @pn.cache(max_items=20, ttl=60 * 5, policy="LRU")
-def _raw_fields(data: pd.DataFrame | Dict[str, np.ndarray]) -> list[dict]:
-    if isinstance(data, dict):
-        return [_infer_prop(pd.Series(array, name=col)) for col, array in data.items()]
+def _raw_fields_core(data: pd.DataFrame) -> list[dict]:
+    return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+
+
+@nw.narwhalify
+def _raw_fields(data: FrameT) -> list[dict]:
+    # Workaround for caching issue. See https://github.com/holoviz/panel/issues/7467.
+    # Should probably use Narwhals schema to one day infer this
+    if isinstance(data, LazyFrame):
+        data = data.head(100).collect()
     else:
-        return [_infer_prop(data[col], i) for i, col in enumerate(data.columns)]
+        try:
+            if len(data) > SAMPLE_ROWS:
+                data = data.sample(SAMPLE_ROWS)
+        except Exception as ex:
+            pass
+
+    pandas_data = data.to_pandas()
+    return _raw_fields_core(pandas_data)
 
 
 SpecType = None | str | Path | dict | list[dict]
@@ -92,16 +115,28 @@ def _load_json(spec):
 
 
 def _is_url(spec):
-    return spec.startswith(("http", "https"))
+    return isinstance(spec, str) and spec.startswith(("http", "https"))
+
+
+@pn.cache(max_items=25, policy="LRU", ttl=60 * 5)
+def _get_spec(url) -> dict:
+    # currently client side loading of url does not work
+    return requests.get(url).json()
 
 
 def process_spec(spec: SpecType):
+    if not spec:
+        return spec
+
     if (
         isinstance(spec, str) and os.path.isfile(spec) and spec.endswith(".json")
     ) or isinstance(spec, Path):
         return _read_and_load_json(spec)
 
-    if isinstance(spec, str) and not _is_url(spec):
+    if _is_url(spec):
+        return _get_spec(spec)
+
+    if isinstance(spec, str):
         return _load_json(spec)
 
     return spec

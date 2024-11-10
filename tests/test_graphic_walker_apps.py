@@ -13,4 +13,8 @@ def test_apps(path):
         code = f.read()
         env = globals().copy()
         env["__file__"] = path
-        exec(code, env)
+        try:
+            exec(code, env)
+        except:
+            msg = f"Error running {path}"
+            raise Exception(msg)

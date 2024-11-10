@@ -22,25 +22,13 @@ function cleanToDict(value){
     return value
 }
 
-function fetchSpec(url) {
-  return fetch(url)
-    .then(response => response.json())
-    .catch(err => {
-      console.error('Error fetching spec from URL', err);
-    });
-}
-
 function transformSpec(spec) {
   /* The spec must be an null or array of objects */
   if (spec === null) {
     return null;
   }
   if (typeof spec === 'string') {
-    if (spec.startsWith('http://') || spec.startsWith('https://')) {
-      spec = fetchSpec(spec);
-    } else {
-      spec = JSON.parse(spec);
-    }
+    spec = JSON.parse(spec);
   }
 
   if (!Array.isArray(spec)) {

@@ -29,6 +29,7 @@ from panel.viewable import Viewer
 from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
 
 from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
+from panel_gwalker._tabular_data import TabularData, TabularDataType
 from panel_gwalker._utils import (
     SPECTYPES,
     SpecType,
@@ -233,7 +234,7 @@ class GraphicWalker(ReactComponent):
     ```
     """
 
-    object: pd.DataFrame = param.DataFrame(
+    object: TabularDataType = TabularData(
         doc="""The data to explore.
         Please note that if you update the `object`, then the existing charts will not be deleted."""
     )
@@ -302,6 +303,15 @@ class GraphicWalker(ReactComponent):
         "imports": {
             "graphic-walker": f"https://esm.sh/@kanaries/graphic-walker@{VERSION}"
         }
+    }
+
+    _rename = {
+        "export": None,
+        "export_mode": None,
+        "export_scope": None,
+        "export_timeout": None,
+        "save": None,
+        "save_path": None,
     }
 
     _esm = "_gwalker.js"
@@ -394,11 +404,13 @@ class GraphicWalker(ReactComponent):
         if action == "export" and event_id in self._exports:
             self._exports[event_id] = msg["data"]
         elif action == "compute":
-            self._send_msg({
-                "action": "compute",
-                "id": event_id,
-                "result": self._compute(msg["payload"]),
-            })
+            self._send_msg(
+                {
+                    "action": "compute",
+                    "id": event_id,
+                    "result": self._compute(msg["payload"]),
+                }
+            )
 
     async def export_chart(
         self,
@@ -423,6 +435,10 @@ class GraphicWalker(ReactComponent):
         -------
         Dictionary containing the exported chart(s).
         """
+        mode = mode or self.export_mode
+        scope = scope or self.export_scope
+        timeout = timeout or self.export_timeout
+
         event_id = uuid.uuid4().hex
         self._send_msg(
             {"action": "export", "id": event_id, "scope": f"{scope}", "mode": mode}

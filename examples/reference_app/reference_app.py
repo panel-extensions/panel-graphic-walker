@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pandas as pd
 import panel as pn
+import requests
 
 from panel_gwalker import GraphicWalker
 
@@ -13,10 +14,8 @@ PANEL_GW_URL = "https://github.com/panel-extensions/panel-graphic-walker"
 GW_LOGO = "https://kanaries.net/_next/static/media/kanaries-logo.0a9eb041.png"
 GW_API = "https://github.com/Kanaries/graphic-walker"
 GW_GUIDE_URL = "https://docs.kanaries.net/graphic-walker/data-viz/create-data-viz"
-# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json
-SPEC_CAPACITY_STATE = ROOT / "spec_capacity_state.json"
-# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json
-SPEC_SIMPLE = ROOT / "spec_simple.json"
+SPEC_CAPACITY_STATE = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_simple.json"
+SPEC_SIMPLE = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference_app/spec_capacity_state.json"
 ACCENT = "#5B8FF9"
 
 

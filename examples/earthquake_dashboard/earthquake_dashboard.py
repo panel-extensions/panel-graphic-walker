@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pandas as pd
 import panel as pn
+import requests
 
 from panel_gwalker import GraphicWalker
 
@@ -29,8 +30,7 @@ body::after {
 }
 """
 DATASET = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
-# https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/earthquake_dashboard/earthquake_dashboard.json
-SPEC = ROOT / "earthquake_dashboard.json"
+SPEC = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/earthquake_dashboard/earthquake_dashboard.json"
 
 
 @pn.cache

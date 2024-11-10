@@ -27,7 +27,7 @@ ibis_table = con.table("my_table").execute()
 DATAFRAMES = {
     "pandas": df_pandas,
     "polars": pl.read_parquet(DATA),
-    "dask": dd.read_parquet(DATA, npartitions=1),
+    "dask": dd.read_parquet(DATA, npartitions=1, engine="pyarrow"),
     "duckdb": duckdb_relation,
     "ibis": ibis_table,
 }

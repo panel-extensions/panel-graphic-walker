@@ -2,6 +2,7 @@ import json
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Protocol
 
 import pandas as pd
+from narwhals.dependencies import is_dask_dataframe, is_ibis_table
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
@@ -35,6 +36,36 @@ def _convert_to_field_spec(spec: dict) -> dict:
         "analytic_type": spec["analyticType"],
         "display_as": spec["name"],
     }
+
+
+def get_dask_dataframe_parser():
+    from dask.dataframe import DataFrame
+    from pygwalker.data_parsers.base import FieldSpec
+    from pygwalker.data_parsers.pandas_parser import PandasDataFrameDataParser
+
+    class DaskDataFrameParser(PandasDataFrameDataParser):
+        def __init__(
+            self,
+            df: DataFrame,
+            field_specs: List[FieldSpec],
+            infer_string_to_date: bool,
+            infer_number_to_dimension: bool,
+            other_params: Dict[str, Any],
+        ):
+            self.origin_df = df
+            self.df = self._rename_dataframe(df)
+            self._example_df = self.df.head(1000)  # This is a change
+            self.field_specs = field_specs
+            self._duckdb_df = self.df
+            self.infer_string_to_date = infer_string_to_date
+            self.infer_number_to_dimension = infer_number_to_dimension
+            self.other_params = other_params
+
+        @property
+        def dataset_type(self) -> str:
+            return "dask_dataframe"
+
+    return DaskDataFrameParser
 
 
 def get_ibis_dataframe_parser():
@@ -78,9 +109,10 @@ def get_data_parser(
     try:
         parser, name = _get_data_parser(object)
     except TypeError as exc:
-        from narwhals.dependencies import is_ibis_table
-
         object_type = type(object)
+        if is_dask_dataframe(object):
+            DaskDataFrameParser = get_dask_dataframe_parser()
+            __classname2method[object_type] = (DaskDataFrameParser, "dask")
         if is_ibis_table(object):
             IbisDataFrameParser = get_ibis_dataframe_parser()
             __classname2method[object_type] = (IbisDataFrameParser, "ibis")

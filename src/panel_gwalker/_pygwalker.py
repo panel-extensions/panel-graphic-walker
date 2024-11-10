@@ -54,39 +54,15 @@ def get_data_parser(
         ) from exc
 
     _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]
-    parser, name = _get_data_parser(object)
-    return parser(
-        object,
-        _field_specs,
-        infer_string_to_date,
-        infer_number_to_dimension,
-        other_params,
-    )
-    msg = f"Data type {type(object)} is currently not supported"
-    raise NotImplementedError(msg)
-
-
-def add_dataframe_interchange_protocol_to_connector():
-    from pygwalker.data_parsers.database_parser import Connector
-
-    def __dataframe__(self: Connector):
-        import pandas as pd
-        import pyarrow as pa
-        from sqlalchemy import text
-
-        with self.engine.connect() as connection:
-            df = pd.read_sql(text(self.view_sql), connection)
-            table = pa.Table.from_pandas(df)
-        return table
-
-    from panel.io.cache import _hash_funcs
-
-    _hash_funcs[Connector] = lambda obj: (obj.url + obj.view_sql).encode()
-
-    Connector.__dataframe__ = __dataframe__
-
-
-try:
-    add_dataframe_interchange_protocol_to_connector()
-except:
-    pass
+    try:
+        parser, name = _get_data_parser(object)
+        return parser(
+            object,
+            _field_specs,
+            infer_string_to_date,
+            infer_number_to_dimension,
+            other_params,
+        )
+    except TypeError as exc:
+        msg = f"Data type {type(object)} is currently not supported"
+        raise NotImplementedError(msg) from exc

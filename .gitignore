@@ -169,3 +169,5 @@ tmp.ibis.db
 tmp.ibis.db.wal
 tmp.db
 tmp.db.wal
+tmp.ibis.duckdb.db
+tmp.ibis.sqlite.db

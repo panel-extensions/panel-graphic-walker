@@ -188,7 +188,7 @@ Our dream is that this package is super simple to use and supports your use case
 | ---- | - | - | - |
 | Pandas | ✅ | ✅ | |
 | Polars | ✅ | ✅ | |
-| DuckDB Relation | ✅ | ✅ | You will need to register your DuckDB connection(s) with `experimental_duckdb_registration` |
+| DuckDB Relation | ✅ | ✅ | |
 | Dask | ✅ | ❌ | [Not supported by Pygwalker](https://github.com/Kanaries/pygwalker/issues/658) |
 | Pygwalker Database Connector | ❌ | ❌ | [Not supported by Narwhals](https://github.com/narwhals-dev/narwhals/issues/1289) |
 

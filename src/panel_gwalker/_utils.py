@@ -3,15 +3,12 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict
 
 import narwhals as nw
-import numpy as np
 import pandas as pd
 import panel as pn
 import requests
 from narwhals.dataframe import LazyFrame
-from narwhals.dependencies import is_into_dataframe
 from narwhals.typing import FrameT
 
 logger = logging.getLogger("panel-graphic-walker")

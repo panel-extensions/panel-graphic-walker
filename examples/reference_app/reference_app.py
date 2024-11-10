@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pandas as pd
 import panel as pn
-import requests
 
 from panel_gwalker import GraphicWalker
 

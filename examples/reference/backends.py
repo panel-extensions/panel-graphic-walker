@@ -1,5 +1,6 @@
 import dask.dataframe as dd
 import duckdb
+import ibis
 import pandas as pd
 import panel as pn
 import polars as pl
@@ -13,11 +14,16 @@ DATA = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_eart
 df_pandas = pd.read_parquet(DATA)
 duckdb_relation = duckdb.sql("SELECT * FROM df_pandas")
 
+con = ibis.duckdb.connect("tmp.ibis.db")
+ibis_table = con.create_table("my_table", schema=ibis.schema(dict(a="int64")))
+con.insert("my_table", obj=[(1,), (2,), (3,)])
+
 DATAFRAMES = {
     "pandas": df_pandas,
     "polars": pl.read_parquet(DATA),
     "dask": dd.read_parquet(DATA, npartitions=1),
     "duckdb": duckdb_relation,
+    "ibis": ibis_table,
 }
 
 select = pn.widgets.Select(options=list(DATAFRAMES), name="Data Source")

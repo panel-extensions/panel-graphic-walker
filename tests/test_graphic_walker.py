@@ -3,17 +3,17 @@ from asyncio import sleep
 from pathlib import Path
 from unittest.mock import patch
 
+import dask.dataframe as dd
+import duckdb
 import pandas as pd
 import param
+import polars as pl
 import pytest
+from pygwalker.data_parsers.database_parser import Connector as DatabaseConnector
+from sqlalchemy import create_engine, text
 
 from panel_gwalker import GraphicWalker
 from panel_gwalker._utils import _raw_fields
-
-
-@pytest.fixture
-def data():
-    return pd.DataFrame({"a": [1, 2, 3]})
 
 
 @pytest.fixture
@@ -135,8 +135,8 @@ def test_process_spec(data, tmp_path: Path):
     assert _process_spec(list_spec) == list_spec
 
     # Test with a URL (assuming we are just checking format, not accessing the URL)
-    url = "http://example.com/data.json"
-    assert _process_spec(url) == url
+    url = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/bikesharing_dashboard/bikesharing_dashboard.json"
+    assert isinstance(_process_spec(url), list)
 
     # Test with a JSON string
     json_string = '{"key": "value"}'

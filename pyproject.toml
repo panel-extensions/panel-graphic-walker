@@ -1,13 +1,13 @@
 [project]
 name = "panel-graphic-walker"
-version = "0.4.0"
+version = "0.5.0"
 description = "A project providing a Graphic Walker Pane for use with HoloViz Panel."
 readme = "README.md"
 authors = [
     { name = "Philipp Rudiger", email = "philipp.jfr@gmail.com" }
 ]
 requires-python = ">=3.9"
-dependencies = ["panel>=1.5.2"]
+dependencies = ["panel>=1.5.2", "narwhals"]
 
 [build-system]
 requires = ["hatchling"]
@@ -18,34 +18,44 @@ dev = [
     "jedi-language-server;sys_platform == 'linux'",
     "mypy",
     "pandas-stubs",
+    "types-requests",
     "pre-commit",
     "pytest",
     "ruff",
     "watchfiles",
 ]
 tests = [
+  "aiohttp",
+  "dask[dataframe]",
   "duckdb",
   "fastparquet",
   "gw-dsl-parser",
+  "ibis-framework[duckdb]",
+  "polars",
   "pygwalker",
   "pytest-asyncio",
   "pytest",
+  "requests",
 ]
 examples = [
+  "dask[dataframe]",
   "duckdb",
   "fastparquet",
   "gw-dsl-parser",
+  "ibis-framework[duckdb]",
+  "polars",
   "pygwalker",
+  "requests",
 ]
 kernel = [
   "duckdb ; platform_system != 'Emscripten'",
   "gw-dsl-parser ; platform_system != 'Emscripten'",
-  "pygwalker ; platform_system != 'Emscripten'"
+  "pygwalker ; platform_system != 'Emscripten'",
 ]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/panel_gwalker"]
 
 [[tool.mypy.overrides]]
-module = "param.*,pygwalker.*,gw_dsl_parser.*"
+module = "param.*,pygwalker.*,gw_dsl_parser.*,requests.*"
 ignore_missing_imports = true

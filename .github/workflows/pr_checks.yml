@@ -2,7 +2,7 @@ name: PR Checks
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    types: [opened, synchronize, draft]
   push:
     branches: [main]
 
@@ -22,10 +22,13 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade uv
+          uv venv
           uv pip install -e .[dev,tests]
 
       - name: Run pre-commit
         uses: pre-commit/action@v3.0.1
 
       - name: Run pytest
-        run: pytest
+        run: |
+          source .venv/bin/activate
+          pytest tests

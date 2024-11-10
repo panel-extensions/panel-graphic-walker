@@ -12,7 +12,7 @@ import pytest
 from pygwalker.data_parsers.database_parser import Connector as DatabaseConnector
 from sqlalchemy import create_engine, text
 
-from panel_gwalker import GraphicWalker
+from panel_gwalker import GraphicWalker, experimental_duckdb_registration
 from panel_gwalker._utils import _raw_fields
 
 # Using duckdb relation as fixtures requires special care
@@ -57,8 +57,12 @@ def data(request, tmp_path, memory_conn, persistent_conn):
         df_pandas = pd.DataFrame({"a": [1, 2, 3]})
         return duckdb.sql("SELECT * FROM df_pandas")
     if request.param == "duckdb-in-memory":
-        return memory_conn.sql("SELECT * FROM df_pandas")
+        relation = memory_conn.sql("SELECT * FROM df_pandas")
+        experimental_duckdb_registration(memory_conn, relation)
+        return relation
     if request.param == "duckdb-persistent":
-        return persistent_conn.sql("SELECT * FROM df_pandas")
+        relation = persistent_conn.sql("SELECT * FROM df_pandas")
+        experimental_duckdb_registration(persistent_conn, relation)
+        return relation
     else:
         raise ValueError(f"Unknown data type: {request.param}")

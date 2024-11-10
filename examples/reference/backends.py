@@ -1,6 +1,3 @@
-import os
-import tempfile
-
 import dask.dataframe as dd
 import duckdb
 import ibis

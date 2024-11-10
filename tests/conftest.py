@@ -1,20 +1,9 @@
-import json
-from asyncio import sleep
-from pathlib import Path
-from unittest.mock import patch
-
 import dask.dataframe as dd
 import duckdb
 import ibis
 import pandas as pd
-import param
 import polars as pl
 import pytest
-from pygwalker.data_parsers.database_parser import Connector as DatabaseConnector
-from sqlalchemy import create_engine, text
-
-from panel_gwalker import GraphicWalker
-from panel_gwalker._utils import _raw_fields
 
 # Using duckdb relation as fixtures requires special care
 # See https://github.com/duckdb/duckdb/issues/14771

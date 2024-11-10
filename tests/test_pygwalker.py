@@ -1,5 +1,4 @@
 import dask.dataframe as dd
-import duckdb
 import pytest
 
 from panel_gwalker._gwalker import get_data_parser

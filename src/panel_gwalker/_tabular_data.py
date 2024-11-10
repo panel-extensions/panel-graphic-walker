@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Union
+from typing import Any
 
 import bokeh.core.properties as bp
 import narwhals as nw

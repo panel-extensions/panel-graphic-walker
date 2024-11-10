@@ -1,8 +1,5 @@
-import pandas as pd
 import param
-import polars as pl
 import pytest
-from pygwalker.data_parsers.database_parser import Connector as DatabaseConnector
 
 from panel_gwalker._tabular_data import TabularData, _column_datasource_from_tabular_df
 

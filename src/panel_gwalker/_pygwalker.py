@@ -1,11 +1,6 @@
-import json
-import sys
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, List, Protocol, runtime_checkable
 
-import pandas as pd
 from narwhals.dependencies import is_duckdb_relation, is_ibis_table
-from sqlalchemy import create_engine, text
-from sqlalchemy.engine import Engine
 
 if TYPE_CHECKING:
     try:
@@ -110,7 +105,6 @@ def get_data_parser(
         from pygwalker.data_parsers.database_parser import DatabaseDataParser
         from pygwalker.services.data_parsers import (
             __classname2method,
-            _get_data_parser,
         )
         from pygwalker.services.data_parsers import (
             _get_data_parser as _get_data_parser_pygwalker,

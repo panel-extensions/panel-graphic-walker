@@ -3,14 +3,7 @@ from asyncio import sleep
 from pathlib import Path
 from unittest.mock import patch
 
-import dask.dataframe as dd
-import duckdb
-import pandas as pd
-import param
-import polars as pl
 import pytest
-from pygwalker.data_parsers.database_parser import Connector as DatabaseConnector
-from sqlalchemy import create_engine, text
 
 from panel_gwalker import GraphicWalker
 from panel_gwalker._utils import _raw_fields

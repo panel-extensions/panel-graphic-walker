@@ -44,6 +44,7 @@ def _column_datasource_from_tabular_df(data: FrameT):
     if isinstance(data, nw.LazyFrame):
         data = data.collect()
     data = data.to_pandas()
+
     return ColumnDataSource._data_from_df(data)
 
 

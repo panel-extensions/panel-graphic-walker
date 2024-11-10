@@ -11,27 +11,41 @@ pn.extension()
 
 DATA = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
 df_pandas = pd.read_parquet(DATA)
-duckdb_relation = duckdb.sql("SELECT * FROM df_pandas")
+duckdb_simple = duckdb.sql("SELECT * FROM df_pandas")
+
+con_in_memory = duckdb.connect(":memory:")
+duckdb_in_memory = con_in_memory.sql("SELECT * FROM df_pandas")
+
+con_persistent = duckdb.connect("tmp.db")
+duckdb_persistent = con_persistent.sql("SELECT * FROM df_pandas")
 
 DATAFRAMES = {
     "pandas": df_pandas,
     "polars": pl.read_parquet(DATA),
     "dask": dd.read_parquet(DATA, npartitions=1),
-    "duckdb": duckdb_relation,
+    "duckdb-simple": duckdb_simple,
+    "duckdb in-memory": duckdb_in_memory,
+    "duckdb persistent": duckdb_persistent,
 }
 
 select = pn.widgets.Select(options=list(DATAFRAMES), name="Data Source")
 kernel_computation = pn.widgets.Checkbox(name="Kernel Computation", value=False)
 
+if pn.state.location:
+    pn.state.location.sync(select, {"value": "backend"})
+    pn.state.location.sync(kernel_computation, {"value": "kernel_computation"})
+
 
 @pn.depends(select, kernel_computation)
 def get_data(value, kernel_computation):
-    data = DATAFRAMES[value]
+    data = DATAFRAMES.get(value, None)
+    if data is None:
+        return "Not a valid option"
     if not kernel_computation:
         try:
-            data = data.head(10)
+            data = data.head(1000)
         except:
-            data = data.df().head(10)
+            data = data.df().head(1000)
     try:
         return GraphicWalker(
             data,

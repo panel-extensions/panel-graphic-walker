@@ -59,50 +59,16 @@ def _get_data_parser_non_pygwalker(
     return object, parser, name
 
 
-_DUCKDB_CONNECTIONS = weakref.WeakKeyDictionary()  # type: ignore[var-annotated]
-_DEFAULT_DUCKDB_CONNECTION = None
-
-
-def experimental_duckdb_registration(connection, relation=None):
-    """Register the duckdb connection to be used by the GraphicWalker
-
-    Will be deprecated the day we now how to solve https://github.com/duckdb/duckdb/discussions/14768
-    or https://github.com/duckdb/duckdb/discussions/14772.
-
-    Args:
-        connection: The duckdb connection to be registered
-        relation (duckdb.duckdb.DuckDBPyRelation): Optional relation to be registered. If None, the connection
-        will be used as the default connection.
-    ."""
-    if relation is None:
-        global _DEFAULT_DUCKDB_CONNECTION
-        _DEFAULT_DUCKDB_CONNECTION = connection
-    else:
-        _DUCKDB_CONNECTIONS[relation] = connection
-
-
 class DuckDBPyRelationConnector(ConnectorP):
     def __init__(self, relation):
         self.relation = relation
-        # Might not work if duckdb is not in memory
-        if relation in _DUCKDB_CONNECTIONS:
-            self._connection = _DUCKDB_CONNECTIONS[relation]
-        elif _DEFAULT_DUCKDB_CONNECTION:
-            self._connection = _DEFAULT_DUCKDB_CONNECTION
-        else:
-            import duckdb
-
-            self._connection = duckdb
-
-        self._connection.register("__relation", self.relation)
-        # Might not work if using multiple relations?
         self.view_sql = "SELECT * FROM __relation"
 
     def query_datas(self, sql: str) -> List[Dict[str, Any]]:
-        connection = self._connection
+        __relation = self.relation
 
-        result = connection.sql(sql).fetchall()
-        columns = connection.sql(sql).columns
+        result = self.relation.query("__relation", sql).fetchall()
+        columns = self.relation.query("__relation", sql).columns
         records = [dict(zip(columns, row)) for row in result]
         return records
 

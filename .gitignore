@@ -165,3 +165,6 @@ cython_debug/
 #.idea/
 script.*
 tmp_graphic_walker.json
+tmp.db
+tmp.ibis.db
+tmp.db.wal

@@ -4,7 +4,7 @@ import pandas as pd
 import panel as pn
 import polars as pl
 
-from panel_gwalker import GraphicWalker, experimental_duckdb_registration
+from panel_gwalker import GraphicWalker
 
 pn.extension()
 
@@ -27,9 +27,6 @@ DATAFRAMES = {
     "duckdb in-memory": duckdb_in_memory,
     "duckdb persistent": duckdb_persistent,
 }
-
-experimental_duckdb_registration(con_in_memory, duckdb_in_memory)
-experimental_duckdb_registration(con_persistent, duckdb_persistent)
 
 select = pn.widgets.Select(options=list(DATAFRAMES), name="Data Source")
 kernel_computation = pn.widgets.Checkbox(name="Kernel Computation", value=False)

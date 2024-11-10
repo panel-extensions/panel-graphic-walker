@@ -1,7 +1,9 @@
 import json
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Protocol
+import sys
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Protocol, runtime_checkable
 
 import pandas as pd
+from narwhals.dependencies import is_duckdb_relation, is_ibis_table
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 
@@ -58,6 +60,44 @@ def get_ibis_dataframe_parser():
     return IbisDataFrameParser
 
 
+@runtime_checkable
+class ConnectorP(Protocol):
+    def query_datas(self, sql: str) -> List[Dict[str, Any]]: ...
+
+    @property
+    def dialect_name(self) -> str: ...
+
+
+def _get_data_parser_non_pygwalker(
+    object, fields_specs, infer_string_to_date, infer_number_to_dimension, other_params
+):
+    if isinstance(dataset, ConnectorP):
+        from pygwalker.data_parsers.database_parser import DatabaseDataParser
+
+        __classname2method[DatabaseDataParser] = (DatabaseDataParser, "connector")
+        return __classname2method[DatabaseDataParser]
+
+    return object, parser, name
+
+
+class DuckDBPyRelationConnector(ConnectorP):
+    def __init__(self, relation):
+        self.relation = relation
+        self.view_sql = "SELECT * FROM __relation"
+
+    def query_datas(self, sql: str) -> List[Dict[str, Any]]:
+        __relation = self.relation
+
+        result = self.relation.query("__relation", sql).fetchall()
+        columns = self.relation.query("__relation", sql).columns
+        records = [dict(zip(columns, row)) for row in result]
+        return records
+
+    @property
+    def dialect_name(self) -> str:
+        return "duckdb"
+
+
 def get_data_parser(
     object,
     field_specs: List[dict],  # FieldSpec
@@ -66,31 +106,38 @@ def get_data_parser(
     other_params: Dict[str, Any],
 ) -> "BaseDataParser":
     try:
-        from pygwalker import data_parsers
         from pygwalker.data_parsers.base import FieldSpec
-        from pygwalker.services.data_parsers import __classname2method, _get_data_parser
+        from pygwalker.data_parsers.database_parser import DatabaseDataParser
+        from pygwalker.services.data_parsers import (
+            __classname2method,
+            _get_data_parser,
+        )
+        from pygwalker.services.data_parsers import (
+            _get_data_parser as _get_data_parser_pygwalker,
+        )
     except ImportError as exc:
         raise ImportError(
             "Server dependencies are not installed. Please: pip install panel-graphic-walker[kernel]."
         ) from exc
 
-    _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]
-    try:
-        parser, name = _get_data_parser(object)
-    except TypeError as exc:
-        from narwhals.dependencies import is_ibis_table
+    object_type = type(object)
 
+    if is_ibis_table(object):
+        IbisDataFrameParser = get_ibis_dataframe_parser()
+        __classname2method[object_type] = (IbisDataFrameParser, "ibis")
+
+    if is_duckdb_relation(object):
+        object = DuckDBPyRelationConnector(object)
         object_type = type(object)
-        if is_ibis_table(object):
-            IbisDataFrameParser = get_ibis_dataframe_parser()
-            __classname2method[object_type] = (IbisDataFrameParser, "ibis")
+        __classname2method[object_type] = (DatabaseDataParser, "duckdb")
 
-        try:
-            parser, name = __classname2method[object_type]
-        except KeyError as exc:
-            msg = f"Data type {type(object)} is currently not supported"
-            raise NotImplementedError(msg) from exc
+    try:
+        parser, name = _get_data_parser_pygwalker(object)
+    except TypeError as exc:
+        msg = f"Data type {type(object)} is currently not supported"
+        raise NotImplementedError(msg) from exc
 
+    _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]
     return parser(
         object,
         _field_specs,

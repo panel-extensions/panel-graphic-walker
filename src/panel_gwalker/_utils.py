@@ -3,7 +3,6 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Dict
 
 import narwhals as nw
 import numpy as np

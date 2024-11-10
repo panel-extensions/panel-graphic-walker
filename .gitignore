@@ -167,3 +167,5 @@ script.*
 tmp_graphic_walker.json
 tmp.ibis.db
 tmp.ibis.db.wal
+tmp.db
+tmp.db.wal

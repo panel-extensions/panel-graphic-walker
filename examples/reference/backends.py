@@ -1,3 +1,6 @@
+import os
+import tempfile
+
 import dask.dataframe as dd
 import duckdb
 import ibis
@@ -10,13 +13,16 @@ from panel_gwalker import GraphicWalker
 pn.extension()
 
 
-DATA = "https://datasets.holoviz.org/significant_earthquakes/v1/significant_earthquakes.parquet"
+DATA = "https://datasets.holoviz.org/windturbines/v1/windturbines.parq"
+
 df_pandas = pd.read_parquet(DATA)
 duckdb_relation = duckdb.sql("SELECT * FROM df_pandas")
 
-con = ibis.duckdb.connect("tmp.ibis.db")
-ibis_table = con.create_table("my_table", schema=ibis.schema(dict(a="int64")))
-con.insert("my_table", obj=[(1,), (2,), (3,)])
+con = ibis.connect("duckdb://tmp.ibis.db")
+if not "my_table" in con.list_tables():
+    con.read_parquet(DATA, "my_table")
+ibis_table = con.table("my_table").execute()
+
 
 DATAFRAMES = {
     "pandas": df_pandas,
@@ -35,9 +41,9 @@ def get_data(value, kernel_computation):
     data = DATAFRAMES[value]
     if not kernel_computation:
         try:
-            data = data.head(10)
+            data = data.head(1000)
         except:
-            data = data.df().head(10)
+            data = data.df().head(1000)
     try:
         return GraphicWalker(
             data,

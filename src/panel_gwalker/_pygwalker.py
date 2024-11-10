@@ -37,6 +37,27 @@ def _convert_to_field_spec(spec: dict) -> dict:
     }
 
 
+def get_ibis_dataframe_parser():
+    from pygwalker.data_parsers.pandas_parser import PandasDataFrameDataParser
+    from pygwalker.services.fname_encodings import rename_columns
+
+    class IbisDataFrameParser(PandasDataFrameDataParser):
+        def _rename_dataframe(self, df):
+            df = df.rename(
+                {
+                    old_col: new_col
+                    for old_col, new_col in zip(df.columns, rename_columns(df.columns))
+                }
+            )
+            return df
+
+    @property
+    def dataset_type(self) -> str:
+        return "ibis_dataframe"
+
+    return IbisDataFrameParser
+
+
 def get_data_parser(
     object,
     field_specs: List[dict],  # FieldSpec
@@ -47,7 +68,7 @@ def get_data_parser(
     try:
         from pygwalker import data_parsers
         from pygwalker.data_parsers.base import FieldSpec
-        from pygwalker.services.data_parsers import _get_data_parser
+        from pygwalker.services.data_parsers import __classname2method, _get_data_parser
     except ImportError as exc:
         raise ImportError(
             "Server dependencies are not installed. Please: pip install panel-graphic-walker[kernel]."
@@ -56,13 +77,24 @@ def get_data_parser(
     _field_specs = [FieldSpec(**_convert_to_field_spec(spec)) for spec in field_specs]
     try:
         parser, name = _get_data_parser(object)
-        return parser(
-            object,
-            _field_specs,
-            infer_string_to_date,
-            infer_number_to_dimension,
-            other_params,
-        )
     except TypeError as exc:
-        msg = f"Data type {type(object)} is currently not supported"
-        raise NotImplementedError(msg) from exc
+        from narwhals.dependencies import is_ibis_table
+
+        object_type = type(object)
+        if is_ibis_table(object):
+            IbisDataFrameParser = get_ibis_dataframe_parser()
+            __classname2method[object_type] = (IbisDataFrameParser, "ibis")
+
+        try:
+            parser, name = __classname2method[object_type]
+        except KeyError as exc:
+            msg = f"Data type {type(object)} is currently not supported"
+            raise NotImplementedError(msg) from exc
+
+    return parser(
+        object,
+        _field_specs,
+        infer_string_to_date,
+        infer_number_to_dimension,
+        other_params,
+    )

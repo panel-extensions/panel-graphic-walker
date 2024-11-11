@@ -64,6 +64,7 @@ export function render({ model }) {
   // Refs
   const graphicWalkerRef = useRef(null);
   const storeRef = useRef(null);
+  const [refUpdated, setRefUpdated] = useState(false);
 
   // Python -> JS Message handler
   model.on('msg:custom', async (e) => {
@@ -160,11 +161,11 @@ export function render({ model }) {
   }, [kernelComputation]);
 
   useEffect(() => {
-    if (renderer=="explorer"){
+    if (renderer === "explorer") {
       const key = tab === "data" ? ISegmentKey.data : ISegmentKey.vis;
-      storeRef?.current?.setSegmentKey(key);
+      storeRef.current?.setSegmentKey(key);
     }
-  }, [tab, storeRef, renderer]);
+  }, [tab, refUpdated, renderer]);
 
   useEffect(() => {
     setContainerStyle({
@@ -179,6 +180,15 @@ export function render({ model }) {
     }
     storeRef.current.resetVisualization()
   }, [fields])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (storeRef.current !== null) {
+        setRefUpdated(true)
+      }
+    }, 10); // Adjust the interval as needed
+    return () => clearInterval(interval);
+  }, []);
 
   if (renderer === "profiler") {
     return <TableWalker

@@ -1,5 +1,6 @@
 import dask.dataframe as dd
 import duckdb
+import ibis
 import pandas as pd
 import polars as pl
 import pytest
@@ -30,6 +31,8 @@ def persistent_conn(tmp_path):
         "pandas",
         "polars",
         "dask",
+        "ibis-duckdb-persistent",
+        "ibis-sqlite",
         "duckdb-simple",
         "duckdb-in-memory",
         "duckdb-persistent",
@@ -42,6 +45,18 @@ def data(request, tmp_path, memory_conn, persistent_conn):
         return pl.DataFrame({"a": [1, 2, 3]})
     if request.param == "dask":
         return dd.from_pandas(pd.DataFrame({"a": [1, 2, 3]}), npartitions=1)
+    if request.param == "ibis-duckdb-persistent":
+        path = (tmp_path / "tmp.ibis.db").as_posix()
+        con = ibis.duckdb.connect(path)
+        table = con.create_table("my_table", schema=ibis.schema(dict(a="int64")))
+        con.insert("my_table", obj=[(1,), (2,), (3,)])
+        return table
+    if request.param == "ibis-sqlite":
+        path = (tmp_path / "tmp.ibis.db").as_posix()
+        con = ibis.sqlite.connect(path)
+        table = con.create_table("my_table", schema=ibis.schema(dict(a="int64")))
+        con.insert("my_table", obj=[(1,), (2,), (3,)])
+        return table
     if request.param == "duckdb-simple":
         df_pandas = pd.DataFrame({"a": [1, 2, 3]})
         return duckdb.sql("SELECT * FROM df_pandas")

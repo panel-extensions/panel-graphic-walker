@@ -8,6 +8,7 @@ from bokeh.models import ColumnDataSource
 from narwhals.dependencies import (
     is_dask_dataframe,
     is_duckdb_relation,
+    is_ibis_table,
     is_into_dataframe,
     is_polars_lazyframe,
 )
@@ -25,6 +26,7 @@ def _validate(val: Any):
         or is_dask_dataframe(val)
         or is_polars_lazyframe(val)
         or is_duckdb_relation(val)
+        or is_ibis_table(val)
     ):
         return
 

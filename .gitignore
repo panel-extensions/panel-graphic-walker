@@ -165,6 +165,9 @@ cython_debug/
 #.idea/
 script.*
 tmp_graphic_walker.json
-tmp.db
 tmp.ibis.db
+tmp.ibis.db.wal
+tmp.db
 tmp.db.wal
+tmp.ibis.duckdb.db
+tmp.ibis.sqlite.db

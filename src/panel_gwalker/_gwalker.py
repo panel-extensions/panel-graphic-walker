@@ -133,7 +133,9 @@ class ExportControls(Viewer):
 
     @param.depends("mode", watch=True)
     def _update_vega_scope(self):
-        self.param.scope.objects = ["current"] if self.mode == "vega-lite" else ["all", "current"]
+        self.param.scope.objects = (
+            ["current"] if self.mode == "vega-lite" else ["all", "current"]
+        )
 
     @param.depends("run", watch=True)
     async def _export(self):
@@ -446,7 +448,9 @@ class GraphicWalker(ReactComponent):
         Dictionary containing the exported chart(s).
         """
         if mode == "vega-lite" and scope == "all":
-            raise ValueError("Exporting vega-lite specification is only supported for the current chart.")
+            raise ValueError(
+                "Exporting vega-lite specification is only supported for the current chart."
+            )
         event_id = uuid.uuid4().hex
         self._send_msg(
             {"action": "export", "id": event_id, "scope": scope, "mode": mode}
@@ -474,7 +478,7 @@ class GraphicWalker(ReactComponent):
         Arguments
         ---------
         path: str | PathLike | IO
-        mode: 'code' | 'svg' | 
+        mode: 'code' | 'svg' | 'vega-lite'
            Whether to export and save the chart specification(s) or SVG.
         scope: 'current' | 'all'
            Whether to export and save only the current chart or all charts.

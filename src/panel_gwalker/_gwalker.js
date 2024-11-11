@@ -87,7 +87,7 @@ export function render({ model }) {
       }
       let value, exported
       if (e.scope === 'current') {
-	if (e.mode === 'vega') {
+	if (e.mode === 'vega-lite') {
           exported = exporter.lastSpec
 	} else if (e.mode === 'spec') {
           exported = exporter.currentVis

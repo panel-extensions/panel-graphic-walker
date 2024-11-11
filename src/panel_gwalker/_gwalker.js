@@ -1,5 +1,5 @@
 import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer, ISegmentKey} from "graphic-walker"
-import {useEffect, useState, useRef} from "react"
+import {useCallback, useEffect, useState, useRef} from "react"
 
 function transform(data) {
   if (data==null) {
@@ -67,37 +67,44 @@ export function render({ model }) {
   const [refUpdated, setRefUpdated] = useState(false);
 
   // Python -> JS Message handler
-  model.on('msg:custom', async (e) => {
-    let exporter
-    if (e.action === 'compute') {
-      events.current.set(e.id, e.result)
-      return
-    }
-    if (e.mode === 'spec') {
-      exporter = storeRef.current
-    } else {
-      exporter = graphicWalkerRef.current
-    }
-    if (exporter === null) {
-      return
-    }
-    let value, exported
-    if (e.scope === 'current') {
+  useEffect(() => {
+    model.on('msg:custom', async (e) => {
+      let exporter
+      if (e.action === 'compute') {
+	events.current.set(e.id, e.result)
+	return
+      } else if (e.action === 'add_chart') {
+	storeRef.current.appendFromCode(e.spec)
+	return
+      }
       if (e.mode === 'spec') {
-        exported = exporter.currentVis
+	exporter = storeRef.current
       } else {
-        exported = await graphicWalkerRef.current.exportChart()
+	exporter = graphicWalkerRef.current
       }
-      value = cleanToDict(exported)
-    } else if (e.scope === 'all') {
-      value = []
-      exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
-      for await (const chart of exported) {
-        value.push(cleanToDict(chart))
+      if (exporter === null) {
+	return
       }
-    }
-    model.send_msg({action: 'export', data: value, id: e.id})
-  })
+      let value, exported
+      if (e.scope === 'current') {
+	if (e.mode === 'vega') {
+          exported = exporter.lastSpec
+	} else if (e.mode === 'spec') {
+          exported = exporter.currentVis
+	} else {
+          exported = await graphicWalkerRef.current.exportChart()
+	}
+	value = cleanToDict(exported)
+      } else if (e.scope === 'all') {
+	value = []
+	exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
+	for await (const chart of exported) {
+          value.push(cleanToDict(chart))
+	}
+      }
+      model.send_msg({action: 'export', data: value, id: e.id})
+    })
+  }, [])
 
   // Data Transforms
   useEffect(() => {
@@ -184,9 +191,10 @@ export function render({ model }) {
   useEffect(() => {
     const interval = setInterval(() => {
       if (storeRef.current !== null) {
-        setRefUpdated(true)
+        setRefUpdated(true);
+	clearInterval(interval);
       }
-    }, 10); // Adjust the interval as needed
+    }, 10);
     return () => clearInterval(interval);
   }, []);
 

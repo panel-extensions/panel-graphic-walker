@@ -68,9 +68,9 @@ def _extract_layout_params(params):
 class ExportControls(Viewer):
     """A UI component to export the Chart(s) spec of SVG(s)"""
 
-    mode: Literal["spec", "svg"] = param.Selector(
+    mode: Literal["spec", "svg", "vega-lite"] = param.Selector(
         default="spec",
-        objects=["spec", "svg"],
+        objects=["spec", "svg", "vega-lite"],
         doc="Whether to export the chart as a specification or as SVG.",
     )
 
@@ -130,6 +130,10 @@ class ExportControls(Viewer):
             *settings,
             button,
         )
+
+    @param.depends("mode", watch=True)
+    def _update_vega_scope(self):
+        self.param.scope.objects = ["current"] if self.mode == "vega-lite" else ["all", "current"]
 
     @param.depends("run", watch=True)
     async def _export(self):
@@ -407,9 +411,20 @@ class GraphicWalker(ReactComponent):
                 }
             )
 
+    def add_chart(self, spec):
+        """
+        Adds a new chart specification.
+
+        Arguments
+        ---------
+        spec: dict[str, Any]
+            Specification of the Chart to add.
+        """
+        self._send_msg({"action": "add_chart", "spec": spec})
+
     async def export_chart(
         self,
-        mode: Literal["spec", "svg"] = "spec",
+        mode: Literal["spec", "svg", "vega-lite"] = "spec",
         scope: Literal["current", "all"] = "current",
         timeout: int = 5000,
     ):
@@ -419,7 +434,7 @@ class GraphicWalker(ReactComponent):
 
         Arguments
         ---------
-        mode: 'code' | 'svg'
+        mode: 'spec' | 'svg' | 'vega-lite'
             Whether to export the chart specification(s) or the SVG(s).
         scope: 'current' | 'all'
             Whether to export only the current chart or all charts.
@@ -430,13 +445,11 @@ class GraphicWalker(ReactComponent):
         -------
         Dictionary containing the exported chart(s).
         """
-        mode = mode or self.export_mode
-        scope = scope or self.export_scope
-        timeout = timeout or self.export_timeout
-
+        if mode == "vega-lite" and scope == "all":
+            raise ValueError("Exporting vega-lite specification is only supported for the current chart.")
         event_id = uuid.uuid4().hex
         self._send_msg(
-            {"action": "export", "id": event_id, "scope": f"{scope}", "mode": mode}
+            {"action": "export", "id": event_id, "scope": scope, "mode": mode}
         )
         wait_count = 0
         self._exports[event_id] = None
@@ -451,7 +464,7 @@ class GraphicWalker(ReactComponent):
     async def save_chart(
         self,
         path: str | PathLike | IO,
-        mode: Literal["spec", "svg"] = "spec",
+        mode: Literal["spec", "svg", "vega-lite"] = "spec",
         scope: Literal["current", "all"] = "current",
         timeout: int = 5000,
     ) -> None:
@@ -461,15 +474,12 @@ class GraphicWalker(ReactComponent):
         Arguments
         ---------
         path: str | PathLike | IO
-        mode: 'code' | 'svg'
-           Whether to export and save the chart specification(s) or SVG. If None the mode is set
-           to the 'export_code' parameter value.
+        mode: 'code' | 'svg' | 
+           Whether to export and save the chart specification(s) or SVG.
         scope: 'current' | 'all'
-           Whether to export and save only the current chart or all charts. If None the scope is
-           set to the 'export_scope' parameter value.
+           Whether to export and save only the current chart or all charts.
         timeout: int
-           How long to wait for the response before timing out. If None the timeout is
-           set to the 'export_timeout' parameter value.
+           How long to wait for the response before timing out.
         """
         spec = await self.export_chart(mode=mode, scope=scope, timeout=timeout)
         if isinstance(path, IO):

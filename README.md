@@ -164,13 +164,14 @@ To learn more about all the parameters and methods of `GraphicWalker`, try the `
 
 #### Export and Save Methods
 
-- `export_chart`: Returns chart(s) from the frontend exported as either Vega specifications or SVG strings.
-- `save_chart`: Saves chart(s) from the frontend exported as either Vega specifications or SVG strings.
+- `export_chart`: Returns chart(s) from the frontend exported as either Graphic Walker Chart specification, vega-lite specification or SVG strings.
+- `save_chart`: Saves chart(s) from the frontend exported as either Graphic Walker Chart specifications, vega-lite specification or SVG strings.
 - `export_controls`: Returns a UI component to export the charts(s) and interactively set `scope`, `mode`, and `timeout` parameters. The `value` parameter will hold the exported spec.
 - `save_controls`: Returns a UI component to export and save the chart(s) acting much like `export_controls`.
 
 #### Other Methods
 
+- `add_chart`: Adds a Chart to the explorer from a Graphic Walker Chart specification.
 - `calculated_field_specs`: Returns a list of *fields* calculated from the `object`. This is a great starting point if you want to provide custom `field_specs`.
 
 ## Vision

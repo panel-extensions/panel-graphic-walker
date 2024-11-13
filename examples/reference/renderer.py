@@ -1,12 +1,9 @@
-from pathlib import Path
-
 import pandas as pd
 import panel as pn
 
 from panel_gwalker import GraphicWalker
 
-ROOT = Path(__file__).parent
-SPEC = ROOT / "spec.json"
+SPEC = "https://cdn.jsdelivr.net/gh/panel-extensions/panel-graphic-walker@main/examples/reference/spec.json"
 
 pn.extension(sizing_mode="stretch_width")
 

@@ -10,9 +10,9 @@ GH_USER = "panel-extensions"
 GH_REPO = "panel-graphic-walker"
 GH_PREFIX = "refs/heads/main/examples/"
 
-BASE_REQUIREMENTS = ["panel-graphic-walker>=0.4.0"]
+BASE_REQUIREMENTS = ["panel-graphic-walker>=0.5.0"]
 PARQUET_REQUIREMENTS = BASE_REQUIREMENTS + ["fastparquet"]
-SERVER_REQUIREMENTS = ["panel-graphic-walker[kernel]>=0.4.0", "fastparquet"]
+SERVER_REQUIREMENTS = ["panel-graphic-walker[kernel]>=0.5.0", "fastparquet"]
 
 
 EXAMPLES = [

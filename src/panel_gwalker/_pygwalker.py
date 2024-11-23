@@ -111,7 +111,7 @@ def get_data_parser(
         )
     except ImportError as exc:
         raise ImportError(
-            "Server dependencies are not installed. Please: pip install panel-graphic-walker[kernel]."
+            "Server dependencies are not installed. Please: pip install 'panel-graphic-walker[kernel]'"
         ) from exc
 
     object_type = type(object)

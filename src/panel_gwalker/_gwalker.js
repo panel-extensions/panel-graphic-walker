@@ -109,7 +109,6 @@ export function render({ model, el, view }) {
   if (renderer === 'profiler') {
     const resize = () => {
       const table = view.container.children[0].shadowRoot.querySelector('div.overflow-y-auto.h-full')
-      console.log(table)
       if (table != null) {
 	table.style.maxHeight = '100%'
       }

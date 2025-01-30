@@ -106,12 +106,17 @@ export function render({ model, el, view }) {
     })
   }, [])
 
-  useEffect(() => {
-    if (renderer === 'profiler') {
+  if (renderer === 'profiler') {
+    const resize = () => {
       const table = view.container.children[0].shadowRoot.querySelector('div.overflow-y-auto.h-full')
-      table.style.maxHeight = '100%'
+      console.log(table)
+      if (table != null) {
+	table.style.maxHeight = '100%'
+      }
     }
-  }, [storeRef, renderer])
+    model.on('after_render', resize)
+    model.on('after_layout', resize)
+  }
 
   // Data Transforms
   useEffect(() => {

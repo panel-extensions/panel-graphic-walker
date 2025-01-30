@@ -37,7 +37,7 @@ function transformSpec(spec) {
   return spec;
 }
 
-export function render({ model }) {
+export function render({ model, el, view }) {
   // Model state
   const [appearance] = model.useState('appearance')
   const [themeKey] = model.useState('theme_key')
@@ -105,6 +105,13 @@ export function render({ model }) {
       model.send_msg({action: 'export', data: value, id: e.id})
     })
   }, [])
+
+  useEffect(() => {
+    if (renderer === 'profiler') {
+      const table = view.container.children[0].shadowRoot.querySelector('div.overflow-y-auto.h-full')
+      table.style.maxHeight = '100%'
+    }
+  }, [storeRef, renderer])
 
   // Data Transforms
   useEffect(() => {

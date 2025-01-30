@@ -1,6 +1,6 @@
 [project]
 name = "panel-graphic-walker"
-version = "0.5.0"
+version = "0.5.1"
 description = "A project providing a Graphic Walker Pane for use with HoloViz Panel."
 readme = "README.md"
 authors = [

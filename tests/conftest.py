@@ -31,7 +31,6 @@ def persistent_conn(tmp_path):
         "pandas",
         "polars",
         "dask",
-        "ibis-duckdb-persistent",
         "ibis-sqlite",
         "duckdb-simple",
         "duckdb-in-memory",

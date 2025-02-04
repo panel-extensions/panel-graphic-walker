@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING, Any, Dict, List, Protocol, runtime_checkable
 
 from narwhals.dependencies import is_duckdb_relation, is_ibis_table
+from packaging.version import Version
 
 if TYPE_CHECKING:
     try:

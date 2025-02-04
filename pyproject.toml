@@ -50,7 +50,7 @@ examples = [
 kernel = [
   "duckdb ; platform_system != 'Emscripten'",
   "gw-dsl-parser ; platform_system != 'Emscripten'",
-  "pygwalker ; platform_system != 'Emscripten'",
+  "pygwalker >=0.4.9.11 ; platform_system != 'Emscripten'",
 ]
 
 [tool.hatch.build.targets.wheel]

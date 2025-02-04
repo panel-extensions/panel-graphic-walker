@@ -101,19 +101,24 @@ def get_data_parser(
     other_params: Dict[str, Any],
 ) -> "BaseDataParser":
     try:
-        from pygwalker.data_parsers.base import FieldSpec
-        from pygwalker.data_parsers.database_parser import DatabaseDataParser
-        from pygwalker.services.data_parsers import (
-            __classname2method,
-        )
-        from pygwalker.services.data_parsers import (
-            _get_data_parser as _get_data_parser_pygwalker,
-        )
+        import pygwalker
     except ImportError as exc:
         raise ImportError(
-            "Server dependencies are not installed. Please: pip install 'panel-graphic-walker[kernel]'"
+            "Enabling panel-graphic-walker kernel computation requires server dependencies. "
+            "Please pip install 'panel-graphic-walker[kernel]'"
         ) from exc
-
+    if Version(pygwalker.__version__) >= Version('0.4.9'):
+        raise ImportError(
+            "Enabling panel-graphic-walker kernel computation requires pygwalker versions greater than 0.4.9."
+        ) from exc
+    from pygwalker.data_parsers.base import FieldSpec
+    from pygwalker.data_parsers.database_parser import DatabaseDataParser
+    from pygwalker.services.data_parsers import (
+        __classname2method,
+    )
+    from pygwalker.services.data_parsers import (
+        _get_data_parser as _get_data_parser_pygwalker,
+    )
     object_type = type(object)
 
     if is_ibis_table(object):

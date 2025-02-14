@@ -22,9 +22,6 @@ panel = ">=1.6.1"
 packaging = "*"
 narwhals = "*"
 
-[pypi-dependencies]
-panel_gwalker = { path = ".", editable = true }
-
 [host-dependencies]
 pip = "*"
 setuptools = ">=61"
@@ -52,6 +49,9 @@ pytest-cov = "*"
 pytest-rerunfailures = "*"
 pytest-xdist = "*"
 mypy = "*"
+
+[feature.test-core.pypi-dependencies]
+panel-graphic-walker = { path = ".", editable = true }
 
 [feature.test.dependencies]
 aiohttp = "*"

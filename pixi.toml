@@ -7,11 +7,11 @@ platforms = ["osx-arm64", "osx-64", "linux-64", "win-64"]
 install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
 
 [environments]
-test-310 = ["py310", "test-core", "test", "test-unit-task"]
-test-311 = ["py311", "test-core", "test", "test-unit-task"]
-test-312 = ["py312", "test-core", "test", "test-unit-task"]
-test-ui = ["py312", "test-core", "test", "test-ui"]
-test-core = ["py312", "test-core", "test-unit-task"]
+test-310 = ["py310", "compile", "test-core", "test", "test-unit-task"]
+test-311 = ["py311", "compile", "test-core", "test", "test-unit-task"]
+test-312 = ["py312", "compile", "test-core", "test", "test-unit-task"]
+test-ui = ["py312", "compile", "test-core", "test", "test-ui"]
+test-core = ["py312", "compile", "test-core", "test-unit-task"]
 build = ["py312", "build", "compile"]
 compile = ["py312", "compile"]
 lint = { features = ["lint"], no-default-feature = true }

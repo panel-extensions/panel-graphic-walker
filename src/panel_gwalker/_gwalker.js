@@ -119,7 +119,7 @@ export function render({ model, el, view }) {
 
   // Data Transforms
   useEffect(() => {
-    let result = null
+    let result = []
     if (!kernelComputation){
       result = transform(data);
     }

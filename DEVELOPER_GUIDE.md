@@ -39,4 +39,4 @@ panel serve $(find examples -name "*.py") --dev
 
 ### 🚢 Release a new package on Pypi
 
-Releasing `panel-graphic-walker` is automated and is triggered in the CI on tags. 
+Releasing `panel-graphic-walker` is automated and is triggered in the CI on tags.

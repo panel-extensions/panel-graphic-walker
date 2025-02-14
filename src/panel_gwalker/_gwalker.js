@@ -2,7 +2,7 @@ import {GraphicWalker, TableWalker, GraphicRenderer, PureRenderer, ISegmentKey} 
 import {useCallback, useEffect, useState, useRef} from "react"
 
 function transform(data) {
-  if (data==null) {
+  if (data == null) {
     return {}
   }
   const keys = Object.keys(data);
@@ -119,7 +119,7 @@ export function render({ model, el, view }) {
 
   // Data Transforms
   useEffect(() => {
-    let result = []
+    let result = null
     if (!kernelComputation){
       result = transform(data);
     }
@@ -166,11 +166,15 @@ export function render({ model, el, view }) {
     await wait_for(event_id)
     const result = events.current.get(event_id)
     events.current.delete(event_id)
-    return transform(result);
+    if (Object.keys(result).length === 0) {
+      return []
+    }
+    const data = transform(result);
+    return data
   }
 
   useEffect(() => {
-    if (kernelComputation){
+    if (kernelComputation) {
       setComputation(() => computationFunc)
     }
     else {

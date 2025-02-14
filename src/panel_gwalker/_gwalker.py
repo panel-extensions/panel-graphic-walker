@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from pyviz_comms import Comm
 
 
-CDN_DIST = f"https://cdn.holoviz.org/panel-graphic-walker/v{base_version(__version__)}/panel-graphic-walker.bundle.js"
+CDN_DIST = f"https://cdn.holoviz.org/panel-graphic-walker/v{base_version(__version__)}/panel-gwalker.bundle.js"
 IS_RELEASE = __version__ == base_version(__version__)
 VERSION = "0.4.72"
 

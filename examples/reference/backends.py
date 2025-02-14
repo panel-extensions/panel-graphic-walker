@@ -20,15 +20,15 @@ duckdb_in_memory = con_in_memory.sql("SELECT * FROM df_pandas")
 con_persistent = duckdb.connect("tmp.db")
 duckdb_persistent = con_persistent.sql("SELECT * FROM df_pandas")
 
-con = ibis.connect("duckdb://tmp.ibis.duckdb.db")
-if not "my_table" in con.list_tables():
-    con.read_parquet(DATA, "my_table")
-ibis_duckdb_table = con.table("my_table")
+con_ibis_duckdb = ibis.connect("duckdb://tmp.ibis.duckdb.db")
+if not "my_table" in con_ibis_duckdb.list_tables():
+    con_ibis_duckdb.create_table("my_table", df_pandas)
+ibis_duckdb_table = con_ibis_duckdb.table("my_table")
 
-con = ibis.connect("sqlite://tmp.ibis.sqlite.db")
-if not "my_table" in con.list_tables():
-    con.create_table("my_table", df_pandas)
-ibis_sqlite_table = con.table("my_table")
+con_ibis_sqlite = ibis.connect("sqlite://tmp.ibis.sqlite.db")
+if not "my_table" in con_ibis_sqlite.list_tables():
+    con_ibis_sqlite.create_table("my_table", df_pandas)
+ibis_sqlite_table = con_ibis_sqlite.table("my_table")
 
 DATAFRAMES = {
     "pandas": df_pandas,

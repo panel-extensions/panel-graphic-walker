@@ -1,0 +1,73 @@
+name: Build
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+a[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+b[0-9]+"
+      - "v[0-9]+.[0-9]+.[0-9]+rc[0-9]+"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
+        with:
+          environments: build
+      - name: Build project
+        run: pixi run -e build build-wheel
+      - name: Check package
+        run: pixi run -e build check-wheel
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip
+          path: dist/*
+      - name: Upload bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: cdn
+          path: src/panel_gwalker/dist/
+  release:
+    name: Publish package
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+    environment: pypi
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pip
+          path: dist/
+      - name: Publish package on PyPi
+        uses: pypa/gh-action-pypi-publish@release/v1
+  publish_cdn:
+    name: Publish to CDN
+    if: startsWith(github.ref, 'refs/tags/')
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: cdn
+          path: dist/
+      - name: Get Tag Name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Upload to S3
+        run: aws s3 sync ./dist s3://cdn.holoviz.org/panel-graphic-walker/${{ env.TAG_NAME }}/

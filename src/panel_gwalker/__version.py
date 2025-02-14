@@ -17,7 +17,9 @@ try:
 
         # This will fail with LookupError if the package is not installed in
         # editable mode or if Git is not installed.
-        __version__ = get_version(root="..", relative_to=__file__, version_scheme="post-release")
+        __version__ = get_version(
+            root="..", relative_to=__file__, version_scheme="post-release"
+        )
     else:
         raise FileNotFoundError
 except (ImportError, LookupError, FileNotFoundError):
@@ -25,7 +27,7 @@ except (ImportError, LookupError, FileNotFoundError):
     try:
         # __version__ was added in _version in setuptools-scm 7.0.0, we rely on
         # the hopefully stable version variable.
-        from ._version import version as __version__
+        from ._version import version as __version__  # type: ignore
     except (ModuleNotFoundError, ImportError):
         # Either _version doesn't exist (ModuleNotFoundError) or version isn't
         # in _version (ImportError). ModuleNotFoundError is a subclass of

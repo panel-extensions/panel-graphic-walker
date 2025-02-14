@@ -111,7 +111,7 @@ def get_data_parser(
     if Version(pygwalker.__version__) < Version("0.4.9"):
         raise ImportError(
             "Enabling panel-graphic-walker kernel computation requires pygwalker versions greater than 0.4.9."
-        ) from exc
+        )
     from pygwalker.data_parsers.base import FieldSpec
     from pygwalker.data_parsers.database_parser import DatabaseDataParser
     from pygwalker.services.data_parsers import (

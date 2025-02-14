@@ -20,13 +20,11 @@ Then run
 ```bash
 git clone https://github.com/panel-extensions/panel-graphic-walker.git
 cd panel-graphic-walker
-pixi run -e test-312 install
 ```
 
-You can run all tests via
+You can run all tests with:
 
 ```bash
-
 pixi run pre-commit-run
 pixi run -e test-312 test
 ```

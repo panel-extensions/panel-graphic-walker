@@ -315,7 +315,7 @@ class GraphicWalker(ReactComponent):
         "save_path": None,
     }
 
-    _bundle = "dist/panel-gwalker.bundle.js"
+    _bundle = Path(__file__).parent / "dist" / "panel-gwalker.bundle.js"
     _esm = "_gwalker.js"
 
     _THEME_CONFIG = {

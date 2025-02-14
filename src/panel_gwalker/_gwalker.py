@@ -402,7 +402,7 @@ class GraphicWalker(ReactComponent):
             comm is None
             and not config.autoreload
             and IS_RELEASE
-            and _settings.resources(default="server" == "cdn")
+            and _settings.resources(default="server")  == "cdn"
         ) or (comm and IS_RELEASE and not config.inline):
             model.update(
                 bundle="url",

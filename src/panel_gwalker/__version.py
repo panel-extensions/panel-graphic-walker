@@ -3,14 +3,14 @@
 Called __version.py as setuptools_scm will create a _version.py
 """
 
-import os.path
+import pathlib
 
 PACKAGE = "panel_gwalker"
 
 try:
     # For performance reasons on imports, avoid importing setuptools_scm
     # if not in a .git folder
-    if os.path.exists(os.path.join(os.path.dirname(__file__), "..", ".git")):
+    if (pathlib.Path(__file__).parent.parent.parent / ".git").is_dir():
         # If setuptools_scm is installed (e.g. in a development environment with
         # an editable install), then use it to determine the version dynamically.
         from setuptools_scm import get_version
@@ -18,7 +18,7 @@ try:
         # This will fail with LookupError if the package is not installed in
         # editable mode or if Git is not installed.
         __version__ = get_version(
-            root="..", relative_to=__file__, version_scheme="post-release"
+            root="../..", relative_to=__file__, version_scheme="post-release"
         )
     else:
         raise FileNotFoundError

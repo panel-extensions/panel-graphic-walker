@@ -23,9 +23,9 @@ from panel.pane import Markdown
 from panel.viewable import Viewer
 from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
 
-from panel_gwalker._pygwalker import get_data_parser, get_sql_from_payload
-from panel_gwalker._tabular_data import TabularData, TabularDataType
-from panel_gwalker._utils import (
+from ._pygwalker import get_data_parser, get_sql_from_payload
+from ._tabular_data import TabularData, TabularDataType
+from ._utils import (
     SPECTYPES,
     SpecType,
     _raw_fields,
@@ -315,6 +315,7 @@ class GraphicWalker(ReactComponent):
         "save_path": None,
     }
 
+    _bundle = "dist/panel-gwalker.bundle.js"
     _esm = "_gwalker.js"
 
     _THEME_CONFIG = {

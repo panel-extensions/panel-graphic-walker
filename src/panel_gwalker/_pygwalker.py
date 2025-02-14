@@ -108,7 +108,7 @@ def get_data_parser(
             "Enabling panel-graphic-walker kernel computation requires server dependencies. "
             "Please pip install 'panel-graphic-walker[kernel]'"
         ) from exc
-    if Version(pygwalker.__version__) < Version('0.4.9'):
+    if Version(pygwalker.__version__) < Version("0.4.9"):
         raise ImportError(
             "Enabling panel-graphic-walker kernel computation requires pygwalker versions greater than 0.4.9."
         ) from exc
@@ -120,6 +120,7 @@ def get_data_parser(
     from pygwalker.services.data_parsers import (
         _get_data_parser as _get_data_parser_pygwalker,
     )
+
     object_type = type(object)
 
     if is_ibis_table(object):

@@ -51,7 +51,7 @@ pytest-xdist = "*"
 mypy = "*"
 
 [feature.test-core.pypi-dependencies]
-panel-graphic-walker = { path = ".", editable = true }
+panel-graphic-walker = { path = ".", editable = true, no-deps = true }
 
 [feature.test.dependencies]
 aiohttp = "*"

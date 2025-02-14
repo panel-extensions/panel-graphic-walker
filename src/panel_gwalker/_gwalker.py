@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import json
 import os
@@ -6,6 +8,7 @@ import uuid
 from os import PathLike
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     IO,
     Any,
     Literal,
@@ -15,6 +18,7 @@ from typing import (
 import numpy as np
 import pandas as pd
 import param
+from bokeh.settings import settings as _settings
 from panel import config
 from panel.custom import ReactComponent
 from panel.io.state import state
@@ -22,7 +26,9 @@ from panel.layout import Column
 from panel.pane import Markdown
 from panel.viewable import Viewer
 from panel.widgets import Button, IntInput, RadioButtonGroup, TextInput
+from panel.util import base_version
 
+from .__version import __version__  # noqa
 from ._pygwalker import get_data_parser, get_sql_from_payload
 from ._tabular_data import TabularData, TabularDataType
 from ._utils import (
@@ -34,6 +40,14 @@ from ._utils import (
     process_spec,
 )
 
+if TYPE_CHECKING:
+    from bokeh.document import Document
+    from bokeh.model import Model
+    from pyviz_comms import Comm
+
+
+CDN_DIST = f"https://cdn.holoviz.org/panel-graphic-walker/v{base_version(__version__)}/panel-graphic-walker.bundle.js"
+IS_RELEASE = __version__ == base_version(__version__)
 VERSION = "0.4.72"
 
 P = ParamSpec("P")
@@ -374,6 +388,22 @@ class GraphicWalker(ReactComponent):
         if params.get("kernel_computation") is False and "object" not in params:
             params["object"] = self.object
         return super()._process_param_change(params)
+
+    def _get_model(
+        self, doc: Document, root: Model | None = None,
+        parent: Model | None = None, comm: Comm | None = None
+    ) -> Model:
+        model = super()._get_model(doc, root, parent, comm)
+        # Ensure model loads ESM bundle from CDN if requested or if in notebook
+        if (
+            (comm is None and not config.autoreload and IS_RELEASE and _settings.resources(default='server' == 'cdn')) or
+            (comm and IS_RELEASE and not config.inline)
+        ):
+            model.update(
+                bundle='url',
+                esm=CDN_DIST,
+            )
+        return model
 
     def _compute(self, payload):
         logger.debug("request: %s", payload)

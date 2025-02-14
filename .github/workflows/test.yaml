@@ -1,14 +1,35 @@
-name: CI
+name: tests
 on:
-  pull_request:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "How much of the test suite to run"
+        type: choice
+        default: default
+        options:
+          - default
+          - full
+          - downstream
+      cache:
+        description: "Use cache"
+        type: boolean
+        default: true
+  schedule:
+    - cron: "0 19 * * SUN"
 
-# Automatically stop old builds on the same branch/PR
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -e {0}
 
 jobs:
   setup:

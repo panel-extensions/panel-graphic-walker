@@ -64,7 +64,7 @@ pytest-xdist = "*"
 mypy = "*"
 
 [feature.test-unit-task.tasks]
-install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
+_install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
 test = { cmd = "pytest", depends-on = ["_install"] }
 test-coverage = { cmd = "pytest --cov=panel_gwalker --cov-report=xml --cov-report=term-missing", depends-on = ["_install"] }
 

@@ -5,22 +5,25 @@ platforms = ["osx-arm64", "osx-64", "linux-64", "win-64"]
 
 [tasks]
 install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
-
-[environments]
-test-310 = ["py310", "test-core", "test", "test-unit-task"]
-test-311 = ["py311", "test-core", "test", "test-unit-task"]
-test-312 = ["py312", "test-core", "test", "test-unit-task"]
-test-ui = ["py312", "test-core", "test", "test-ui"]
-test-core = ["py312", "test-core", "test-unit-task"]
-build = ["py312", "build", "compile"]
-compile = ["py312", "compile"]
-lint = { features = ["lint"], no-default-feature = true }
+serve = { cmd = "panel serve examples/*/*.py --port 0 --show", depends-on = ["install"] }
+serve-dev = { cmd = "panel serve examples/*/*.py --dev --port 0 --show", env = { PYTHONPATH = "./src:$PYTHONPATH" } }
 
 [dependencies]
 python = ">=3.10"
-panel = ">=1.6.1rc2"
+panel = ">=1.6.1"
 packaging = "*"
 narwhals = "*"
+watchfiles = "*"
+aiohttp = "*"
+dask = "*"
+duckdb = "*"
+ibis-framework = "*"
+fastparquet = "*"
+polars = "*"
+pygwalker = "*"
+
+[pypi-dependencies]
+gw-dsl-parser = "*"
 
 [host-dependencies]
 pip = "*"
@@ -30,6 +33,16 @@ hatchling = "*"
 hatch-vcs = "*"
 nodejs = ">=18"
 esbuild = "*"
+
+[environments]
+test-310 = ["py310", "test", "test-unit-task"]
+test-311 = ["py311", "test", "test-unit-task"]
+test-312 = ["py312", "test", "test-unit-task"]
+test-ui = ["py312", "test", "test-ui"]
+test-compiled = ["py312", "compile", "test", "test-unit-task"]
+build = ["py312", "build", "compile"]
+compile = ["py312", "compile", "compile-task"]
+lint = { features = ["lint"], no-default-feature = true }
 
 [feature.py310.dependencies]
 python = "3.10.*"
@@ -42,7 +55,7 @@ python = "3.12.*"
 # ================== TEST =====================
 # =============================================
 
-[feature.test-core.dependencies]
+[feature.test.dependencies]
 pytest = ">=6"
 pytest-asyncio = "*"
 pytest-cov = "*"
@@ -50,21 +63,10 @@ pytest-rerunfailures = "*"
 pytest-xdist = "*"
 mypy = "*"
 
-[feature.test.dependencies]
-aiohttp = "*"
-dask = "*"
-duckdb = "*"
-ibis-framework = "*"
-fastparquet = "*"
-polars = "*"
-pygwalker = "*"
-
-[feature.test.pypi-dependencies]
-gw-dsl-parser = "*"
-
 [feature.test-unit-task.tasks]
-test = "pytest"
-test-coverage = "pytest --cov=panel_gwalker --cov-report=xml --cov-report=term-missing"
+_install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
+test = { cmd = "pytest", depends-on = ["_install"] }
+test-coverage = { cmd = "pytest --cov=panel_gwalker --cov-report=xml --cov-report=term-missing", depends-on = ["_install"] }
 
 [feature.test-ui]
 channels = ["microsoft"]
@@ -74,11 +76,12 @@ playwright = { version = "*", channel = "microsoft" }
 pytest-playwright = { version = "*", channel = "microsoft" }
 
 [feature.test-ui.tasks]
+_install = "pip install --no-build-isolation --no-deps --disable-pip-version-check -e ."
 _install-ui = 'playwright install chromium'
 
 [feature.test-ui.tasks.test-ui]
 cmd = 'pytest ./tests/ui --ui --browser chromium -n logical --dist loadgroup --reruns 3 --reruns-delay 10'
-depends-on = ["_install-ui"]
+depends-on = ["_install", "_install-ui"]
 
 # =============================================
 # ================== BUILD ====================
@@ -101,9 +104,9 @@ check-wheel = "twine check dist/*"
 nodejs = ">=18"
 esbuild = "*"
 
-[feature.compile.tasks]
-compile = "panel compile panel_gwalker"
-compile-develop = "panel compile panel_gwalker --build-dir build --watch"
+[feature.compile-task.tasks]
+compile = { cmd = "panel compile panel_gwalker", env = { PYTHONPATH = "./src:$PYTHONPATH" } }
+compile-dev = { cmd = "panel compile panel_gwalker --build-dir build --watch", env = { PYTHONPATH = "./src:$PYTHONPATH" } }
 
 # =============================================
 # ================== LINT =====================

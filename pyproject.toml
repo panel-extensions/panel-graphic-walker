@@ -43,6 +43,9 @@ version_scheme = "post-release"
 [tool.hatch.build.hooks.custom]
 path = 'hatch_build.py'
 
+[tool.hatch.build.hooks.vcs]
+version-file = "src/panel_gwalker/_version.py"
+
 [project.optional-dependencies]
 dev = [
     "jedi-language-server;sys_platform == 'linux'",

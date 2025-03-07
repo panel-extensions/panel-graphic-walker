@@ -1,8 +1,12 @@
+import decimal
 import json
 import logging
 import os
 import sys
 from pathlib import Path
+from typing import Union, Any
+
+import pandas as pd
 
 import narwhals as nw
 import pandas as pd
@@ -10,6 +14,30 @@ import panel as pn
 import requests
 from narwhals.dataframe import LazyFrame
 from narwhals.typing import FrameT
+
+
+def convert_decimals_to_float(df: pd.DataFrame, sample: int = 100) -> pd.DataFrame:
+    """
+    Convert decimal.Decimal to float in a pandas DataFrame, as
+    Bokeh ColumnDataSource does not support decimal.Decimal.
+    Samples only a subset of the DataFrame to check for decimal.Decimal
+
+    Arguments
+    ---------
+    df (pd.DataFrame):
+      the DataFrame to convert
+    sample (int):
+      number of rows to sample to check for decimal.Decimal
+    """
+    df = df.copy()
+    for col in df.select_dtypes(include=['object']).columns:
+        try:
+            if df[col].sample(min(sample, len(df))).apply(lambda x: isinstance(x, decimal.Decimal)).any():
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+        except Exception:
+            df[col] = df[col].astype(str)
+    return df
+
 
 logger = logging.getLogger("panel-graphic-walker")
 FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
@@ -90,7 +118,7 @@ def _raw_fields(data: FrameT) -> list[dict]:
         except Exception as ex:
             pass
 
-    pandas_data = data.to_pandas()
+    pandas_data = convert_decimals_to_float(data.to_pandas())
     return _raw_fields_core(pandas_data)
 
 

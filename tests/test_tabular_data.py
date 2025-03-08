@@ -1,4 +1,5 @@
 import decimal
+
 import pandas as pd
 import param
 import pytest
@@ -26,14 +27,16 @@ def test_column_datasource_from_tabular_df(data):
 
 
 def test_decimal_conversion():
-    df = pd.DataFrame({
-        'price': [decimal.Decimal('10.50'), decimal.Decimal('25.75')],
-        'qty': [5, 10],
-        'name': ['Item A', 'Item B']
-    })
-    
+    df = pd.DataFrame(
+        {
+            "price": [decimal.Decimal("10.50"), decimal.Decimal("25.75")],
+            "qty": [5, 10],
+            "name": ["Item A", "Item B"],
+        }
+    )
+
     converted_df = convert_decimals_to_float(df)
-    
-    assert isinstance(converted_df['price'][0], float)
-    assert not isinstance(converted_df['price'][0], decimal.Decimal)
-    assert converted_df['price'][0] == 10.5
+
+    assert isinstance(converted_df["price"][0], float)
+    assert not isinstance(converted_df["price"][0], decimal.Decimal)
+    assert converted_df["price"][0] == 10.5

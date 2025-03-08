@@ -4,9 +4,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Union, Any
-
-import pandas as pd
+from typing import Any, Union
 
 import narwhals as nw
 import pandas as pd
@@ -30,10 +28,15 @@ def convert_decimals_to_float(df: pd.DataFrame, sample: int = 100) -> pd.DataFra
       number of rows to sample to check for decimal.Decimal
     """
     df = df.copy()
-    for col in df.select_dtypes(include=['object']).columns:
+    for col in df.select_dtypes(include=["object"]).columns:
         try:
-            if df[col].sample(min(sample, len(df))).apply(lambda x: isinstance(x, decimal.Decimal)).any():
-                df[col] = pd.to_numeric(df[col], errors='coerce')
+            if (
+                df[col]
+                .sample(min(sample, len(df)))
+                .apply(lambda x: isinstance(x, decimal.Decimal))
+                .any()
+            ):
+                df[col] = pd.to_numeric(df[col], errors="coerce")
         except Exception:
             df[col] = df[col].astype(str)
     return df

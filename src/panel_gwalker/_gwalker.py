@@ -433,10 +433,10 @@ class GraphicWalker(ReactComponent):
             result = pd.DataFrame()
 
         df = pd.DataFrame.from_records(result)
-        
+
         # Convert any Decimal objects to float
         df = convert_decimals_to_float(df)
-                
+
         logger.debug("response:\n%s", df)
         return {col: df[col].values for col in df.columns}
 

@@ -1,11 +1,13 @@
+import datetime
 import decimal
 
+import numpy as np
 import pandas as pd
 import param
 import pytest
 
 from panel_gwalker._tabular_data import TabularData, _column_datasource_from_tabular_df
-from panel_gwalker._utils import convert_decimals_to_float
+from panel_gwalker._utils import cast_to_supported_dtypes
 
 
 class MyClass(param.Parameterized):
@@ -35,8 +37,27 @@ def test_decimal_conversion():
         }
     )
 
-    converted_df = convert_decimals_to_float(df)
+    converted_df = cast_to_supported_dtypes(df)
 
     assert isinstance(converted_df["price"][0], float)
     assert not isinstance(converted_df["price"][0], decimal.Decimal)
     assert converted_df["price"][0] == 10.5
+
+
+def test_date_conversion():
+    df = pd.DataFrame(
+        {
+            "date": pd.to_datetime(
+                [
+                    datetime.date(2020, 1, 1) + datetime.timedelta(days=i)
+                    for i in range(3)
+                ]
+            ),
+            "value": np.random.randn(3).cumsum(),
+        }
+    )
+    converted_df = cast_to_supported_dtypes(df)
+    print(df)
+
+    assert isinstance(converted_df["date"][0], pd.Timestamp)
+    assert converted_df["date"][0] == pd.Timestamp("2020-01-01")

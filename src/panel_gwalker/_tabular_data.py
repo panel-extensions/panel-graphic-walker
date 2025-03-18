@@ -15,7 +15,7 @@ from narwhals.dependencies import (
 from narwhals.typing import FrameT, IntoFrame
 from panel.io.datamodel import PARAM_MAPPING
 
-from ._utils import convert_decimals_to_float
+from ._utils import cast_to_supported_dtypes
 
 TabularDataType = IntoFrame
 
@@ -47,7 +47,7 @@ class TabularData(param.Parameter):
 def _column_datasource_from_tabular_df(data: FrameT):
     if isinstance(data, nw.LazyFrame):
         data = data.collect()
-    data = convert_decimals_to_float(data.to_pandas())
+    data = cast_to_supported_dtypes(data.to_pandas())
     return ColumnDataSource._data_from_df(data)
 
 

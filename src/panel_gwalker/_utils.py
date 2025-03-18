@@ -1,3 +1,4 @@
+import datetime
 import decimal
 import json
 import logging
@@ -14,7 +15,7 @@ from narwhals.dataframe import LazyFrame
 from narwhals.typing import FrameT
 
 
-def convert_decimals_to_float(df: pd.DataFrame, sample: int = 100) -> pd.DataFrame:
+def cast_to_supported_dtypes(df: pd.DataFrame, sample: int = 100) -> pd.DataFrame:
     """
     Convert decimal.Decimal to float in a pandas DataFrame, as
     Bokeh ColumnDataSource does not support decimal.Decimal.
@@ -29,14 +30,14 @@ def convert_decimals_to_float(df: pd.DataFrame, sample: int = 100) -> pd.DataFra
     """
     df = df.copy()
     for col in df.select_dtypes(include=["object"]).columns:
+        df_col_sample = df[col].sample(min(sample, len(df)))
         try:
-            if (
-                df[col]
-                .sample(min(sample, len(df)))
-                .apply(lambda x: isinstance(x, decimal.Decimal))
-                .any()
-            ):
+            if df_col_sample.apply(lambda x: isinstance(x, decimal.Decimal)).any():
                 df[col] = pd.to_numeric(df[col], errors="coerce")
+            if df_col_sample.apply(
+                lambda x: isinstance(x, (datetime.datetime, datetime.date))
+            ).any():
+                df[col] = pd.to_datetime(df[col], errors="coerce")
         except Exception:
             df[col] = df[col].astype(str)
     return df
@@ -121,7 +122,7 @@ def _raw_fields(data: FrameT) -> list[dict]:
         except Exception as ex:
             pass
 
-    pandas_data = convert_decimals_to_float(data.to_pandas())
+    pandas_data = cast_to_supported_dtypes(data.to_pandas())
     return _raw_fields_core(pandas_data)
 
 

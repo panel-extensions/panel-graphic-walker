@@ -111,7 +111,6 @@ export function render({ model, el, view }) {
 
 
   useEffect(() => {
-    console.log('injectStyles')
     const injectStyles = () => {
       const host = el.children[0]
       if (!host) return false
@@ -162,6 +161,7 @@ export function render({ model, el, view }) {
     const interval = setInterval(() => {
       if (injectStyles()) {
         clearInterval(interval)
+        clearTimeout(timeout)
       }
     }, 10)
 

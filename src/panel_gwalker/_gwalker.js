@@ -71,51 +71,110 @@ export function render({ model, el, view }) {
     model.on('msg:custom', async (e) => {
       let exporter
       if (e.action === 'compute') {
-	events.current.set(e.id, e.result)
-	return
+        events.current.set(e.id, e.result)
+        return
       } else if (e.action === 'add_chart') {
-	storeRef.current.appendFromCode(e.spec)
-	return
+        storeRef.current.appendFromCode(e.spec)
+        return
+      } else if (e.action === 'remove_chart') {
+        storeRef.current.removeFromCode(e.spec)
+        return
       }
       if (e.mode === 'spec') {
-	exporter = storeRef.current
+        exporter = storeRef.current
       } else {
-	exporter = graphicWalkerRef.current
+        exporter = graphicWalkerRef.current
       }
       if (exporter === null) {
-	return
+        return
       }
       let value, exported
       if (e.scope === 'current') {
-	if (e.mode === 'vega-lite') {
+        if (e.mode === 'vega-lite') {
           exported = exporter.lastSpec
-	} else if (e.mode === 'spec') {
+        } else if (e.mode === 'spec') {
           exported = exporter.currentVis
-	} else {
+        } else {
           exported = await graphicWalkerRef.current.exportChart()
-	}
-	value = cleanToDict(exported)
+        }
+        value = cleanToDict(exported)
       } else if (e.scope === 'all') {
-	value = []
-	exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
-	for await (const chart of exported) {
+        value = []
+        exported = await (e.mode === 'spec' ? exporter.exportCode() : exporter.exportChartList())
+        for await (const chart of exported) {
           value.push(cleanToDict(chart))
-	}
+        }
       }
       model.send_msg({action: 'export', data: value, id: e.id})
     })
   }, [])
 
-  if (renderer === 'profiler') {
-    const resize = () => {
-      const table = view.container.children[0].shadowRoot.querySelector('div.overflow-y-auto.h-full')
-      if (table != null) {
-	table.style.maxHeight = '100%'
-      }
+
+  useEffect(() => {
+    console.log('injectStyles')
+    const injectStyles = () => {
+      const host = el.children[0]
+      if (!host) return false
+
+      host.style.height = "100%"
+      host.style.maxHeight = "100%"
+      const shadow = host.shadowRoot
+      if (!shadow) return false
+
+      // Avoid injecting the same style multiple times
+      const STYLE_ID = "tabs-shadow-patch"
+      if (shadow.getElementById(STYLE_ID)) return true
+
+      const styleEl = document.createElement("style")
+      styleEl.id = STYLE_ID
+      styleEl.textContent = `
+        /* 1. Remove max-height constraint in the scroll container */
+        div.relative > div.relative > div.overflow-y-auto.h-full {
+          max-height: unset !important;
+        }
+
+        /* 2. Make tabs flex properly */
+        [role="tabpanel"] {
+          flex-grow: 1;
+          flex-shrink: 1;
+          min-height: 0;
+        }
+
+        [role="tabpanel"] > div.border {
+          margin-left: 0;
+          margin-right: 0;
+          border: none;
+        }
+
+        [role="tabpanel"] > div.border, [role="tabpanel"] > div.border > .relative {
+          max-height: 100%;
+          height: 100%;
+        }
+      `
+      shadow.appendChild(styleEl)
+      return true
     }
-    model.on('after_render', resize)
-    model.on('after_layout', resize)
-  }
+
+    // Try immediately first
+    if (injectStyles()) return
+
+    // Poll until shadow root is available
+    const interval = setInterval(() => {
+      if (injectStyles()) {
+        clearInterval(interval)
+      }
+    }, 10)
+
+    // Cleanup after reasonable timeout (5 seconds)
+    const timeout = setTimeout(() => {
+      clearInterval(interval)
+    }, 5000)
+
+    return () => {
+      clearInterval(interval)
+      clearTimeout(timeout)
+    }
+  }, [refUpdated]);
 
   // Data Transforms
   useEffect(() => {
@@ -207,7 +266,7 @@ export function render({ model, el, view }) {
     const interval = setInterval(() => {
       if (storeRef.current !== null) {
         setRefUpdated(true);
-	clearInterval(interval);
+        clearInterval(interval);
       }
     }, 10);
     return () => clearInterval(interval);
